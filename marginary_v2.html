@@ -1,0 +1,1735 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>marginary</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --green: #00712B;
+    --lime: #00712B;
+    --amber: #00712B;
+    --gray: #E5E5E5;
+    --gray-text: #666666;
+    --lime-text: #333;
+    --placeholder-lime: #ffffff;
+    --text: #333;
+    --white: #ffffff;
+    --bg: #111111;
+    /* キャラごとのおぼろげドット色 */
+    --oboroke-dot: #00712B;
+    /* ぐたい丸色：全キャラ茶色 */
+    --gutai-dot: #8C6239;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    background: var(--bg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    color: var(--text);
+  }
+
+  .app {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    background: #fff;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 480px) {
+    body { align-items: flex-start; background: #fff; }
+    .app {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      border-radius: 0;
+      box-shadow: none;
+      background: #fff;
+    }
+  }
+
+  @media (min-width: 481px) {
+    body { background: var(--bg); align-items: center; }
+    .app {
+      width: 390px;
+      height: min(844px, 95vh);
+      border-radius: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      background: #fff;
+      overflow: hidden;
+    }
+  }
+
+  .screen {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+  .screen.active { display: flex; }
+  .tap-screen.active { cursor: pointer; }
+
+  .card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 28px 24px;
+    width: calc(100% - 40px);
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-next {
+    width: 100%;
+    padding: 18px;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    cursor: pointer;
+    background: var(--lime);
+    color: var(--lime-text);
+    font-family: inherit;
+    transition: opacity 0.2s;
+    opacity: 0.45;
+  }
+  .btn-next:not(:disabled) { opacity: 1; cursor: pointer; }
+  .btn-next:disabled { opacity: 0.45; cursor: default; }
+
+  .btn-gutai, .btn-oboroke {
+    flex: 1;
+    padding: 16px 8px;
+    border: none;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn-gutai  { background: var(--lime); color: var(--lime-text); }
+  .btn-oboroke{ background: var(--gray); color: var(--gray-text); }
+
+  .result-badge-lime {
+    background: var(--lime);
+    color: var(--lime-text);
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-align: center;
+    width: 100%;
+  }
+  .result-badge-gray {
+    background: var(--gray);
+    color: var(--gray-text);
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .tap-hint {
+    position: absolute;
+    bottom: 14px;
+    right: 18px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: #333;
+    pointer-events: none;
+  }
+
+  textarea {
+    resize: none;
+    outline: none;
+    border: none;
+    font-family: inherit;
+    caret-color: var(--lime);
+  }
+
+  .chara-svg {
+    display: inline-block;
+    animation: charaFloat 3s ease-in-out infinite;
+  }
+  @keyframes charaFloat {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+  }
+
+  .screen.active [data-serif] {
+    animation: serifFade 0.6s ease forwards;
+  }
+  @keyframes serifFade {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .stacked-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 8px;
+  }
+
+  .end-text {
+    font-size: 13px;
+    letter-spacing: 3px;
+    color: #333;
+    line-height: 2.2;
+    margin-bottom: 24px;
+  }
+  .chara-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    justify-items: center;
+    margin-bottom: 24px;
+  }
+  .btn-restart {
+    background: var(--gray);
+    color: #666;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 32px;
+    font-size: 12px;
+    font-family: inherit;
+    letter-spacing: 3px;
+    cursor: pointer;
+    font-weight: 700;
+  }
+
+  .dots-row {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-items: center;
+  }
+
+  .choice-row {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .choice-row .btn-gutai,
+  .choice-row .btn-oboroke {
+    flex: 1;
+  }
+
+  /* FIX 1: 木のsvgのgc classをCSS変数--greenに連動 */
+  .gc { fill: var(--green); }
+
+  #serif-gutai-res, #serif-oboroke-res {
+    opacity: 1 !important;
+    animation: none !important;
+  }
+
+  @keyframes loadDot {
+    0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+    40%           { opacity: 1;   transform: scale(1.1); }
+  }
+
+  html, body { overflow: hidden; height: 100%; height: 100dvh; }
+
+  #gutai-text::placeholder,
+  #gutai-text2::placeholder {
+    color: var(--placeholder-lime);
+    opacity: 0.7;
+  }
+  #oboroke-text::placeholder,
+  #oboroke-text2::placeholder {
+    color: var(--gray-text);
+    opacity: 0.6;
+  }
+
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ====== SCREEN 1: TITLE ====== -->
+  <div class="screen active" id="screen-title">
+    <div style="width:100%;height:100%;cursor:pointer;position:relative;overflow:hidden;" onclick="goTo('screen-intro')">
+      <div style="width:100%;position:relative;overflow:hidden;height:260px;position:absolute;top:50%;left:0;transform:translateY(-50%);">
+        <svg id="title-svg" width="100%" height="260" viewBox="0 0 800 471" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style="display:block;">
+          <rect width="800" height="471" fill="white"/>
+
+          <!-- ===== 上部エリア (y=0〜215) ===== -->
+          <!-- 左：大きな緑横長rect → 茶色(y=30, height=185)に合わせる -->
+          <rect x="0" y="30" width="280" height="185" fill="#00712B"/>
+          <!-- 左：緑三角（右上がり） -->
+          <path d="M0 30 L280 30 L200 0 Z" fill="#00712B"/>
+          <!-- 左：白丸ドット群 -->
+          <circle class="td" cx="40"  cy="70"  r="18" fill="white"/>
+          <circle class="td" cx="90"  cy="70"  r="18" fill="white"/>
+          <circle class="td" cx="140" cy="70"  r="18" fill="white"/>
+          <circle class="td" cx="190" cy="70"  r="18" fill="white"/>
+          <circle class="td" cx="240" cy="70"  r="18" fill="white"/>
+          <circle class="td" cx="40"  cy="120" r="18" fill="white"/>
+          <circle class="td" cx="90"  cy="120" r="18" fill="white"/>
+          <circle class="td" cx="140" cy="120" r="18" fill="white"/>
+          <circle class="td" cx="190" cy="120" r="18" fill="white"/>
+          <circle class="td" cx="240" cy="120" r="18" fill="white"/>
+          <circle class="td" cx="40"  cy="170" r="18" fill="white"/>
+          <circle class="td" cx="90"  cy="170" r="18" fill="white"/>
+          <circle class="td" cx="140" cy="170" r="18" fill="white"/>
+          <circle class="td" cx="190" cy="170" r="18" fill="white"/>
+          <circle class="td" cx="240" cy="170" r="18" fill="white"/>
+
+          <!-- 中央左：茶色縦rect -->
+          <rect x="330" y="30" width="54" height="185" fill="#8C6239"/>
+          <!-- 中央：緑縦rect -->
+          <rect x="400" y="10" width="90" height="205" fill="#00712B"/>
+          <!-- 中央右：緑縦rect -->
+          <rect x="510" y="30" width="90" height="185" fill="#00712B"/>
+
+          <!-- 右上：茶色横長rect -->
+          <rect x="625" y="0" width="175" height="56" fill="#8C6239"/>
+          <!-- 右：鋭角緑パーツ群 -->
+          <path d="M700 56 L800 56 L800 180 L760 180 Z" fill="#00712B"/>
+          <path d="M625 56 L680 56 L680 215 L625 215 Z" fill="#00712B"/>
+          <path d="M760 180 L800 180 L800 260 L720 260 Z" fill="#00712B"/>
+
+          <!-- ===== 下部エリア (y=262〜471) ===== -->
+          <!-- 左下：緑三角 -->
+          <path d="M0 262 L100 262 L0 471 Z" fill="#00712B"/>
+          <!-- 左下：茶色rect -->
+          <rect x="80" y="262" width="70" height="209" fill="#8C6239"/>
+          <!-- 左下：大きな緑rect＋白丸 -->
+          <rect x="150" y="262" width="200" height="209" fill="#00712B"/>
+          <circle class="td" cx="200" cy="316" r="22" fill="white"/>
+          <circle class="td" cx="260" cy="316" r="22" fill="white"/>
+          <circle class="td" cx="320" cy="316" r="22" fill="white"/>
+          <circle class="td" cx="200" cy="371" r="22" fill="white"/>
+          <circle class="td" cx="260" cy="371" r="22" fill="white"/>
+          <circle class="td" cx="320" cy="371" r="22" fill="white"/>
+          <circle class="td" cx="200" cy="426" r="22" fill="white"/>
+          <circle class="td" cx="260" cy="426" r="22" fill="white"/>
+          <circle class="td" cx="320" cy="426" r="22" fill="white"/>
+
+          <!-- 中央下：茶色三角 -->
+          <path d="M350 471 L420 262 L490 471 Z" fill="#8C6239"/>
+
+          <!-- 中央右下：緑rect＋白丸 -->
+          <rect x="490" y="262" width="180" height="209" fill="#00712B"/>
+          <circle class="td" cx="535" cy="316" r="22" fill="white"/>
+          <circle class="td" cx="595" cy="316" r="22" fill="white"/>
+          <circle class="td" cx="655" cy="316" r="22" fill="white"/>
+          <circle class="td" cx="535" cy="376" r="22" fill="white"/>
+          <circle class="td" cx="595" cy="376" r="22" fill="white"/>
+          <circle class="td" cx="655" cy="376" r="22" fill="white"/>
+          <circle class="td" cx="535" cy="436" r="22" fill="white"/>
+          <circle class="td" cx="595" cy="436" r="22" fill="white"/>
+
+          <!-- 右下：茶色rect -->
+          <rect x="680" y="262" width="70" height="209" fill="#8C6239"/>
+          <!-- 右下：鋭角緑 -->
+          <path d="M750 262 L800 262 L800 471 L700 471 Z" fill="#00712B"/>
+
+          <!-- 動くドット（白丸にアニメーション） -->
+
+          <!-- marginary テキスト（中央、上下パーツのすぐ間） -->
+          <text x="400" y="248" text-anchor="middle"
+            font-family="Inter,sans-serif" font-weight="300"
+            font-size="32" letter-spacing="14" fill="#111">marginary</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN 2: INTRO ====== -->
+  <div class="screen tap-screen" id="screen-intro">
+    <div class="card" style="position:relative; min-height:320px;" onclick="goTo('screen-choice')">
+      <div class="tap-hint">タップで次へ</div>
+      <!-- Corner mosaic: FIX 1 - 木のrectをCSS変数--greenで塗る -->
+      <svg width="100" height="160" style="position:absolute;top:0;left:0;" viewBox="0 0 100 160" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="45" height="70" class="gc"/>
+        <rect x="45" y="0" width="20" height="160" fill="#8C6239"/>
+        <rect x="0" y="70" width="45" height="50" class="gc"/>
+        <rect x="0" y="120" width="45" height="40" class="gc"/>
+        <circle cx="10" cy="14" r="6" fill="white"/><circle cx="26" cy="14" r="6" fill="white"/>
+        <circle cx="10" cy="32" r="6" fill="white"/><circle cx="26" cy="32" r="6" fill="white"/>
+        <circle cx="10" cy="50" r="6" fill="white"/>
+      </svg>
+      <!-- Right top -->
+      <svg width="80" height="80" style="position:absolute;top:0;right:0;" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="80" height="40" class="gc"/>
+        <polygon points="80,0 80,80 0,80" class="gc"/>
+      </svg>
+      <div style="text-align:center; font-size:14px; letter-spacing:3px; line-height:2.2; color:#333; font-weight:700; margin-top:52px; padding: 0 16px;">
+        <span data-serif="serif-intro">ボ ク は マ ジ マ ジ<br>こ の 森 に 住 む<br>妖 精 さ</span>
+      </div>
+      <div style="display:flex; justify-content:center; margin-top:20px; padding-bottom:16px;">
+        <span class="chara-svg" data-w="90" data-h="90"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN 3: CHOICE ====== -->
+  <div class="screen" id="screen-choice">
+    <div class="card" style="position:relative; min-height:300px;">
+      <!-- Left tree deco: FIX 1 - CSS変数--greenに連動 -->
+      <svg width="70" height="200" style="position:absolute;top:0;left:0;" viewBox="0 0 70 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="55" height="140" class="gc"/>
+        <rect x="10" y="140" width="20" height="60" fill="#8C6239"/>
+        <polygon points="10,120 55,80 55,140 10,140" class="gc" style="opacity:0.7;"/>
+      </svg>
+      <div style="margin-left:80px; padding-top:16px;">
+        <div class="choice-row">
+          <button class="btn-oboroke" id="btn-oboroke" onclick="selectMode('oboroke')">マ ジ お ぼ ろ げ</button>
+          <button class="btn-gutai" id="btn-gutai" onclick="selectMode('gutai')">マ ジ ぐ た い</button>
+        </div>
+        <div class="choice-label" style="font-weight:700;" data-serif="serif-choice">ど っ ち か な ー ？</div>
+      </div>
+      <div style="text-align:center; margin-top:8px;">
+        <span class="chara-svg" data-w="80" data-h="95"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN 4a: GUTAI INPUT (1st) ====== -->
+  <div class="screen" id="screen-gutai-input">
+    <div class="card" style="position:relative; min-height:320px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+        <span class="chara-svg" data-w="65" data-h="78"></span>
+        <div style="font-size:14px; letter-spacing:3px; color:#333; font-weight:700;" data-serif="serif-gutai-in">身 近 な も の か な ぁ 〜</div>
+      </div>
+
+      <!-- ぐたいドット：茶色固定 -->
+      <div class="dots-row" style="margin-bottom:6px;">
+        <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float"></div>
+        <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float2"></div>
+        <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float3"></div>
+        <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float2"></div>
+        <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float3"></div>
+        <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float"></div>
+        <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float2"></div>
+      </div>
+
+      <div style="position:relative; margin-bottom:6px;">
+        <textarea
+          id="gutai-text"
+          rows="2"
+          placeholder="マジぐたい"
+          oninput="checkInput('gutai')"
+          style="
+            width:100%;
+            background:var(--lime);
+            border:none;
+            border-radius:12px;
+            padding:18px 18px;
+            font-family:inherit;
+            font-size:18px;
+            font-weight:bold;
+            letter-spacing:3px;
+            color:#333;
+            text-align:center;
+            resize:none;
+            outline:none;
+            line-height:1.5;
+          "
+        ></textarea>
+      </div>
+
+      <div class="dots-row" style="margin-bottom:20px;">
+        <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float"></div>
+        <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float2"></div>
+        <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float3"></div>
+        <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float3"></div>
+        <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float"></div>
+        <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float2"></div>
+      </div>
+
+      <button class="btn-next" id="gutai-next-btn" disabled onclick="showFirstResult('gutai')">次へ</button>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN 4b: OBOROKE INPUT (1st) ====== -->
+  <div class="screen" id="screen-oboroke-input">
+    <div class="card" style="position:relative; min-height:320px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+        <span class="chara-svg" data-w="60" data-h="72"></span>
+        <div style="font-size:13px; letter-spacing:3px; color:#333; line-height:1.9; font-weight:700;" data-serif="serif-oboroke-in">朝 日 が 嫌 な<br>時 も あ る さ 。</div>
+      </div>
+
+      <!-- FIX 2: おぼろげドット色をCSS変数--oboroke-dotに連動 -->
+      <div class="dots-row" style="margin-bottom:6px;">
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float2"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float3"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float2"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float3"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float2"></div>
+      </div>
+
+      <div style="position:relative; margin-bottom:6px;">
+        <textarea
+          id="oboroke-text"
+          rows="2"
+          placeholder="マジおぼろげ"
+          oninput="checkInput('oboroke')"
+          style="
+            width:100%;
+            background:var(--gray);
+            border:none;
+            border-radius:12px;
+            padding:18px 18px;
+            font-family:inherit;
+            font-size:18px;
+            letter-spacing:3px;
+            color:var(--gray-text);
+            text-align:center;
+            resize:none;
+            outline:none;
+            line-height:1.5;
+          "
+        ></textarea>
+      </div>
+
+      <div class="dots-row" style="margin-bottom:8px;">
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float2"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float3"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float2"></div>
+      </div>
+
+      <button class="btn-next" id="oboroke-next-btn" disabled onclick="showFirstResult('oboroke')">次へ</button>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN: 掛け合い ====== -->
+  <div class="screen" id="screen-dialogue">
+    <div class="card" style="position:relative; min-height:320px; padding:28px 24px 32px;">
+      <div id="dialogue-lines" style="margin-bottom:32px;"></div>
+      <button class="btn-next" onclick="goToFirstResult()">次へ</button>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN: 入力内容＋キャラ反応 ====== -->
+  <div class="screen tap-screen" id="screen-reaction">
+    <div class="card" style="position:relative; min-height:260px;" onclick="afterReaction()">
+      <div class="tap-hint">タップで次へ</div>
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px;">
+        <div style="font-size:13px; letter-spacing:3px; color:var(--text); font-weight:700; line-height:2.2; transform:rotate(-8deg); transform-origin:left top; margin-top:16px;">
+          <span id="serif-reaction"></span>
+        </div>
+        <span class="chara-svg" data-w="75" data-h="90"></span>
+      </div>
+      <div id="reaction-badge" class="result-badge-lime" style="font-size:17px;min-height:56px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;"></div>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN 5a: こっちはどない？ ====== -->
+  <div class="screen tap-screen" id="screen-prompt-oboroke">
+    <div class="card" style="position:relative; min-height:260px;" onclick="goTo('screen-oboroke-input2')">
+      <div class="tap-hint">タップで次へ</div>
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:28px;">
+        <span class="chara-svg" data-w="65" data-h="78"></span>
+        <div style="font-size:14px; letter-spacing:3px; color:#333; line-height:1.8; font-weight:700;" data-serif="serif-prompt-o">こ っ ち は ど な い ？</div>
+      </div>
+      <div style="width:100%;background:var(--gray);color:var(--gray-text);border-radius:12px;padding:20px;font-family:inherit;font-size:18px;letter-spacing:3px;text-align:center;">マジおぼろげ</div>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN 5b: こっちはどう？ ====== -->
+  <div class="screen tap-screen" id="screen-prompt-gutai">
+    <div class="card" style="position:relative; min-height:260px;" onclick="goTo('screen-gutai-input2')">
+      <div class="tap-hint">タップで次へ</div>
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:28px;">
+        <span class="chara-svg" data-w="65" data-h="78"></span>
+        <div style="font-size:14px; letter-spacing:3px; color:#333; line-height:1.8; font-weight:700;" data-serif="serif-prompt-g">こ っ ち は ど う ？</div>
+      </div>
+      <button onclick="goTo('screen-gutai-input2')" style="width:100%;background:var(--lime);color:var(--lime-text);font-weight:bold;border:none;border-radius:12px;padding:20px;font-family:inherit;font-size:18px;letter-spacing:3px;cursor:pointer;transition:all 0.2s;">マジぐたい</button>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN 6a: OBOROKE INPUT 2nd ====== -->
+  <div class="screen" id="screen-oboroke-input2">
+    <div class="card" style="position:relative; min-height:320px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+        <span class="chara-svg" data-w="60" data-h="72"></span>
+        <div style="font-size:13px; letter-spacing:3px; color:#333; line-height:1.9; font-weight:700;" data-serif="serif-oboroke-in2">石 の 上 っ て 、<br>寒 い よ ね</div>
+      </div>
+      <div class="dots-row" style="margin-bottom:6px;">
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float2"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float3"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float2"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float3"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float2"></div>
+      </div>
+      <div style="position:relative; margin-bottom:6px;">
+        <textarea id="oboroke-text2" rows="2" placeholder="マジおぼろげ" oninput="checkInput2('oboroke')" style="width:100%;background:var(--gray);border:none;border-radius:12px;padding:18px 18px;font-family:inherit;font-size:18px;letter-spacing:3px;color:var(--gray-text);text-align:center;resize:none;outline:none;line-height:1.5;"></textarea>
+      </div>
+      <div class="dots-row" style="margin-bottom:20px;">
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float2"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float3"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float2"></div>
+      </div>
+      <button class="btn-next" id="oboroke2-next-btn" disabled onclick="showCombined()">次へ</button>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN 6b: GUTAI INPUT 2nd ====== -->
+  <div class="screen" id="screen-gutai-input2">
+    <div class="card" style="position:relative; min-height:320px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+        <span class="chara-svg" data-w="60" data-h="72"></span>
+        <div style="font-size:13px; letter-spacing:3px; color:#333; line-height:1.9; font-weight:700;" data-serif="serif-gutai-in2">木 漏 れ 日 っ て 、<br>眠 く な る よ ね ー</div>
+      </div>
+      <div class="dots-row" style="margin-bottom:6px;">
+        <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float"></div>
+        <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float2"></div>
+        <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float3"></div>
+        <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float2"></div>
+        <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float3"></div>
+        <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float"></div>
+        <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float2"></div>
+      </div>
+      <div style="position:relative; margin-bottom:6px;">
+        <textarea id="gutai-text2" rows="2" placeholder="マジぐたい" oninput="checkInput2('gutai')" style="width:100%;background:var(--lime);border:none;border-radius:12px;padding:18px 18px;font-family:inherit;font-size:18px;font-weight:bold;letter-spacing:3px;color:var(--lime-text);text-align:center;resize:none;outline:none;line-height:1.5;"></textarea>
+      </div>
+      <div class="dots-row" style="margin-bottom:20px;">
+        <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float"></div>
+        <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float2"></div>
+        <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float3"></div>
+        <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float3"></div>
+        <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float"></div>
+        <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float2"></div>
+      </div>
+      <button class="btn-next" id="gutai2-next-btn" disabled onclick="showCombined()">次へ</button>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN 7: COMBINED ====== -->
+  <div class="screen tap-screen" id="screen-combined">
+    <div class="card" style="position:relative; min-height:300px;" onclick="goTo('screen-kokoni')">
+      <div class="tap-hint">タップで次へ</div>
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
+        <span class="chara-svg" data-w="55" data-h="66"></span>
+        <div style="font-size:13px;letter-spacing:3px;color:#333; font-weight:700;" data-serif="serif-combined">ち ょ っ と 並 べ た</div>
+      </div>
+      <div class="stacked-badges">
+        <div id="combined-gutai" class="result-badge-lime" style="font-size:17px; min-height:56px; display:flex; align-items:center; justify-content:center;"></div>
+        <div id="combined-oboroke" class="result-badge-gray" style="font-size:17px; min-height:56px; display:flex; align-items:center; justify-content:center;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN 8: ここに何かあるかもね ====== -->
+  <div class="screen tap-screen" id="screen-kokoni">
+    <div class="card" style="position:relative; min-height:300px;" onclick="goTo('screen-tamatta')">
+      <div class="tap-hint">タップで次へ</div>
+      <div id="kokoni-oboroke" class="result-badge-gray" style="font-size:17px;min-height:56px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;"></div>
+      <div style="border:2px dashed #ccc;border-radius:10px;padding:16px;text-align:center;margin-bottom:12px;min-height:52px;display:flex;align-items:center;justify-content:center;">
+        <span style="font-size:22px;color:#ccc;">？</span>
+      </div>
+      <div id="kokoni-gutai" class="result-badge-lime" style="font-size:17px;min-height:56px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;"></div>
+      <div style="display:flex;justify-content:flex-end;align-items:center;gap:8px;">
+        <div style="font-size:12px;letter-spacing:3px;color:#333; font-weight:700;" data-serif="serif-kokoni">こ こ に 何 か あ る か も ね</div>
+        <span class="chara-svg" data-w="48" data-h="58"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN 9: 貯まったねー ====== -->
+  <div class="screen" id="screen-tamatta">
+    <div style="position:relative;width:100%;height:100%;display:flex;flex-direction:column;background:#fff;overflow:hidden;">
+      <!-- ヘッダー -->
+      <div style="display:flex;align-items:center;gap:10px;padding:16px 20px 0;flex-shrink:0;position:relative;z-index:2;">
+        <span class="chara-svg" data-w="36" data-h="42"></span>
+        <div style="font-size:11px;letter-spacing:3px;color:#333;font-weight:700;" data-serif="serif-tamatta">貯 ま っ た ね ー</div>
+      </div>
+      <!-- 木エリア（白背景） -->
+      <div id="tamatta-tree" style="position:relative;flex:1;overflow:hidden;background:#fff;"></div>
+      <!-- 地面の線 -->
+      <div style="height:1px;background:#ccc;flex-shrink:0;position:relative;z-index:2;"></div>
+      <!-- 地層エリア（ベージュ） -->
+      <div id="tamatta-strata" style="position:relative;height:38%;flex-shrink:0;background:#EDCFA3;overflow:hidden;"></div>
+      <!-- タップで次へ -->
+      <div onclick="goTo('screen-end')" style="text-align:center;padding:10px;color:#333;font-size:13px;letter-spacing:0.2em;flex-shrink:0;font-weight:700;cursor:pointer;background:#EDCFA3;">タップで次へ</div>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN END ====== -->
+  <div class="screen" id="screen-end">
+    <div class="card" style="position:relative; min-height:360px; text-align:center;">
+      <div class="end-text" style="font-weight:700;" data-serif="serif-end">ま た 気 が 向 い た ら<br>来 る と い い よ ー</div>
+      <!-- FIX 4: エンディングのキャラグリッドはマジマジ固定緑 -->
+      <div class="chara-grid" id="end-chara-grid"></div>
+      <button class="btn-restart" onclick="restart()">最初に戻る</button>
+    </div>
+  </div>
+
+</div><!-- /.app -->
+
+<script>
+  // ===== キャラ設定 =====
+  const ALL_CHARAS = ['majimaji','yurayura','kasa','concrete','sun','namake'];
+
+  // FIX 4: エンディングのキャラグリッドはマジマジ固定緑(#00712B)で描画
+  function renderEndGrid() {
+    const grid = document.getElementById('end-chara-grid');
+    if (!grid) return;
+    const order = ALL_CHARAS.filter(c => c !== currentChara).concat([currentChara]);
+    const tapStyle = 'cursor:pointer;transition:transform 0.15s;display:flex;align-items:center;justify-content:center;';
+    grid.innerHTML = order.map(chara => {
+      // マジマジは常にマジマジ固定カラー(--green=#00712B)で描画
+      const svgHtml = charaInnerSVGFixed(chara, 62, 62);
+      return `<div style="${tapStyle}" onclick="startNewRound('${chara}')"
+        onmousedown="this.style.transform='scale(0.9)'"
+        onmouseup="this.style.transform='scale(1)'"
+        ontouchstart="this.style.transform='scale(0.9)'"
+        ontouchend="this.style.transform='scale(1)'"
+      >${svgHtml}</div>`;
+    }).join('');
+  }
+
+  function initTitleCanvas() {
+    const dots = document.querySelectorAll('#title-svg .td');
+    if (!dots.length) return;
+    const params = Array.from(dots).map(() => ({
+      phase:  Math.random() * Math.PI * 2,
+      phaseY: Math.random() * Math.PI * 2,
+      freq:   0.6 + Math.random() * 0.8,
+      range:  8 + Math.random() * 10,
+      rangeY: 5 + Math.random() * 7,
+      ox: 0, oy: 0
+    }));
+    dots.forEach((dot, i) => {
+      params[i].ox = parseFloat(dot.getAttribute('cx'));
+      params[i].oy = parseFloat(dot.getAttribute('cy'));
+    });
+    let t = 0;
+    function animate() {
+      t += 0.022;
+      dots.forEach((dot, i) => {
+        const p = params[i];
+        const dx = Math.sin(t * p.freq + p.phase)  * p.range;
+        const dy = Math.cos(t * p.freq * 0.7 + p.phaseY) * p.rangeY;
+        dot.setAttribute('cx', p.ox + dx);
+        dot.setAttribute('cy', p.oy + dy);
+      });
+      requestAnimationFrame(animate);
+    }
+    animate();
+  }
+
+  // ===== キャラSVGジェネレータ =====
+  const CHARA_DEFS = {
+    majimaji: { vw: 89, vh: 176, green: '#00712B', svg: `<g clip-path="url(#clip0_300_5985)">
+<path d="M20.84 78.08C20.84 78.08 4.5 154.5 4.5 165.5C4.5 176.5 42.5 175.5 42.5 175.5C42.5 175.5 82.5 177.5 82.5 161.5C82.5 145.5 68.48 73.75 68.48 73.75C68.48 73.75 55.5 82 41 82C26.5 82 20.84 78.08 20.84 78.08Z" fill="CHARA_GREEN"/>
+<path d="M71.68 70.96C71.68 70.96 87.5 87.5 87.5 109.5C87.5 109.5 82.98 123.23 76.24 114.36L68.48 74.75L71.68 70.96Z" fill="#FBEFD2"/>
+<path d="M17.3 75.96C17.3 75.96 1.48 92.5 1.48 114.5C1.48 114.5 6 128.23 12.74 119.36L20.5 79.75L17.3 75.96Z" fill="#FBEFD2"/>
+<path d="M5.61 58.95C5.61 58.95 3.3 26 41.68 26C80.06 26 76.88 52.31 76.88 52.31C76.88 52.31 80.81 85.24 43.09 85.24C5.37 85.24 5.61 58.95 5.61 58.95Z" fill="#FBEFD2"/>
+<path d="M61.5 100C65.0899 100 68 97.0899 68 93.5C68 89.9101 65.0899 87 61.5 87C57.9101 87 55 89.9101 55 93.5C55 97.0899 57.9101 100 61.5 100Z" fill="white"/>
+<path d="M45.5 108C49.0899 108 52 105.09 52 101.5C52 97.9101 49.0899 95 45.5 95C41.9101 95 39 97.9101 39 101.5C39 105.09 41.9101 108 45.5 108Z" fill="white"/>
+<path d="M27.5 102C31.0899 102 34 99.0899 34 95.5C34 91.9101 31.0899 89 27.5 89C23.9101 89 21 91.9101 21 95.5C21 99.0899 23.9101 102 27.5 102Z" fill="white"/>
+<path d="M60.5 120C64.0899 120 67 117.09 67 113.5C67 109.91 64.0899 107 60.5 107C56.9101 107 54 109.91 54 113.5C54 117.09 56.9101 120 60.5 120Z" fill="white"/>
+<path d="M45.5 133C49.0899 133 52 130.09 52 126.5C52 122.91 49.0899 120 45.5 120C41.9101 120 39 122.91 39 126.5C39 130.09 41.9101 133 45.5 133Z" fill="white"/>
+<path d="M27.5 121C31.0899 121 34 118.09 34 114.5C34 110.91 31.0899 108 27.5 108C23.9101 108 21 110.91 21 114.5C21 118.09 23.9101 121 27.5 121Z" fill="white"/>
+<path d="M20.5 144C24.0899 144 27 141.09 27 137.5C27 133.91 24.0899 131 20.5 131C16.9101 131 14 133.91 14 137.5C14 141.09 16.9101 144 20.5 144Z" fill="white"/>
+<path d="M40.5 152C44.0899 152 47 149.09 47 145.5C47 141.91 44.0899 139 40.5 139C36.9101 139 34 141.91 34 145.5C34 149.09 36.9101 152 40.5 152Z" fill="white"/>
+<path d="M65.5 141C69.0899 141 72 138.09 72 134.5C72 130.91 69.0899 128 65.5 128C61.9101 128 59 130.91 59 134.5C59 138.09 61.9101 141 65.5 141Z" fill="white"/>
+<path d="M60.5 159C64.0899 159 67 156.09 67 152.5C67 148.91 64.0899 146 60.5 146C56.9101 146 54 148.91 54 152.5C54 156.09 56.9101 159 60.5 159Z" fill="white"/>
+<path d="M25.5 164C29.0899 164 32 161.09 32 157.5C32 153.91 29.0899 151 25.5 151C21.9101 151 19 153.91 19 157.5C19 161.09 21.9101 164 25.5 164Z" fill="white"/>
+<path d="M5.76 58.95C5.76 58.95 -2.7 51.3 2.87 45.79C2.87 45.79 -5.23 33 5.76 28.75C5.76 28.75 2.01 16.44 14.44 15.97C14.44 15.97 13.67 -0.59 29.86 7.45C29.86 7.45 30.74 0 41.43 0C52.12 0 52.1 8.98 52.1 8.98C52.1 8.98 57.73 1.54 62.64 6.39C67.55 11.24 67.28 15.5 67.28 17.5C67.28 17.5 72.33 12.5 77.38 17.5C82.43 22.5 77.1 28.75 77.1 28.75C77.1 28.75 81.42 25.5 85.46 31.5C89.5 37.5 86.98 38 82.43 42.5C82.43 42.5 88.49 42.5 88.49 48.5C88.49 54.5 79.85 60.69 77.1 60.69C74.35 60.69 73.34 27.5 41.01 27.5C8.68 27.5 5.76 58.95 5.76 58.95Z" fill="CHARA_GREEN"/>
+<path d="M41 63C42.6569 63 44 62.3284 44 61.5C44 60.6716 42.6569 60 41 60C39.3431 60 38 60.6716 38 61.5C38 62.3284 39.3431 63 41 63Z" fill="black"/>
+<path d="M33.23 45.0201C34.33 46.6701 33.63 48.9101 32.02 49.9301C30.42 50.9401 28.2 50.5001 27.09 48.9401C25.97 47.3601 26.25 45.2001 27.75 43.9501C29.28 42.6801 31.39 42.8601 32.81 44.3801C32.58 44.3001 32.35 44.2001 32.11 44.1501C31.07 43.9301 30.14 44.5701 30.03 45.5801C29.93 46.4501 30.69 47.3201 31.59 47.3901C32.53 47.4501 33.3 46.6801 33.3 45.6501C33.3 45.4401 33.26 45.2301 33.23 45.0201Z" fill="black"/>
+<path d="M33.23 45.0201C33.25 45.2301 33.3 45.4401 33.3 45.6501C33.3 46.6701 32.52 47.4501 31.59 47.3901C30.68 47.3301 29.93 46.4601 30.03 45.5801C30.15 44.5701 31.07 43.9301 32.11 44.1501C32.35 44.2001 32.58 44.3001 32.81 44.3801C32.95 44.5901 33.09 44.8101 33.23 45.0201Z" fill="white"/>
+<path d="M55.23 45.0201C56.33 46.6701 55.63 48.9101 54.02 49.9301C52.42 50.9401 50.2 50.5001 49.09 48.9401C47.97 47.3601 48.25 45.2001 49.75 43.9501C51.28 42.6801 53.39 42.8601 54.81 44.3801C54.58 44.3001 54.35 44.2001 54.11 44.1501C53.07 43.9301 52.14 44.5701 52.03 45.5801C51.93 46.4501 52.69 47.3201 53.59 47.3901C54.53 47.4501 55.3 46.6801 55.3 45.6501C55.3 45.4401 55.26 45.2301 55.23 45.0201Z" fill="black"/>
+<path d="M55.23 45.0201C55.25 45.2301 55.3 45.4401 55.3 45.6501C55.3 46.6701 54.52 47.4501 53.59 47.3901C52.68 47.3301 51.93 46.4601 52.03 45.5801C52.15 44.5701 53.07 43.9301 54.11 44.1501C54.35 44.2001 54.58 44.3001 54.81 44.3801C54.95 44.5901 55.09 44.8101 55.23 45.0201Z" fill="white"/>
+<path d="M40.89 72.56C40.05 75.74 37.32 76.1 34.97 75.73C33.1 75.44 31.75 74 31.7 72.03C32.04 72.27 32.38 72.38 32.43 72.57C32.86 74.21 34.05 74.9 35.59 75.04C36.38 75.11 37.22 75.01 38 74.82C39.06 74.57 39.79 73.87 39.97 72.74C40.05 72.27 40.27 72.12 40.71 72.15C41.14 72.18 41.6 72.03 41.76 72.69C42.09 74.06 43.07 74.82 44.4 74.95C45.41 75.04 46.47 74.96 47.47 74.74C48.43 74.53 49.04 73.77 49.25 72.78C49.32 72.42 49.37 72.04 49.83 72.22C49.97 72.27 50.04 72.74 49.99 72.99C49.76 74.11 49.09 74.94 48.04 75.37C46.44 76.03 44.81 76.06 43.19 75.41C41.98 74.92 41.29 73.96 40.9 72.57L40.89 72.56Z" fill="black"/>
+</g>
+<defs>
+<clipPath id="clip0_300_5985">
+<rect width="88.5" height="175.58" fill="white"/>
+</clipPath>
+</defs>` },
+
+    concrete: { vw: 155, vh: 117, green: '#FF7BAC', svg: `<path d="M124.5 42.2474L146.5 64.2474" stroke="black" stroke-width="2" stroke-miterlimit="10"/>
+<path d="M149.25 72.7474C152.149 72.7474 154.5 70.3969 154.5 67.4974C154.5 64.5979 152.149 62.2474 149.25 62.2474C146.351 62.2474 144 64.5979 144 67.4974C144 70.3969 146.351 72.7474 149.25 72.7474Z" fill="#FBEFD2" stroke="black" stroke-miterlimit="10"/>
+<path d="M31 42.7474L9 64.7474" stroke="black" stroke-width="2" stroke-miterlimit="10"/>
+<path d="M6 73.2474C9.03757 73.2474 11.5 70.785 11.5 67.7474C11.5 64.7099 9.03757 62.2474 6 62.2474C2.96243 62.2474 0.5 64.7099 0.5 67.7474C0.5 70.785 2.96243 73.2474 6 73.2474Z" fill="#FBEFD2" stroke="black" stroke-miterlimit="10"/>
+<path d="M112.18 21.7474H41.82C34.1874 21.7474 28 27.9349 28 35.5674V68.9274C28 76.56 34.1874 82.7474 41.82 82.7474H112.18C119.813 82.7474 126 76.56 126 68.9274V35.5674C126 27.9349 119.813 21.7474 112.18 21.7474Z" fill="#FBEFD2" stroke="black" stroke-width="2" stroke-miterlimit="10"/>
+<path d="M95 50.2474C97.4853 50.2474 99.5 47.1134 99.5 43.2474C99.5 39.3814 97.4853 36.2474 95 36.2474C92.5147 36.2474 90.5 39.3814 90.5 43.2474C90.5 47.1134 92.5147 50.2474 95 50.2474Z" fill="black"/>
+<path d="M97.43 48.2474C98.4959 48.2474 99.36 46.9043 99.36 45.2474C99.36 43.5906 98.4959 42.2474 97.43 42.2474C96.3641 42.2474 95.5 43.5906 95.5 45.2474C95.5 46.9043 96.3641 48.2474 97.43 48.2474Z" fill="white"/>
+<path d="M94.5 42.2474C95.6046 42.2474 96.5 41.352 96.5 40.2474C96.5 39.1429 95.6046 38.2474 94.5 38.2474C93.3954 38.2474 92.5 39.1429 92.5 40.2474C92.5 41.352 93.3954 42.2474 94.5 42.2474Z" fill="white"/>
+<path d="M61 50.2474C63.4853 50.2474 65.5 47.1134 65.5 43.2474C65.5 39.3814 63.4853 36.2474 61 36.2474C58.5147 36.2474 56.5 39.3814 56.5 43.2474C56.5 47.1134 58.5147 50.2474 61 50.2474Z" fill="black"/>
+<path d="M63.43 48.2474C64.4959 48.2474 65.36 46.9043 65.36 45.2474C65.36 43.5906 64.4959 42.2474 63.43 42.2474C62.3641 42.2474 61.5 43.5906 61.5 45.2474C61.5 46.9043 62.3641 48.2474 63.43 48.2474Z" fill="white"/>
+<path d="M60.5 42.2474C61.6046 42.2474 62.5 41.352 62.5 40.2474C62.5 39.1429 61.6046 38.2474 60.5 38.2474C59.3954 38.2474 58.5 39.1429 58.5 40.2474C58.5 41.352 59.3954 42.2474 60.5 42.2474Z" fill="white"/>
+<path d="M63.5 64.2474C63.5 64.2474 65.5 71.2474 77.5 71.2474C89.5 71.2474 91.5 64.2474 91.5 64.2474" stroke="black" stroke-width="2" stroke-miterlimit="10"/>
+<path d="M97.59 116.137C100.628 116.137 103.09 113.675 103.09 110.637C103.09 107.6 100.628 105.137 97.59 105.137C94.5524 105.137 92.09 107.6 92.09 110.637C92.09 113.675 94.5524 116.137 97.59 116.137Z" fill="#FBEFD2" stroke="black" stroke-miterlimit="10"/>
+<path d="M98 105.637V83.2374" stroke="black" stroke-width="2" stroke-miterlimit="10"/>
+<path d="M55.59 116.137C58.6276 116.137 61.09 113.675 61.09 110.637C61.09 107.6 58.6276 105.137 55.59 105.137C52.5524 105.137 50.09 107.6 50.09 110.637C50.09 113.675 52.5524 116.137 55.59 116.137Z" fill="#FBEFD2" stroke="black" stroke-miterlimit="10"/>
+<path d="M56 105.637V83.2374" stroke="black" stroke-width="2" stroke-miterlimit="10"/>
+<path d="M128.117 15.7821L122.257 11.9532L114.052 24.5104L119.912 28.3393L128.117 15.7821Z" fill="#FF7BAC" stroke="black" stroke-miterlimit="10"/>
+<path d="M122.09 29.1375L129.09 18.1375H141.09L130.09 37.1375L122.09 29.1375Z" fill="#FF7BAC" stroke="black" stroke-miterlimit="10"/>
+<path d="M113.28 22.8674L120.25 11.8474L115.13 0.997437L102.64 19.0474L113.28 22.8674Z" fill="#FF7BAC" stroke="black" stroke-miterlimit="10"/>` },
+
+    kasa: { vw: 122, vh: 150, green: '#005598', svg: `<path d="M55.9344 2.4975L0.984494 83.6975C-1.56551 87.4675 1.13445 92.5575 5.68445 92.5575H115.594C120.144 92.5575 122.844 87.4675 120.294 83.6975L65.3445 2.4975C63.0945 -0.8325 58.1945 -0.8325 55.9445 2.4975H55.9344Z" fill="#FBEFD2"/>
+<path d="M75.9845 41.5476C77.6414 41.5476 78.9845 39.6895 78.9845 37.3976C78.9845 35.1056 77.6414 33.2476 75.9845 33.2476C74.3276 33.2476 72.9845 35.1056 72.9845 37.3976C72.9845 39.6895 74.3276 41.5476 75.9845 41.5476Z" fill="black"/>
+<path d="M45.9845 41.5476C47.6414 41.5476 48.9845 39.6895 48.9845 37.3976C48.9845 35.1056 47.6414 33.2476 45.9845 33.2476C44.3276 33.2476 42.9845 35.1056 42.9845 37.3976C42.9845 39.6895 44.3276 41.5476 45.9845 41.5476Z" fill="black"/>
+<path d="M68.9845 62.4675V68.3475L73.1844 72.5475C73.1844 72.5475 87.4645 67.5075 89.9845 53.2275C89.9845 53.2275 76.5445 66.6675 74.8645 64.9875C73.1845 63.3075 68.9845 62.4675 68.9845 62.4675Z" fill="black"/>
+<path d="M52.9845 62.4675V68.3475L48.7845 72.5475C48.7845 72.5475 34.5045 67.5075 31.9845 53.2275C31.9845 53.2275 45.4245 66.6675 47.1045 64.9875C48.7845 63.3075 52.9845 62.4675 52.9845 62.4675Z" fill="black"/>
+<path d="M58.4845 94.0475V131.047C58.4845 131.047 57.4845 149.047 74.4845 149.047C74.4845 149.047 83.4845 150.047 85.4845 141.047L83.4845 138.047C83.4845 138.047 80.4845 143.047 73.4845 143.047C66.4845 143.047 64.4845 138.047 64.4845 129.047V94.0475H58.4845Z" fill="#005598" stroke="black" stroke-miterlimit="10"/>
+<path d="M18.9845 92.5475V73.5475L28.9845 82.5475L34.9845 76.5475C34.9845 76.5475 41.9845 82.5475 43.9845 82.5475C45.9845 82.5475 49.9845 76.5475 49.9845 76.5475L50.5544 92.1575L18.9745 93.2475V92.5475H18.9845Z" fill="#005598"/>
+<path d="M104.304 91.2576L103.624 71.9976L93.9544 81.4776L87.7444 75.6076C87.7444 75.6076 80.9644 81.9376 78.9644 82.0076C76.9644 82.0776 72.7544 76.1376 72.7544 76.1376V91.9776L104.354 91.9676L104.314 91.2576H104.304Z" fill="#005598"/>` },
+
+    sun: { vw: 143, vh: 160, green: '#EB6100', svg: `<path d="M70.38 130.66C94.4872 130.66 114.03 113.723 114.03 92.83C114.03 71.9371 94.4872 55 70.38 55C46.2728 55 26.73 71.9371 26.73 92.83C26.73 113.723 46.2728 130.66 70.38 130.66Z" fill="#EB6100"/>
+<path d="M77.38 15H64.88V61H77.38V15Z" fill="#FFC80C"/>
+<path d="M71.38 11C74.4176 11 76.88 8.53757 76.88 5.5C76.88 2.46243 74.4176 0 71.38 0C68.3424 0 65.88 2.46243 65.88 5.5C65.88 8.53757 68.3424 11 71.38 11Z" fill="#FFC80C"/>
+<path d="M44.38 11C47.4176 11 49.88 8.53757 49.88 5.5C49.88 2.46243 47.4176 0 44.38 0C41.3424 0 38.88 2.46243 38.88 5.5C38.88 8.53757 41.3424 11 44.38 11Z" fill="#FFC80C"/>
+<path d="M40.88 61H59.28L48.24 15H40.88V61Z" fill="#FFC80C"/>
+<path d="M97.38 11C100.418 11 102.88 8.53757 102.88 5.5C102.88 2.46243 100.418 0 97.38 0C94.3424 0 91.88 2.46243 91.88 5.5C91.88 8.53757 94.3424 11 97.38 11Z" fill="#FFC80C"/>
+<path d="M100.88 61H82.48L93.52 15H100.88V61Z" fill="#FFC80C"/>
+<path d="M69.67 94.62C69.67 94.62 69.67 103.08 68.26 105.9C68.26 105.9 69.67 110.13 76.72 107.31" stroke="black" stroke-width="2" stroke-miterlimit="10"/>
+<path d="M64.03 115.77C64.03 115.77 66.85 120 72.49 120C78.13 120 83.77 112.95 83.77 112.95" stroke="black" stroke-width="2" stroke-miterlimit="10"/>
+<path d="M76.73 81.92C76.73 81.92 80.96 66.41 90.83 65" stroke="black" stroke-width="2" stroke-miterlimit="10"/>
+<path d="M64.83 81.92C64.83 81.92 60.6 66.41 50.73 65" stroke="black" stroke-width="2" stroke-miterlimit="10"/>
+<path d="M95.0601 93.2101C93.6501 94.6201 86.6 96.0301 86.6 96.0301C73.91 97.4401 78.1401 83.34 78.1401 83.34L95.0601 81.9301V93.2101Z" fill="white" stroke="black" stroke-width="2" stroke-miterlimit="10"/>
+<path d="M86.6 83.33C86.6 83.33 83.78 91.79 88.01 91.79C92.24 91.79 90.83 83.33 90.83 83.33H86.6Z" stroke="black" stroke-width="2" stroke-miterlimit="10"/>
+<path d="M62.0601 95.2101C60.6501 96.6201 53.6 98.0301 53.6 98.0301C40.91 99.4401 45.1401 85.34 45.1401 85.34L62.0601 83.9301V95.2101Z" fill="white" stroke="black" stroke-width="2" stroke-miterlimit="10"/>
+<path d="M53.6 85.33C53.6 85.33 50.78 93.79 55.01 93.79C59.24 93.79 57.83 85.33 57.83 85.33H53.6Z" stroke="black" stroke-width="2" stroke-miterlimit="10"/>
+<path d="M114.88 70C114.88 70 119.88 66 123.88 66C127.88 66 133.88 67 135.88 64" stroke="black" stroke-miterlimit="10" stroke-linecap="round"/>
+<path d="M120.74 84.56C120.74 84.56 127.05 83.47 130.55 85.4C134.05 87.33 138.83 91.1 142.03 89.44" stroke="black" stroke-miterlimit="10" stroke-linecap="round"/>
+<path d="M119.83 102.7C119.83 102.7 126.19 103.41 129.02 106.23C131.85 109.05 135.38 114.01 138.92 113.3" stroke="black" stroke-miterlimit="10" stroke-linecap="round"/>
+<path d="M113.35 113.64C113.35 113.64 119.04 116.57 120.68 120.22C122.32 123.87 123.85 129.76 127.41 130.35" stroke="black" stroke-miterlimit="10" stroke-linecap="round"/>
+<path d="M101.64 126.16C101.64 126.16 106.43 130.41 107.11 134.35C107.79 138.29 107.82 144.37 111.11 145.84" stroke="black" stroke-miterlimit="10" stroke-linecap="round"/>
+<path d="M85.64 135.16C85.64 135.16 90.43 139.41 91.11 143.35C91.79 147.29 91.82 153.37 95.11 154.84" stroke="black" stroke-miterlimit="10" stroke-linecap="round"/>
+<path d="M70.61 137.11C70.61 137.11 73.49 142.83 72.67 146.74C71.85 150.65 69.63 156.32 72.15 158.89" stroke="black" stroke-miterlimit="10" stroke-linecap="round"/>
+<path d="M56.01 133.19C56.01 133.19 53.6501 139.14 50.1801 141.13C46.7101 143.12 41 145.22 40.75 148.82" stroke="black" stroke-miterlimit="10" stroke-linecap="round"/>
+<path d="M41.05 125.92C41.05 125.92 36.9699 130.86 33.0599 131.67C29.1499 132.48 23.07 132.73 21.72 136.08" stroke="black" stroke-miterlimit="10" stroke-linecap="round"/>
+<path d="M25.9501 111.27C25.9501 111.27 20.85 115.14 16.85 115.04C12.85 114.94 6.88005 113.79 4.80005 116.74" stroke="black" stroke-miterlimit="10" stroke-linecap="round"/>
+<path d="M22.26 90.92C22.26 90.92 16.17 92.89 12.43 91.47C8.68999 90.05 3.43 86.99 0.5 89.09" stroke="black" stroke-miterlimit="10" stroke-linecap="round"/>
+<path d="M26.9601 74.25C26.9601 74.25 20.5901 73.58 17.7501 70.77C14.9101 67.96 11.3401 63.03 7.81006 63.75" stroke="black" stroke-miterlimit="10" stroke-linecap="round"/>` },
+
+    yurayura: { vw: 115, vh: 122, green: '#E6E6E6', svg: `<path d="M7.51866 67.0754C7.51866 67.0754 0.518658 40.1554 8.51866 30.4554C8.51866 30.4554 17.5187 18.6054 34.5187 32.6054C34.5187 32.6054 47.5187 46.6054 55.5187 30.4554C55.5187 30.4554 55.5187 8.91544 68.5187 1.37544C68.5187 1.37544 87.5187 -5.08456 95.5187 9.99544C95.5187 9.99544 105.519 17.5354 92.5187 35.8454C92.5187 35.8454 93.5187 57.3854 107.519 57.3854C107.519 57.3854 114.519 59.5354 114.519 77.8454C114.519 96.1554 96.5187 103.695 86.5187 103.695C86.5187 103.695 88.5187 122.005 80.5187 122.005C72.5187 122.005 52.5187 117.695 52.5187 102.615C52.5187 102.615 42.5187 118.765 34.5187 110.155C34.5187 110.155 16.5187 117.695 7.51866 108.005C-1.48134 98.3154 -3.48134 78.9254 7.51866 67.0754Z" fill="#E6E6E6"/>
+<path d="M70.5186 58.0055C72.7277 58.0055 74.5186 56.2146 74.5186 54.0055C74.5186 51.7964 72.7277 50.0055 70.5186 50.0055C68.3094 50.0055 66.5186 51.7964 66.5186 54.0055C66.5186 56.2146 68.3094 58.0055 70.5186 58.0055Z" fill="white" stroke="black" stroke-width="0.5" stroke-miterlimit="10"/>
+<path d="M70.5185 56.4055C71.844 56.4055 72.9185 55.331 72.9185 54.0055C72.9185 52.68 71.844 51.6055 70.5185 51.6055C69.193 51.6055 68.1185 52.68 68.1185 54.0055C68.1185 55.331 69.193 56.4055 70.5185 56.4055Z" fill="black"/>
+<path d="M39.5186 58.0055C41.7277 58.0055 43.5186 56.2146 43.5186 54.0055C43.5186 51.7964 41.7277 50.0055 39.5186 50.0055C37.3094 50.0055 35.5186 51.7964 35.5186 54.0055C35.5186 56.2146 37.3094 58.0055 39.5186 58.0055Z" fill="white" stroke="black" stroke-width="0.5" stroke-miterlimit="10"/>
+<path d="M39.5185 56.4055C40.844 56.4055 41.9185 55.331 41.9185 54.0055C41.9185 52.68 40.844 51.6055 39.5185 51.6055C38.193 51.6055 37.1185 52.68 37.1185 54.0055C37.1185 55.331 38.193 56.4055 39.5185 56.4055Z" fill="black"/>
+<path d="M36.5186 78.0055C36.5186 78.0055 36.5186 86.0055 43.5186 86.0055C50.5186 86.0055 53.5186 79.0055 53.5186 79.0055C53.5186 79.0055 54.5186 75.0055 57.5186 75.0055C60.5186 75.0055 63.5186 86.0055 70.5186 86.0055C77.5186 86.0055 82.5186 85.0055 82.5186 74.0055" stroke="black" stroke-miterlimit="10"/>` },
+
+    namake: { vw: 174, vh: 95, green: '#FBEFD2', svg: `<path d="M120.24 0.5H6.35999C2.84745 0.5 0 3.34747 0 6.86V37.64C0 41.1525 2.84745 44 6.35999 44H120.24C123.753 44 126.6 41.1525 126.6 37.64V6.86C126.6 3.34747 123.753 0.5 120.24 0.5Z" fill="#8C6239"/>
+<path d="M44.1799 44.2C44.1799 44.2 44.8299 25.59 62.7899 25.59C80.7499 25.59 82.4199 41.45 82.4199 44L44.1899 44.2H44.1799Z" fill="#FBEFD2"/>
+<path d="M11.62 43.5C11.62 43.5 22.62 64.5 19.62 78.5C19.62 78.5 27.62 71.5 37.62 77.5C37.62 77.5 31.62 52.5 41.62 43.5H11.62Z" fill="#8C6239"/>
+<path d="M84.62 43.5C84.62 43.5 95.62 64.5 92.62 78.5C92.62 78.5 100.62 71.5 110.62 77.5C110.62 77.5 104.62 52.5 114.62 43.5H84.62Z" fill="#8C6239"/>
+<path d="M29.12 94.28C35.1951 94.28 40.12 89.9013 40.12 84.5C40.12 79.0986 35.1951 74.72 29.12 74.72C23.0449 74.72 18.12 79.0986 18.12 84.5C18.12 89.9013 23.0449 94.28 29.12 94.28Z" fill="#FBEFD2"/>
+<path d="M102.12 94.28C108.195 94.28 113.12 89.9013 113.12 84.5C113.12 79.0986 108.195 74.72 102.12 74.72C96.0449 74.72 91.12 79.0986 91.12 84.5C91.12 89.9013 96.0449 94.28 102.12 94.28Z" fill="#FBEFD2"/>
+<path d="M149.78 39C162.886 39 173.51 30.2696 173.51 19.5C173.51 8.73045 162.886 0 149.78 0C136.674 0 126.05 8.73045 126.05 19.5C126.05 30.2696 136.674 39 149.78 39Z" fill="#8C6239"/>
+<path d="M149.78 35.48C161.107 35.48 170.29 28.3255 170.29 19.5C170.29 10.6745 161.107 3.52002 149.78 3.52002C138.453 3.52002 129.27 10.6745 129.27 19.5C129.27 28.3255 138.453 35.48 149.78 35.48Z" fill="#FBEFD2"/>
+<path d="M169.52 17.58L157.43 19.92C157.43 19.92 153.11 19.92 153.11 14.06C153.11 8.19998 169.52 11.72 169.52 11.72V17.58Z" fill="#8C6239"/>
+<path d="M150.18 25.78C151.152 25.78 151.94 24.992 151.94 24.02C151.94 23.048 151.152 22.26 150.18 22.26C149.208 22.26 148.42 23.048 148.42 24.02C148.42 24.992 149.208 25.78 150.18 25.78Z" fill="black"/>
+<path d="M155.8 13.6299C155.8 13.6299 158.91 11.4099 163.62 12.3599V17.0699L156.57 18.1399C156.57 18.1399 156.01 17.4199 155.58 15.3599C155.58 15.3599 155.52 14.9099 155.8 13.6299Z" fill="white" stroke="black" stroke-width="0.75" stroke-miterlimit="10"/>
+<path d="M157.31 15.1899C157.31 15.1899 159.26 13.7999 162.21 14.3899V17.3399L157.79 18.0099C157.79 18.0099 157.44 17.5599 157.17 16.2699C157.17 16.2699 157.13 15.9899 157.31 15.1899Z" fill="black"/>
+<path d="M131.11 17.58L143.2 19.92C143.2 19.92 147.52 19.92 147.52 14.06C147.52 8.19998 131.11 11.72 131.11 11.72V17.58Z" fill="#8C6239"/>
+<path d="M145.39 13.6299C145.39 13.6299 142.28 11.4099 137.57 12.3599V17.0699L144.62 18.1399C144.62 18.1399 145.18 17.4199 145.61 15.3599C145.61 15.3599 145.67 14.9099 145.39 13.6299Z" fill="white" stroke="black" stroke-width="0.75" stroke-miterlimit="10"/>
+<path d="M143.88 15.1899C143.88 15.1899 141.93 13.7999 138.98 14.3899V17.3399L143.4 18.0099C143.4 18.0099 143.75 17.5599 144.02 16.2699C144.02 16.2699 144.06 15.9899 143.88 15.1899Z" fill="black"/>
+<path d="M145.53 30.08C145.53 30.08 146.25 32.6 150.58 32.6C154.91 32.6 155.63 30.08 155.63 30.08" stroke="black" stroke-miterlimit="10"/>` },
+  };
+
+  // SVG内のCHARA_GREENプレースホルダーをキャラ固有色に置換して生成
+  function charaInnerSVG(charaKey, w, h) {
+    const def = CHARA_DEFS[charaKey] || CHARA_DEFS.majimaji;
+    // 現在のCSS変数--greenで置換（画面上のキャラ）
+    const currentGreen = getComputedStyle(document.documentElement).getPropertyValue('--green').trim() || def.green;
+    const scale = Math.min(w / def.vw, h / def.vh);
+    const sw = Math.round(def.vw * scale);
+    const sh = Math.round(def.vh * scale);
+    const svgContent = def.svg.replace(/CHARA_GREEN/g, currentGreen);
+    return `<svg width="${sw}" height="${sh}" viewBox="0 0 ${def.vw} ${def.vh}" fill="none" xmlns="http://www.w3.org/2000/svg">${svgContent}</svg>`;
+  }
+
+  // FIX 4: エンディンググリッド用 - 各キャラを固有色で描画（CSS変数に影響されない）
+  function charaInnerSVGFixed(charaKey, w, h) {
+    const def = CHARA_DEFS[charaKey] || CHARA_DEFS.majimaji;
+    const fixedGreen = def.green; // キャラ固有の色を使用
+    const scale = Math.min(w / def.vw, h / def.vh);
+    const sw = Math.round(def.vw * scale);
+    const sh = Math.round(def.vh * scale);
+    const svgContent = def.svg.replace(/CHARA_GREEN/g, fixedGreen);
+    return `<svg width="${sw}" height="${sh}" viewBox="0 0 ${def.vw} ${def.vh}" fill="none" xmlns="http://www.w3.org/2000/svg">${svgContent}</svg>`;
+  }
+
+  function updateAllCharaSVG(charaKey) {
+    document.querySelectorAll('.chara-svg').forEach(el => {
+      const w = parseInt(el.dataset.w) || 65;
+      const h = parseInt(el.dataset.h) || 78;
+      el.innerHTML = charaInnerSVG(charaKey, w, h);
+    });
+  }
+
+  // キャラ設定定義
+  const CHARA_CONFIG = {
+    majimaji: {
+      green: '#00712B', lime: '#00712B', limeText: '#ffffff', grayText: '#666666',
+      obokeDot: '#00712B', gutaiDot: '#8C6239',
+      serif_intro:    'ボ ク は マ ジ マ ジ<br>こ の 森 に 住 む<br>妖 精 さ',
+      serif_choice:   'ど っ ち か な ー ？',
+      serif_gutai_in: '身 近 な も の か な ぁ 〜',
+      serif_gutai_res:'言 葉 に す る と<br>軽 く な り か も ね',
+      serif_prompt_o: 'こ っ ち は ど な い ？',
+      serif_oboroke_in2:'石 の 上 っ て 、<br>寒 い よ ね',
+      serif_combined: 'ち ょ っ と 並 べ た',
+      serif_kokoni:   'こ こ に 何 か あ る か も ね',
+      serif_tamatta:  '貯 ま っ た ね ー',
+      serif_end:      'ま た 気 が 向 い た ら<br>来 る と い い よ ー',
+      label_oboroke: 'マ ジ お ぼ ろ げ',
+      label_gutai:   'マ ジ ぐ た い',
+      ph_gutai:      'マジぐたい',
+      ph_oboroke:    'マジおぼろげ',
+      serif_prompt_g: 'こ っ ち は ど う ？',
+      serif_oboroke_res:'床 に 転 が る と 、<br>軽 く な る こ と<br>も あ る よ',
+      serif_gutai_in2:'木 漏 れ 日 っ て 、<br>眠 く な る よ ね ー',
+      serif_oboroke_in:'朝 日 が 嫌 な<br>時 も あ る さ 。',
+    },
+    concrete: {
+      green: '#FF7BAC', lime: '#FF7BAC', grayText: '#666666', limeText: '#ffffff',
+      // FIX 2&3: マジマジ以外のおぼろげドット→キャラ色、ぐたい白丸→#8C6239
+      obokeDot: '#FF7BAC', gutaiDot: '#8C6239',
+      serif_intro:    '私 、 カ ワ ラ ち ゃ ん 。<br>よ ろ し く ね ！',
+      serif_choice:   'ど っ ち か し ら ？',
+      serif_gutai_in: '今 っ ぽ い 方 で い い よ 。',
+      serif_gutai_res:'パ ッ と 思 い つ い た の で い い 。',
+      serif_prompt_o: 'こ っ ち は 言 葉 に な る か し ら 。',
+      serif_oboroke_in2:'そ れ っ て 、 な ん で だ ろ ね 。',
+      serif_combined: '並 べ る と 、 ち ょ っ と わ か る か も ね',
+      serif_kokoni:   'こ こ 気 に な る ね',
+      serif_tamatta:  '進 ん だ わ ね 。',
+      serif_end:      'ま た 来 て ね ー ！',
+      label_oboroke: 'ま だ 言 葉 に な っ て な い 感 じ',
+      label_gutai:   '具 体 的 な こ と',
+      ph_gutai:      '具体的なこと',
+      ph_oboroke:    'まだ言葉になってない感じ',
+      serif_prompt_g: 'こ っ ち は 言 葉 に な る か し ら 。',
+      serif_oboroke_res:'そ れ っ て 、 な ん で だ ろ ね 。',
+      serif_gutai_in2:'今 っ ぽ い 方 で い い よ 。',
+      serif_oboroke_in:'そ れ っ て 、 な ん で だ ろ ね 。',
+    },
+    kasa: {
+      green: '#005598', lime: '#005598', limeText: '#ffffff',
+      obokeDot: '#005598', gutaiDot: '#8C6239',
+      serif_intro:    'ワ タ ク シ 、 ム ッ シ ュ<br>ア ン ブ レ ー ラ',
+      serif_choice:   'ど っ ち ム ッ シ ュ ？',
+      serif_gutai_in: 'そ こ ま で 考 え な く て い い ム ッ シ ュ',
+      serif_gutai_res:'そ れ で も い い ム ッ シ ュ',
+      serif_prompt_o: 'こ れ は ど う ム ッ シ ュ ？',
+      serif_oboroke_in2:'そ れ も い い ム ッ シ ュ',
+      serif_combined: '並 べ た ム ッ シ ュ',
+      serif_kokoni:   'こ こ か も ム ッ シ ュ',
+      serif_tamatta:  '貯 ま っ た ム ッ シ ュ',
+      serif_end:      'ま た 来 る ム ッ シ ュ',
+      label_oboroke: 'ま だ ぼ ん や り し て る',
+      label_gutai:   '身 の 回 り の こ と',
+      ph_gutai:      '身の回りのこと',
+      ph_oboroke:    'まだぼんやりしてる',
+      serif_prompt_g: 'こ れ は ど う ム ッ シ ュ ？',
+      serif_oboroke_res:'そ れ も い い ム ッ シ ュ',
+      serif_gutai_in2:'そ こ ま で 考 え な く て い い ム ッ シ ュ',
+      serif_oboroke_in:'そ れ も い い ム ッ シ ュ',
+    },
+    yurayura: {
+      green: '#E6E6E6', lime: '#777777', limeText: '#ffffff', grayText: '#666666',
+      obokeDot: '#E6E6E6', gutaiDot: '#8C6239',
+      serif_intro:    'ボ ク は ユ ラ ユ ラ ン ゴ<br>あ ん ま 考 え な い ン ゴ',
+      serif_choice:   'ど っ ち で も い い ン ゴ',
+      serif_gutai_in: '思 い つ い た こ と で い い ン ゴ',
+      serif_gutai_res:'思 い つ き か ら 広 が る ン ゴ',
+      serif_prompt_o: 'こ っ ち は あ る ン ゴ ？',
+      serif_oboroke_in2:'決 め る 必 要 な い ン ゴ',
+      serif_combined: '並 べ て み た ン ゴ',
+      serif_kokoni:   'こ こ か も ン ゴ',
+      serif_tamatta:  '貯 ま っ た ン ゴ',
+      serif_end:      'ま た 来 る ン ゴ',
+      label_oboroke: 'ま だ は っ き り し な い',
+      label_gutai:   '思 い つ き は す る',
+      ph_gutai:      '思いつきはする',
+      ph_oboroke:    'まだはっきりしない',
+      serif_prompt_g: 'こ っ ち は あ る ン ゴ ？',
+      serif_oboroke_res:'決 め る 必 要 な い ン ゴ',
+      serif_gutai_in2:'思 い つ い た こ と で い い ン ゴ',
+      serif_oboroke_in:'決 め る 必 要 な い ン ゴ',
+    },
+    namake: {
+      green: '#FBEFD2', lime: '#FBEFD2', limeText: '#555555',
+      obokeDot: '#FBEFD2', gutaiDot: '#8C6239',
+      serif_intro:    'ナ マ ケ ー ル だ よ ん',
+      serif_choice:   'テ キ ト ー で い い よ ん',
+      serif_gutai_in: '眠 い と き は 寝 る に か ぎ る よ ん',
+      serif_gutai_res:'昼 起 き る と 得 し た<br>気 分 に な る よ ん',
+      serif_prompt_o: '夢 で い い よ ん',
+      serif_oboroke_in2:'日 向 ぼ っ こ は 苦 手 だ よ ん',
+      serif_combined: '並 べ た よ ん',
+      serif_kokoni:   '気 に な る よ ん',
+      serif_tamatta:  '貯 ま っ た よ ん',
+      serif_end:      'ま た 来 る よ ん',
+      label_oboroke: 'わ か ら な い',
+      label_gutai:   '目 に つ い た も の',
+      ph_gutai:      '目についたもの',
+      ph_oboroke:    'わからない',
+      serif_prompt_g: '夢 で い い よ ん',
+      serif_oboroke_res:'日 向 ぼ っ こ は 苦 手 だ よ ん',
+      serif_gutai_in2:'眠 い と き は 寝 る に か ぎ る よ ん',
+      serif_oboroke_in:'日 向 ぼ っ こ は 苦 手 だ よ ん',
+    },
+    sun: {
+      green: '#EB6100', lime: '#EB6100', limeText: '#ffffff',
+      obokeDot: '#EB6100', gutaiDot: '#8C6239',
+      serif_intro:    '俺 は テ カ リ 王 子 ！<br>ガ ン ガ ン 行 こ う ぜ ！',
+      serif_choice:   'ど っ ち か ら 行 こ う か ？',
+      serif_gutai_in: '身 近 な も の は 想 像 つ く よ な ！',
+      serif_gutai_res:'嫌 な も ん も 見 方 次 第 だ ぜ ！',
+      serif_prompt_o: 'こ っ ち は ど う だ ？',
+      serif_oboroke_in2:'ル ー テ ィ ン っ て だ る い よ な ！',
+      serif_combined: '並 べ て み た ぜ ！',
+      serif_kokoni:   'こ こ が 気 に な る ぜ ？',
+      serif_tamatta:  '進 ん だ な 、',
+      serif_end:      'ま た 来 い よ ！',
+      label_oboroke: 'な ん か よ か っ た こ と',
+      label_gutai:   '気 に な っ て る こ と',
+      ph_gutai:      '気になってること',
+      ph_oboroke:    'なんかよかったこと',
+      serif_prompt_g: 'こ っ ち は ど う だ ？',
+      serif_oboroke_res:'ル ー テ ィ ン っ て だ る い よ な ！',
+      serif_gutai_in2:'身 近 な も の は 想 像 つ く よ な ！',
+      serif_oboroke_in:'ル ー テ ィ ン っ て だ る い よ な ！',
+    },
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initTitleCanvas();
+    updateAllCharaSVG('majimaji');
+    applyCharaConfig('majimaji');
+  });
+
+  function applyCharaConfig(charaKey) {
+    const cfg = CHARA_CONFIG[charaKey] || CHARA_CONFIG.majimaji;
+
+    document.documentElement.style.setProperty('--green', cfg.green);
+    document.documentElement.style.setProperty('--lime', cfg.lime);
+    document.documentElement.style.setProperty('--gray-text', cfg.grayText || '#888');
+    document.documentElement.style.setProperty('--lime-text', cfg.limeText || '#333');
+    document.documentElement.style.setProperty('--placeholder-lime', cfg.limeText || '#333');
+    // FIX 2: おぼろげドット色をCSS変数にセット
+    document.documentElement.style.setProperty('--oboroke-dot', cfg.obokeDot || '#6ad87b');
+    // FIX 3: ぐたい白丸色をCSS変数にセット
+    document.documentElement.style.setProperty('--gutai-dot', cfg.gutaiDot || 'white');
+
+    const btnO = document.getElementById('btn-oboroke');
+    const btnG = document.getElementById('btn-gutai');
+    if (btnO) btnO.textContent = cfg.label_oboroke || 'マ ジ お ぼ ろ げ';
+    if (btnG) btnG.textContent = cfg.label_gutai   || 'マ ジ ぐ た い';
+
+    ['gutai-text','gutai-text2'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.placeholder = cfg.ph_gutai || 'マジぐたい';
+    });
+    ['oboroke-text','oboroke-text2'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.placeholder = cfg.ph_oboroke || 'マジおぼろげ';
+    });
+
+    const gt = cfg.limeText || '#333';
+    const ot = cfg.grayText || '#888';
+    ['gutai-text','gutai-text2'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.color = gt;
+    });
+    ['oboroke-text','oboroke-text2'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.color = ot;
+    });
+
+    const serifMap = {
+      'serif-intro':      cfg.serif_intro,
+      'serif-choice':     cfg.serif_choice,
+      'serif-gutai-in':   cfg.serif_gutai_in,
+      'serif-prompt-o':   cfg.serif_prompt_o,
+      'serif-oboroke-in2':cfg.serif_oboroke_in2,
+      'serif-combined':   cfg.serif_combined,
+      'serif-kokoni':     cfg.serif_kokoni,
+      'serif-tamatta':    cfg.serif_tamatta,
+      'serif-end':        cfg.serif_end,
+      'serif-prompt-g':   cfg.serif_prompt_g,
+      'serif-gutai-in2':  cfg.serif_gutai_in2,
+      'serif-oboroke-in': cfg.serif_oboroke_in,
+    };
+    Object.entries(serifMap).forEach(([key, text]) => {
+      document.querySelectorAll(`[data-serif="${key}"]`).forEach(el => {
+        el.innerHTML = text;
+      });
+    });
+
+    const grEl = document.getElementById('serif-gutai-res');
+    const orEl = document.getElementById('serif-oboroke-res');
+    if (grEl) grEl.innerHTML = cfg.serif_gutai_res || '';
+    if (orEl) orEl.innerHTML = cfg.serif_oboroke_res || '';
+  }
+
+  // ===== STATE =====
+  let mode = '';
+  let currentChara = 'majimaji';
+  let history = [];
+
+  // ===== NAVIGATION =====
+  function goTo(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.chara-svg').forEach(el => {
+      el.style.animation = 'none';
+      el.offsetHeight;
+      el.style.animation = '';
+    });
+    if (id === 'screen-tamatta') {
+      setTimeout(() => renderTamatta(), 80);
+    }
+  }
+
+  // ===== MODE SELECT =====
+  function selectMode(m) {
+    mode = m;
+    ['gutai-text','oboroke-text','gutai-text2','oboroke-text2'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    document.getElementById('gutai-next-btn').disabled = true;
+    document.getElementById('oboroke-next-btn').disabled = true;
+    if (document.getElementById('gutai2-next-btn')) document.getElementById('gutai2-next-btn').disabled = true;
+    if (document.getElementById('oboroke2-next-btn')) document.getElementById('oboroke2-next-btn').disabled = true;
+    goTo(m === 'gutai' ? 'screen-gutai-input' : 'screen-oboroke-input');
+  }
+
+  // ===== カテゴリ定義 =====
+  const CATEGORIES = {
+    temp:   { keywords: ['寒い','暑い','冷たい','熱い','冷える','ぬるい','温かい','涼しい'], color: '#7ec8e3', label: '温度' },
+    choice: { keywords: ['悩む','どっち','選べない','迷う','選ぶ','どれ','どうしよう','決められない'], color: '#a8d8a8', label: '選択' },
+    state:  { keywords: ['眠い','疲れた','だるい','しんどい','眠れない','起きれない','休みたい','休憩'], color: '#ffc89a', label: '状態' },
+    default:{ keywords: [], color: null, label: 'その他' },
+  };
+
+  function classifyInput(text) {
+    for (const [key, cat] of Object.entries(CATEGORIES)) {
+      if (key === 'default') continue;
+      if (cat.keywords.some(kw => text.includes(kw))) return key;
+    }
+    return 'default';
+  }
+
+  const DIALOGUES = {
+    majimaji: [
+      { partner: 'namake', category: 'state', lines: [
+        {s:'self', t:'石の上が落ち着くなー'},
+        {s:'partner', t:'何でもいいよん'},
+        {s:'self', t:'眠くなってきた'},
+      ]},
+      { partner: 'sun', category: 'state', lines: [
+        {s:'self', t:'元気だから寝るんだよ'},
+        {s:'partner', t:'そうなのか！'},
+        {s:'self', t:'そういうのもあるよー'},
+      ]},
+      { partner: 'kasa', category: 'default', lines: [
+        {s:'self', t:'いき当たりばったりもいいよー'},
+        {s:'partner', t:'不安にならないムッシュ？'},
+        {s:'self', t:'ボクはいまが大事だからなー'},
+      ]},
+      { partner: 'yurayura', category: 'default', lines: [
+        {s:'partner', t:'空気は澄んでるンゴ'},
+        {s:'self', t:'ボクには違って見えるよ'},
+        {s:'partner', t:'よくわからないンゴ'},
+      ]},
+      { partner: 'concrete', category: 'default', lines: [
+        {s:'partner', t:'人間が森を汚してるのよ'},
+        {s:'self', t:'そう見えないこともあるよ'},
+        {s:'partner', t:'マジマジは不思議ね'},
+      ]},
+    ],
+    concrete: [
+      { partner: 'yurayura', category: 'choice', lines: [
+        {s:'self', t:'チョコとケーキで悩むのよ'},
+        {s:'partner', t:'どっちでもいいンゴ'},
+        {s:'self', t:'でも悩むのよー'},
+      ]},
+      { partner: 'kasa', category: 'default', lines: [
+        {s:'self', t:'これでよしと。'},
+        {s:'partner', t:'なんか不安ムッシュ'},
+        {s:'self', t:'また明日にしようよ'},
+      ]},
+      { partner: 'majimaji', category: 'default', lines: [
+        {s:'partner', t:'そう見えないこともあるよ'},
+        {s:'self', t:'マジマジは不思議ね'},
+        {s:'partner', t:'ボクもよくわからないよ'},
+      ]},
+    ],
+    kasa: [
+      { partner: 'namake', category: 'default', lines: [
+        {s:'self', t:'木の上ってどうムッシュ？'},
+        {s:'partner', t:'考えたことないよん'},
+        {s:'self', t:'それはすごいムッシュ…'},
+      ]},
+      { partner: 'sun', category: 'default', lines: [
+        {s:'self', t:'雨が降らないか不安ムッシュ'},
+        {s:'partner', t:'俺がいるから大丈夫だ！'},
+        {s:'self', t:'…不安ムッシュ'},
+      ]},
+      { partner: 'concrete', category: 'default', lines: [
+        {s:'partner', t:'これでよしと。'},
+        {s:'self', t:'なんか不安ムッシュ'},
+        {s:'partner', t:'また明日にしようよ'},
+      ]},
+    ],
+    yurayura: [
+      { partner: 'sun', category: 'temp', lines: [
+        {s:'self', t:'今日は暑いンゴ'},
+        {s:'partner', t:'俺がいるからな！'},
+        {s:'self', t:'暑すぎるのも微妙ンゴ'},
+      ]},
+      { partner: 'kasa', category: 'temp', lines: [
+        {s:'self', t:'風が気持ちいいンゴ'},
+        {s:'partner', t:'寒くなるかもムッシュ'},
+        {s:'self', t:'今の風で十分ンゴ'},
+      ]},
+      { partner: 'namake', category: 'default', lines: [
+        {s:'self', t:'この木の上は涼しいンゴ'},
+        {s:'partner', t:'わからないよん'},
+        {s:'self', t:'人それぞれンゴ'},
+      ]},
+      { partner: 'concrete', category: 'default', lines: [
+        {s:'partner', t:'チョコとケーキで悩むのよ'},
+        {s:'self', t:'どっちでもいいンゴ'},
+        {s:'partner', t:'でも悩むのよー'},
+      ]},
+      { partner: 'majimaji', category: 'default', lines: [
+        {s:'self', t:'空気は澄んでるンゴ'},
+        {s:'partner', t:'ボクには違って見えるよ'},
+        {s:'self', t:'よくわからないンゴ'},
+      ]},
+    ],
+    namake: [
+      { partner: 'sun', category: 'state', lines: [
+        {s:'partner', t:'元気出してこうぜ！'},
+        {s:'self', t:'元気って何だよん？'},
+        {s:'partner', t:'テンションぶち上げだよ！'},
+      ]},
+      { partner: 'kasa', category: 'default', lines: [
+        {s:'partner', t:'木の上ってどうムッシュ？'},
+        {s:'self', t:'考えたことないよん'},
+        {s:'partner', t:'それはすごいムッシュ…'},
+      ]},
+      { partner: 'yurayura', category: 'default', lines: [
+        {s:'partner', t:'この木の上は涼しいンゴ'},
+        {s:'self', t:'わからないよん'},
+        {s:'partner', t:'人それぞれンゴ'},
+      ]},
+      { partner: 'majimaji', category: 'default', lines: [
+        {s:'partner', t:'石の上が落ち着くなー'},
+        {s:'self', t:'何でもいいよん'},
+        {s:'partner', t:'眠くなってきた'},
+      ]},
+    ],
+    sun: [
+      { partner: 'namake', category: 'state', lines: [
+        {s:'self', t:'元気出してこうぜ！'},
+        {s:'partner', t:'元気って何だよん？'},
+        {s:'self', t:'テンションぶち上げだよ！'},
+      ]},
+      { partner: 'yurayura', category: 'temp', lines: [
+        {s:'partner', t:'今日は暑いンゴ'},
+        {s:'self', t:'俺がいるからな！'},
+        {s:'partner', t:'暑すぎるのも微妙ンゴ'},
+      ]},
+      { partner: 'kasa', category: 'default', lines: [
+        {s:'partner', t:'雨が降らないか不安ムッシュ'},
+        {s:'self', t:'俺がいるから大丈夫だ！'},
+        {s:'partner', t:'…不安ムッシュ'},
+      ]},
+      { partner: 'majimaji', category: 'default', lines: [
+        {s:'partner', t:'元気だから寝るんだよ'},
+        {s:'self', t:'そうなのか！'},
+        {s:'partner', t:'そういうのもあるよー'},
+      ]},
+    ],
+  };
+
+  let dialogueType = '';
+  let lastInputCategory = 'default';
+
+  const CHARA_PATTERNS = {
+    majimaji: {
+      keywords: [
+        { words: ['嫌','嫌い','つらい','辛い'],    reply: 'そういう気持ちもあるよねー' },
+        { words: ['疲れ','しんどい','だるい'],      reply: '寝るといいよー' },
+        { words: ['眠い','眠れない'],              reply: '眠いのはボクもだよー' },
+        { words: ['わからない','迷','どうしよう'],  reply: 'ボクもよくわからないよー' },
+        { words: ['楽し','うれし','よかっ'],        reply: 'なんかいい感じだよねー' },
+        { words: ['怖','不安','心配'],             reply: 'そのままでいいよー' },
+        { words: ['仕事','学校','会社'],           reply: 'そういう日もあるよー' },
+        { words: ['好き','すき'],                  reply: 'そういうのあるよねー' },
+      ],
+      temp:    ['そういう日もあるよー','ボクもそう思うときあるよー','なんか変な感じだよねー'],
+      choice:  ['どっちでもなれる気がするよー','まだ決めなくていいかもねー','ボクはあんまり決めないよー'],
+      state:   ['寝るといいよー','そのままでいいよー','なんかそういう時期かもねー'],
+      default: ['そうかもねー','なんか変だよねー','そのままでいい気がするよー','まだ変わるかもねー','そういうのもあるよー'],
+    },
+    concrete: {
+      keywords: [
+        { words: ['嫌','嫌い','つらい'],      reply: '少し整理してみましょうか' },
+        { words: ['疲れ','しんどい','だるい'], reply: '休んでから考えてもいいわよ' },
+        { words: ['わからない','迷'],         reply: '少し分けて考えてみましょうか' },
+        { words: ['楽し','うれし'],           reply: 'いい感じね' },
+        { words: ['不安','心配'],             reply: '置いておくのもありよ' },
+        { words: ['仕事','学校','会社'],      reply: 'そういう日もあるわよ' },
+      ],
+      temp:    ['そういうこともあるわよ','少し距離を置いてみましょうか','それはそれでいいわよ'],
+      choice:  ['少し分けてみましょうか','どちらも持っておけばいいわよ','焦らなくていいわよ'],
+      state:   ['休んでからでもいいわよ','少しだけ置いておきましょうか','そのままでいいわよ'],
+      default: ['そういうのあるわよね','少し見方を変えてみましょうか','それもありよ','なかなか難しいわよね'],
+    },
+    kasa: {
+      keywords: [
+        { words: ['嫌','嫌い','つらい'],      reply: '少し離れて見るムッシュ' },
+        { words: ['疲れ','しんどい','だるい'], reply: '距離を置くのも大事ムッシュ' },
+        { words: ['わからない','迷'],         reply: '違う角度から見るムッシュ' },
+        { words: ['楽し','うれし'],           reply: 'それはいいムッシュ' },
+        { words: ['不安','心配'],             reply: 'ムッシュも不安なことありますムッシュ' },
+        { words: ['仕事','学校','会社'],      reply: 'そういう場所は複雑ムッシュ' },
+      ],
+      temp:    ['見方次第で変わるムッシュ','少し離れると違って見えるムッシュ','そういうものムッシュ'],
+      choice:  ['どこから見るかで変わるムッシュ','角度を変えてみるムッシュ','どちらも正解かもムッシュ'],
+      state:   ['待つのも一つの方法ムッシュ','そのままでいいムッシュ','少し距離を置くムッシュ'],
+      default: ['なかなか難しいムッシュ','そういう見方もあるムッシュ','距離で変わるムッシュ','深いムッシュ'],
+    },
+    yurayura: {
+      keywords: [
+        { words: ['嫌','嫌い','つらい'],      reply: 'それでもいいンゴ' },
+        { words: ['疲れ','しんどい','だるい'], reply: '揺れてるままでいいンゴ' },
+        { words: ['眠い','眠れない'],         reply: '眠れなくてもいいンゴ' },
+        { words: ['わからない','迷'],         reply: 'はっきりしなくていいンゴ' },
+        { words: ['楽し','うれし'],           reply: 'ふわっとしていいンゴ' },
+        { words: ['不安','心配'],             reply: '揺れててもいいンゴ' },
+        { words: ['仕事','学校','会社'],      reply: 'そういう波があるンゴ' },
+      ],
+      temp:    ['そういう感じあるンゴ','揺れてる感じするンゴ','ふわっとしてるンゴ'],
+      choice:  ['どっちでもいいンゴ','決めなくてもいいンゴ','ゆらゆらしてていいンゴ'],
+      state:   ['そのままでいいンゴ','休んでていいンゴ','揺れてるままでいいンゴ'],
+      default: ['なんかそういう感じンゴ','ふわっとしてていいンゴ','そのままでいいンゴ','人それぞれンゴ'],
+    },
+    namake: {
+      keywords: [
+        { words: ['嫌','嫌い','つらい'],      reply: 'あとでもいいよん' },
+        { words: ['疲れ','しんどい','だるい'], reply: '寝てればいいよん' },
+        { words: ['眠い','眠れない'],         reply: '寝ようよん' },
+        { words: ['わからない','迷'],         reply: 'そのうちわかるよん' },
+        { words: ['楽し','うれし'],           reply: 'よかったよん' },
+        { words: ['不安','心配'],             reply: 'なんとかなるよん' },
+        { words: ['仕事','学校','会社'],      reply: '今日はもういいよん' },
+      ],
+      temp:    ['そのうちなるよん','今は考えなくていいよん','あとでいいよん'],
+      choice:  ['どっちでもいいよん','そのうち決まるよん','急がなくていいよん'],
+      state:   ['寝てればいいよん','休んでいいよん','ゆっくりでいいよん'],
+      default: ['まあいいよん','そのうちでいいよん','なんとかなるよん','今は休んでいいよん'],
+    },
+    sun: {
+      keywords: [
+        { words: ['嫌','嫌い','つらい'],      reply: 'そこから光るとこ見つけようぜ！' },
+        { words: ['疲れ','しんどい','だるい'], reply: '休んだらまた行こうぜ！' },
+        { words: ['眠い','眠れない'],         reply: '寝てからがチャンスだぜ！' },
+        { words: ['わからない','迷'],         reply: 'まず動いてみようぜ！' },
+        { words: ['楽し','うれし'],           reply: 'その調子だぜ！' },
+        { words: ['不安','心配'],             reply: 'やってみれば変わるぜ！' },
+        { words: ['仕事','学校','会社'],      reply: 'いいとこもあるはずだぜ！' },
+      ],
+      temp:    ['その感じ、いけるぜ！','見方次第でいけるぜ！','そこからだぜ！'],
+      choice:  ['どっちもいけるぜ！','決めたら全力でいこうぜ！','やってみようぜ！'],
+      state:   ['休んだら全開でいこうぜ！','充電中だぜ！','そこから上がるぜ！'],
+      default: ['なんかいけそうだぜ！','その調子だぜ！','光るとこあるぜ！','やってみようぜ！'],
+    },
+  };
+
+  function localCharaReply(charaKey, userInput) {
+    const def = CHARA_PATTERNS[charaKey];
+    if (!def) return null;
+    for (const { words, reply } of (def.keywords || [])) {
+      if (words.some(w => userInput.includes(w))) return reply;
+    }
+    const cat = classifyInput(userInput);
+    const pool = def[cat] || def.default || [];
+    if (pool.length === 0) return null;
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  async function fetchCharaReply(charaKey, userInput) {
+    return localCharaReply(charaKey, userInput);
+  }
+
+  function bubbleHTML(charaKey, isSelf, text, mb) {
+    const icon = charaInnerSVGFixed(charaKey, 48, 48);
+    if (isSelf) {
+      return `<div style="display:flex;align-items:flex-start;gap:8px;justify-content:flex-end;margin-bottom:${mb};">
+        <div style="background:#f0f0f0;border-radius:12px 0 12px 12px;padding:11px 14px;font-size:13px;letter-spacing:0.04em;line-height:1.8;color:#333;font-weight:700;max-width:72%;">${text}</div>
+        <div style="flex-shrink:0;margin-top:2px;">${icon}</div>
+      </div>`;
+    } else {
+      return `<div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:${mb};">
+        <div style="flex-shrink:0;margin-top:2px;">${icon}</div>
+        <div style="background:#f0f0f0;border-radius:0 12px 12px 12px;padding:11px 14px;font-size:13px;letter-spacing:0.04em;line-height:1.8;color:#333;font-weight:700;max-width:72%;">${text}</div>
+      </div>`;
+    }
+  }
+
+  async function showDialogue(type) {
+    dialogueType = type;
+    const val = type === 'gutai'
+      ? document.getElementById('gutai-text').value.trim()
+      : document.getElementById('oboroke-text').value.trim();
+
+    const cat = classifyInput(val);
+    lastInputCategory = cat;
+
+    const pool = DIALOGUES[currentChara] || DIALOGUES.majimaji;
+    const catPool = pool.filter(d => d.category === cat);
+    const defPool = pool.filter(d => d.category === 'default');
+    const candidates = catPool.length > 0 ? catPool : defPool.length > 0 ? defPool : pool;
+    const data = candidates[Math.floor(Math.random() * candidates.length)];
+    const partner = data.partner;
+    const container = document.getElementById('dialogue-lines');
+
+    container.innerHTML = data.lines.map((line, i) => {
+      const isSelf = line.s === 'self';
+      const chara  = isSelf ? currentChara : partner;
+      const isLast = i === data.lines.length - 1;
+      return bubbleHTML(chara, isSelf, line.t, isLast ? '0' : '18px');
+    }).join('');
+    goTo('screen-dialogue');
+  }
+
+  function goToFirstResult() {
+    const cfg = CHARA_CONFIG[currentChara] || CHARA_CONFIG.majimaji;
+    const val = dialogueType === 'gutai'
+      ? document.getElementById('gutai-text').value.trim()
+      : document.getElementById('oboroke-text').value.trim();
+
+    // バッジ（入力内容）
+    const badge = document.getElementById('reaction-badge');
+    badge.textContent = val;
+    badge.className = dialogueType === 'gutai' ? 'result-badge-lime' : 'result-badge-gray';
+
+    // キャラの反応セリフ
+    const serifEl = document.getElementById('serif-reaction');
+    const serifText = dialogueType === 'gutai'
+      ? (cfg.serif_gutai_res || '')
+      : (cfg.serif_oboroke_res || '');
+    serifEl.innerHTML = serifText;
+
+    goTo('screen-reaction');
+  }
+
+  function afterReaction() {
+    afterFirst(dialogueType);
+  }
+
+  function showFirstResult(type) {
+    showDialogue(type);
+  }
+
+  function afterFirst(type) {
+    goTo(type === 'gutai' ? 'screen-prompt-oboroke' : 'screen-prompt-gutai');
+  }
+
+  function checkInput(type) {
+    if (type === 'gutai') {
+      document.getElementById('gutai-next-btn').disabled = !document.getElementById('gutai-text').value.trim();
+    } else {
+      const v = document.getElementById('oboroke-text').value.trim();
+      document.getElementById('oboroke-next-btn').disabled = !v;
+    }
+  }
+
+  function checkInput2(type) {
+    if (type === 'oboroke') {
+      const v = document.getElementById('oboroke-text2').value.trim();
+      document.getElementById('oboroke2-next-btn').disabled = !v;
+    } else {
+      document.getElementById('gutai2-next-btn').disabled = !document.getElementById('gutai-text2').value.trim();
+    }
+  }
+
+  function showCombined() {
+    let gutaiVal, oborokeVal;
+    if (mode === 'gutai') {
+      gutaiVal   = document.getElementById('gutai-text').value.trim();
+      oborokeVal = document.getElementById('oboroke-text2').value.trim();
+    } else {
+      oborokeVal = document.getElementById('oboroke-text').value.trim();
+      gutaiVal   = document.getElementById('gutai-text2').value.trim();
+    }
+
+    const gEl = document.getElementById('combined-gutai');
+    const oEl = document.getElementById('combined-oboroke');
+    gEl.textContent = gutaiVal || '';
+    oEl.textContent = oborokeVal || '';
+    gEl.style.display = gutaiVal ? 'flex' : 'none';
+    oEl.style.display = oborokeVal ? 'flex' : 'none';
+
+    document.getElementById('kokoni-gutai').textContent = gutaiVal || '';
+    document.getElementById('kokoni-oboroke').textContent = oborokeVal || '';
+    document.getElementById('kokoni-gutai').style.display = gutaiVal ? 'flex' : 'none';
+    document.getElementById('kokoni-oboroke').style.display = oborokeVal ? 'flex' : 'none';
+
+    history.push({ gutai: gutaiVal, oboroke: oborokeVal, chara: currentChara, category: lastInputCategory });
+
+    renderEndGrid();
+    goTo('screen-combined');
+  }
+
+  // ===== TAMATTA: シンプルツリー + 地層 =====
+  let treeAnim = null;
+
+  function renderTamatta() {
+    const treeEl   = document.getElementById('tamatta-tree');
+    const strataEl = document.getElementById('tamatta-strata');
+    if (!treeEl || !strataEl) return;
+    treeEl.innerHTML   = '';
+    strataEl.innerHTML = '';
+    if (treeAnim) { cancelAnimationFrame(treeAnim); treeAnim = null; }
+
+    // 全ラウンドの単語収集（ぐたい・おぼろげ両方）
+    const gutaiWords   = [];
+    const oborokeWords = [];
+    history.forEach(entry => {
+      if (entry.gutai)   gutaiWords.push(entry.gutai);
+      if (entry.oboroke) oborokeWords.push(entry.oboroke);
+    });
+    // 木の枝に乗せる単語：全部（ぐたい＋おぼろげ）
+    const treeWords = [...gutaiWords, ...oborokeWords];
+    // 地層に表示する単語：全部（ぐたい＋おぼろげ）
+    const strataWords = [...gutaiWords, ...oborokeWords];
+    if (treeWords.length === 0) return;
+
+    // ===== 木エリア：Canvas =====
+    const TW = treeEl.offsetWidth  || 320;
+    const TH = treeEl.offsetHeight || 300;
+    const canvas = document.createElement('canvas');
+    canvas.width  = TW;
+    canvas.height = TH;
+    canvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;';
+    treeEl.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+
+    // 枝構造を生成
+    const branches = [];
+    const TRUNK_X = TW * 0.5;
+    const TRUNK_BOTTOM = TH; // 地面
+
+    function addBranch(x, y, angle, len, depth, word) {
+      branches.push({ x, y, angle, len, depth, word, prog: depth === 0 ? 0 : 0 });
+    }
+
+    // 幹
+    const trunkLen = TH * 0.45;
+    addBranch(TRUNK_X, TRUNK_BOTTOM, -Math.PI / 2, trunkLen, 0, null);
+
+    // 枝を単語数に応じて生成
+    const wordCount = treeWords.length;
+    const BASE_ANGLE = -Math.PI / 2;
+
+    // 枝先の座標計算
+    function branchEnd(b) {
+      return {
+        x: b.x + Math.cos(b.angle) * b.len,
+        y: b.y + Math.sin(b.angle) * b.len,
+      };
+    }
+
+    // 左右対称に大枝を追加
+    const trunkEnd = { x: TRUNK_X, y: TRUNK_BOTTOM - trunkLen };
+    const bigBranchAngles = [
+      BASE_ANGLE - 0.65, BASE_ANGLE + 0.65,
+      BASE_ANGLE - 1.1,  BASE_ANGLE + 1.1,
+      BASE_ANGLE - 0.3,  BASE_ANGLE + 0.3,
+    ];
+    const bigLen = trunkLen * 0.55;
+
+    // 大枝（最大6本）- 全単語を割り当て
+    const bigCount = Math.min(wordCount, 6);
+    const bigBranches = [];
+    for (let i = 0; i < bigCount; i++) {
+      const ang = bigBranchAngles[i % bigBranchAngles.length];
+      const t = 0.5 + (i % 3) * 0.18;
+      const sx = TRUNK_X;
+      const sy = TRUNK_BOTTOM - trunkLen * t;
+      const bl = bigLen * (0.7 + Math.random() * 0.4);
+      const b = { x: sx, y: sy, angle: ang, len: bl, depth: 1, word: treeWords[i] || null, prog: 0 };
+      branches.push(b);
+      bigBranches.push(b);
+    }
+
+    // 小枝（大枝から派生）
+    bigBranches.forEach((parent, pi) => {
+      const pe = branchEnd(parent);
+      const subCount = 1 + (pi % 2);
+      for (let s = 0; s < subCount; s++) {
+        const side = (s % 2 === 0 ? 1 : -1);
+        const ang  = parent.angle + side * (0.35 + Math.random() * 0.3);
+        const sl   = parent.len * (0.45 + Math.random() * 0.25);
+        branches.push({ x: pe.x, y: pe.y, angle: ang, len: sl, depth: 2, word: null, prog: 0 });
+      }
+    });
+
+    // アニメーション（成長）
+    let growIdx = 0;
+    let growProg = 0;
+    const GROW_SPD = 0.035;
+    let frame = 0;
+
+    function drawBranch(b) {
+      if (b.prog <= 0) return;
+      const ex = b.x + Math.cos(b.angle) * b.len * b.prog;
+      const ey = b.y + Math.sin(b.angle) * b.len * b.prog;
+
+      // 太さ：幹>大枝>小枝
+      const sw = b.depth === 0 ? 4.5 : b.depth === 1 ? 2.8 : 1.4;
+      ctx.beginPath();
+      ctx.moveTo(b.x, b.y);
+      ctx.lineTo(ex, ey);
+      ctx.strokeStyle = '#8C6239';
+      ctx.lineWidth   = sw;
+      ctx.lineCap     = 'round';
+      ctx.stroke();
+
+      // 大枝先のぐたい単語ラベル（成長完了後）
+      if (b.depth === 1 && b.word && b.prog >= 1) {
+        const lx = ex + Math.cos(b.angle) * 6;
+        const ly = ey + Math.sin(b.angle) * 6;
+        ctx.save();
+        ctx.font = '500 10px Inter, sans-serif';
+        ctx.fillStyle = '#278007';
+        ctx.textAlign = Math.cos(b.angle) >= 0 ? 'left' : 'right';
+        ctx.textBaseline = 'middle';
+        // 複数行対応（最大8文字で折返し）
+        const maxLen = 8;
+        const text = b.word;
+        if (text.length <= maxLen) {
+          ctx.fillText(text, lx, ly);
+        } else {
+          ctx.fillText(text.slice(0, maxLen), lx, ly - 7);
+          ctx.fillText(text.slice(maxLen),    lx, ly + 7);
+        }
+        ctx.restore();
+      }
+    }
+
+    function loop() {
+      treeAnim = requestAnimationFrame(loop);
+      frame++;
+      ctx.clearRect(0, 0, TW, TH);
+
+      // 成長
+      if (growIdx < branches.length) {
+        growProg += GROW_SPD;
+        branches[growIdx].prog = Math.min(growProg, 1);
+        if (growProg >= 1) { growIdx++; growProg = 0; }
+      }
+
+      // 幹は常に先に完全描画
+      branches[0].prog = 1;
+      branches.forEach(b => drawBranch(b));
+    }
+    loop();
+
+    // ===== 地層エリア：全単語（ぐたい＋おぼろげ）=====
+    const SW = strataEl.offsetWidth || 320;
+    const SH = strataEl.offsetHeight || 120;
+
+    // ランダム配置（重ならないよう）
+    const placed = [];
+    strataWords.forEach((word, i) => {
+      const margin = 16;
+      let x, y, tries = 0;
+      do {
+        x = margin + Math.random() * (SW - margin * 2 - 80);
+        y = margin + Math.random() * (SH - margin * 2 - 20);
+        tries++;
+      } while (tries < 30 && placed.some(p => Math.abs(p.x - x) < 72 && Math.abs(p.y - y) < 24));
+      placed.push({ x, y });
+
+      const div = document.createElement('div');
+      div.textContent = word;
+      const opacity = 0.55 + (i % 3) * 0.12;
+      div.style.cssText = `
+        position:absolute;
+        left:${x}px;
+        top:${y}px;
+        font-size:10px;
+        font-weight:500;
+        color:rgba(100,60,20,${opacity});
+        letter-spacing:0.12em;
+        white-space:nowrap;
+        user-select:none;
+      `;
+      strataEl.appendChild(div);
+    });
+  }
+
+  // ===== 新ラウンド開始 =====
+  function startNewRound(chara) {
+    currentChara = chara;
+    // CSS変数を先に更新してからSVGを再描画
+    applyCharaConfig(chara);
+    updateAllCharaSVG(chara);
+    ['gutai-text','oboroke-text','gutai-text2','oboroke-text2'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    document.getElementById('gutai-next-btn').disabled = true;
+    document.getElementById('oboroke-next-btn').disabled = true;
+    if (document.getElementById('gutai2-next-btn')) document.getElementById('gutai2-next-btn').disabled = true;
+    if (document.getElementById('oboroke2-next-btn')) document.getElementById('oboroke2-next-btn').disabled = true;
+    mode = '';
+    goTo('screen-intro');
+  }
+
+  // ===== 完全リセット =====
+  function restart() {
+    history = [];
+    currentChara = 'majimaji';
+    applyCharaConfig('majimaji');
+    updateAllCharaSVG('majimaji');
+    mode = '';
+    ['gutai-text','oboroke-text','gutai-text2','oboroke-text2'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    goTo('screen-title');
+  }
+</script>
+</body>
+</html>
