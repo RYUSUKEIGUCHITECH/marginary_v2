@@ -391,7 +391,6 @@
   <!-- ====== SCREEN 3: CHOICE ====== -->
   <div class="screen" id="screen-choice">
     <div class="card" style="position:relative; min-height:300px;">
-      <!-- Left tree deco: FIX 1 - CSS変数--greenに連動 -->
       <svg width="70" height="200" style="position:absolute;top:0;left:0;" viewBox="0 0 70 200" xmlns="http://www.w3.org/2000/svg">
         <rect x="0" y="0" width="55" height="140" class="gc"/>
         <rect x="10" y="140" width="20" height="60" fill="#8C6239"/>
@@ -906,12 +905,18 @@
       serif_end:      'ま た 気 が 向 い た ら<br>来 る と い い よ ー',
       label_oboroke: 'マ ジ お ぼ ろ げ',
       label_gutai:   'マ ジ ぐ た い',
+      label_asame:   'マ ジ あ さ め',
+      label_fukame:  'マ ジ ふ か め',
       ph_gutai:      'マジぐたい',
       ph_oboroke:    'マジおぼろげ',
       serif_prompt_g: 'こ っ ち は ど う ？',
       serif_oboroke_res:'床 に 転 が る と 、<br>軽 く な る こ と<br>も あ る よ',
       serif_gutai_in2:'木 漏 れ 日 っ て 、<br>眠 く な る よ ね ー',
       serif_oboroke_in:'朝 日 が 嫌 な<br>時 も あ る さ 。',
+      serif_gutai_res_asame:  'と り あ え ず 言 っ て み る',
+      serif_gutai_res_fukame: 'そ の 言 葉 の は じ ま り',
+      serif_oboroke_in2_asame: 'ほ ん と に 寒 い',
+      serif_oboroke_in2_fukame:'寒 さ の も と',
     },
     concrete: {
       green: '#FF7BAC', lime: '#FF7BAC', grayText: '#666666', limeText: '#ffffff',
@@ -929,12 +934,18 @@
       serif_end:      'ま た 来 て ね ー ！',
       label_oboroke: 'ま だ 言 葉 に な っ て な い 感 じ',
       label_gutai:   '具 体 的 な こ と',
+      label_asame:   '見 え る と こ',
+      label_fukame:  '本 当 の と こ',
       ph_gutai:      '具体的なこと',
       ph_oboroke:    'まだ言葉になってない感じ',
       serif_prompt_g: 'こ っ ち は 言 葉 に な る か し ら 。',
       serif_oboroke_res:'そ れ っ て 、 な ん で だ ろ ね 。',
       serif_gutai_in2:'今 っ ぽ い 方 で い い よ 。',
       serif_oboroke_in:'そ れ っ て 、 な ん で だ ろ ね 。',
+      serif_gutai_res_asame:  'お も い つ い た こ と',
+      serif_gutai_res_fukame: 'ち ょ っ と 気 に な る ね 、 そ れ',
+      serif_oboroke_in2_asame: 'ま あ そ う い う 感 じ だ よ ね',
+      serif_oboroke_in2_fukame:'そ れ 、 ど う い う こ と な ん だ ろ ね',
     },
     kasa: {
       green: '#005598', lime: '#005598', limeText: '#ffffff',
@@ -951,12 +962,18 @@
       serif_end:      'ま た 来 る ム ッ シ ュ',
       label_oboroke: 'ま だ ぼ ん や り し て る',
       label_gutai:   '身 の 回 り の こ と',
+      label_asame:   'そ の ま ま',
+      label_fukame:  '奥 の ほ う',
       ph_gutai:      '身の回りのこと',
       ph_oboroke:    'まだぼんやりしてる',
       serif_prompt_g: 'こ れ は ど う ム ッ シ ュ ？',
       serif_oboroke_res:'そ れ も い い ム ッ シ ュ',
       serif_gutai_in2:'そ こ ま で 考 え な く て い い ム ッ シ ュ',
       serif_oboroke_in:'そ れ も い い ム ッ シ ュ',
+      serif_gutai_res_asame:  'そ の ま ま ム ッ シ ュ',
+      serif_gutai_res_fukame: '言 葉 の 奥 ム ッ シ ュ',
+      serif_oboroke_in2_asame: 'そ れ で よ ろ し い ム ッ シ ュ',
+      serif_oboroke_in2_fukame:'そ の 奥 も 見 て み る ム ッ シ ュ',
     },
     yurayura: {
       green: '#E6E6E6', lime: '#777777', limeText: '#ffffff', grayText: '#666666',
@@ -973,12 +990,18 @@
       serif_end:      'ま た 来 る ン ゴ',
       label_oboroke: 'ま だ は っ き り し な い',
       label_gutai:   '思 い つ き は す る',
+      label_asame:   '近 い と こ',
+      label_fukame:  '奥 の 方',
       ph_gutai:      '思いつきはする',
       ph_oboroke:    'まだはっきりしない',
       serif_prompt_g: 'こ っ ち は あ る ン ゴ ？',
       serif_oboroke_res:'決 め る 必 要 な い ン ゴ',
       serif_gutai_in2:'思 い つ い た こ と で い い ン ゴ',
       serif_oboroke_in:'決 め る 必 要 な い ン ゴ',
+      serif_gutai_res_asame:  '流 し て い い ン ゴ',
+      serif_gutai_res_fukame: '言 葉 の 続 き ン ゴ',
+      serif_oboroke_in2_asame: 'い ま そ ん な 感 じ ン ゴ',
+      serif_oboroke_in2_fukame:'そ の 奥 の ほ う ン ゴ',
     },
     namake: {
       green: '#FBEFD2', lime: '#FBEFD2', limeText: '#555555',
@@ -995,12 +1018,18 @@
       serif_end:      'ま た 来 る よ ん',
       label_oboroke: 'わ か ら な い',
       label_gutai:   '目 に つ い た も の',
+      label_asame:   'テ キ ト ー',
+      label_fukame:  '気 に な る や つ',
       ph_gutai:      '目についたもの',
       ph_oboroke:    'わからない',
       serif_prompt_g: '夢 で い い よ ん',
       serif_oboroke_res:'日 向 ぼ っ こ は 苦 手 だ よ ん',
       serif_gutai_in2:'眠 い と き は 寝 る に か ぎ る よ ん',
       serif_oboroke_in:'日 向 ぼ っ こ は 苦 手 だ よ ん',
+      serif_gutai_res_asame:  'テ キ ト ー で い い よ ん',
+      serif_gutai_res_fukame: '気 に な る 言 葉 よ ん',
+      serif_oboroke_in2_asame: 'ま あ そ ん な 日 も あ る よ ん',
+      serif_oboroke_in2_fukame:'ち ょ っ と 気 に な る ね ぇ',
     },
     sun: {
       green: '#EB6100', lime: '#EB6100', limeText: '#ffffff',
@@ -1017,12 +1046,18 @@
       serif_end:      'ま た 来 い よ ！',
       label_oboroke: 'な ん か よ か っ た こ と',
       label_gutai:   '気 に な っ て る こ と',
+      label_asame:   '一 歩',
+      label_fukame:  'そ の 先',
       ph_gutai:      '気になってること',
       ph_oboroke:    'なんかよかったこと',
       serif_prompt_g: 'こ っ ち は ど う だ ？',
       serif_oboroke_res:'ル ー テ ィ ン っ て だ る い よ な ！',
       serif_gutai_in2:'身 近 な も の は 想 像 つ く よ な ！',
       serif_oboroke_in:'ル ー テ ィ ン っ て だ る い よ な ！',
+      serif_gutai_res_asame:  'と り あ え ず 出 す ！',
+      serif_gutai_res_fukame: '言 葉 の 裏 側 ！',
+      serif_oboroke_in2_asame: 'そ う い う 時 も あ る な ！',
+      serif_oboroke_in2_fukame:'そ の 先 ど う す る ？',
     },
   };
 
@@ -1045,10 +1080,7 @@
     // FIX 3: ぐたい白丸色をCSS変数にセット
     document.documentElement.style.setProperty('--gutai-dot', cfg.gutaiDot || 'white');
 
-    const btnO = document.getElementById('btn-oboroke');
-    const btnG = document.getElementById('btn-gutai');
-    if (btnO) btnO.textContent = cfg.label_oboroke || 'マ ジ お ぼ ろ げ';
-    if (btnG) btnG.textContent = cfg.label_gutai   || 'マ ジ ぐ た い';
+    // ボタンラベルはgoTo('screen-choice')→initChoiceScreen()で設定される
 
     ['gutai-text','gutai-text2'].forEach(id => {
       const el = document.getElementById(id);
@@ -1100,6 +1132,10 @@
   let mode = '';
   let currentChara = 'majimaji';
   let history = [];
+  // ペア管理: 'abstruct'=おぼろげ/ぐたい, 'depth'=あさめ/ふかめ
+  let currentPair = 'abstruct';
+  // あさめ/ふかめ時のどちらが選ばれたか: 'asame' or 'fukame'
+  let currentDepth = null;
 
   // ===== NAVIGATION =====
   function goTo(id) {
@@ -1110,14 +1146,80 @@
       el.offsetHeight;
       el.style.animation = '';
     });
+    if (id === 'screen-choice') {
+      initChoiceScreen();
+    }
+    if (id === 'screen-oboroke-input2') {
+      // あさめ/ふかめ時はセリフを差し替え
+      const cfg = CHARA_CONFIG[currentChara] || CHARA_CONFIG.majimaji;
+      const el = document.querySelector('[data-serif="serif-oboroke-in2"]');
+      if (el) {
+        if (currentDepth === 'asame') {
+          el.innerHTML = cfg.serif_oboroke_in2_asame || cfg.serif_oboroke_in2 || '';
+        } else if (currentDepth === 'fukame') {
+          el.innerHTML = cfg.serif_oboroke_in2_fukame || cfg.serif_oboroke_in2 || '';
+        } else {
+          el.innerHTML = cfg.serif_oboroke_in2 || '';
+        }
+      }
+    }
     if (id === 'screen-tamatta') {
       setTimeout(() => renderTamatta(), 80);
     }
   }
 
+  // ===== 選択画面の初期化（ランダムペア） =====
+  function initChoiceScreen() {
+    const cfg = CHARA_CONFIG[currentChara] || CHARA_CONFIG.majimaji;
+    // 50%でペアをランダム決定
+    currentPair = Math.random() < 0.5 ? 'abstruct' : 'depth';
+    currentDepth = null;
+
+    const btnO = document.getElementById('btn-oboroke');
+    const btnG = document.getElementById('btn-gutai');
+
+    if (currentPair === 'abstruct') {
+      // 既存: おぼろげ / ぐたい
+      if (btnO) { btnO.textContent = cfg.label_oboroke || 'マ ジ お ぼ ろ げ'; btnO.onclick = () => selectMode('oboroke'); }
+      if (btnG) { btnG.textContent = cfg.label_gutai   || 'マ ジ ぐ た い';   btnG.onclick = () => selectMode('gutai'); }
+    } else {
+      // 新規: ふかめ（左） / あさめ（右）
+      if (btnO) { btnO.textContent = cfg.label_fukame || 'マ ジ ふ か め'; btnO.onclick = () => selectMode('fukame'); }
+      if (btnG) { btnG.textContent = cfg.label_asame  || 'マ ジ あ さ め'; btnG.onclick = () => selectMode('asame'); }
+    }
+  }
+
   // ===== MODE SELECT =====
   function selectMode(m) {
-    mode = m;
+    const cfg = CHARA_CONFIG[currentChara] || CHARA_CONFIG.majimaji;
+
+    if (m === 'asame' || m === 'fukame') {
+      currentDepth = m;
+      mode = 'gutai';
+
+      // プレースホルダーのみ変更（ヘッダーセリフはキャラのセリフのまま）
+      const label = m === 'asame'
+        ? (cfg.label_asame || 'マジあさめ').replace(/\s/g, '')
+        : (cfg.label_fukame || 'マジふかめ').replace(/\s/g, '');
+      ['gutai-text', 'gutai-text2'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.placeholder = label;
+      });
+
+    } else {
+      currentDepth = null;
+      mode = m;
+
+      // ヘッダーセリフを元に戻す
+      document.querySelectorAll('[data-serif="serif-gutai-in"]').forEach(el => {
+        el.innerHTML = cfg.serif_gutai_in || '';
+      });
+      ['gutai-text', 'gutai-text2'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.placeholder = cfg.ph_gutai || 'マジぐたい';
+      });
+    }
+
     ['gutai-text','oboroke-text','gutai-text2','oboroke-text2'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.value = '';
@@ -1126,7 +1228,8 @@
     document.getElementById('oboroke-next-btn').disabled = true;
     if (document.getElementById('gutai2-next-btn')) document.getElementById('gutai2-next-btn').disabled = true;
     if (document.getElementById('oboroke2-next-btn')) document.getElementById('oboroke2-next-btn').disabled = true;
-    goTo(m === 'gutai' ? 'screen-gutai-input' : 'screen-oboroke-input');
+
+    goTo(mode === 'gutai' ? 'screen-gutai-input' : 'screen-oboroke-input');
   }
 
   // ===== カテゴリ定義 =====
@@ -1443,11 +1546,18 @@
     badge.textContent = val;
     badge.className = dialogueType === 'gutai' ? 'result-badge-lime' : 'result-badge-gray';
 
-    // キャラの反応セリフ
+    // キャラの反応セリフ：あさめ/ふかめ時は差し替え
     const serifEl = document.getElementById('serif-reaction');
-    const serifText = dialogueType === 'gutai'
-      ? (cfg.serif_gutai_res || '')
-      : (cfg.serif_oboroke_res || '');
+    let serifText;
+    if (currentDepth === 'asame') {
+      serifText = cfg.serif_gutai_res_asame || cfg.serif_gutai_res || '';
+    } else if (currentDepth === 'fukame') {
+      serifText = cfg.serif_gutai_res_fukame || cfg.serif_gutai_res || '';
+    } else {
+      serifText = dialogueType === 'gutai'
+        ? (cfg.serif_gutai_res || '')
+        : (cfg.serif_oboroke_res || '');
+    }
     serifEl.innerHTML = serifText;
 
     goTo('screen-reaction');
@@ -1462,7 +1572,24 @@
   }
 
   function afterFirst(type) {
-    goTo(type === 'gutai' ? 'screen-prompt-oboroke' : 'screen-prompt-gutai');
+    const cfg = CHARA_CONFIG[currentChara] || CHARA_CONFIG.majimaji;
+
+    if (currentDepth === 'asame') {
+      currentDepth = 'fukame';
+      const label = (cfg.label_fukame || 'マジふかめ').replace(/\s/g, '');
+      const el = document.getElementById('gutai-text2');
+      if (el) el.placeholder = label;
+      goTo('screen-gutai-input2');
+    } else if (currentDepth === 'fukame') {
+      currentDepth = 'asame';
+      const label = (cfg.label_asame || 'マジあさめ').replace(/\s/g, '');
+      const el = document.getElementById('gutai-text2');
+      if (el) el.placeholder = label;
+      goTo('screen-gutai-input2');
+    } else {
+      // 通常のおぼろげ/ぐたいペア
+      goTo(type === 'gutai' ? 'screen-prompt-oboroke' : 'screen-prompt-gutai');
+    }
   }
 
   function checkInput(type) {
@@ -1485,7 +1612,11 @@
 
   function showCombined() {
     let gutaiVal, oborokeVal;
-    if (mode === 'gutai') {
+    if (currentPair === 'depth') {
+      // あさめ/ふかめ：両方gutai-textから取得
+      gutaiVal   = document.getElementById('gutai-text').value.trim();
+      oborokeVal = document.getElementById('gutai-text2').value.trim();
+    } else if (mode === 'gutai') {
       gutaiVal   = document.getElementById('gutai-text').value.trim();
       oborokeVal = document.getElementById('oboroke-text2').value.trim();
     } else {
