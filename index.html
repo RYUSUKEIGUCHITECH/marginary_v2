@@ -252,7 +252,22 @@
     40%           { opacity: 1;   transform: scale(1.1); }
   }
 
-  html, body { overflow: hidden; height: 100%; height: 100dvh; }
+  /* ドットの上下アニメーション */
+  @keyframes dotFloat {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-5px); }
+  }
+  @keyframes dotFloat2 {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-5px); }
+  }
+  @keyframes dotFloat3 {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-5px); }
+  }
+  .float  { animation: dotFloat  1.8s ease-in-out infinite; }
+  .float2 { animation: dotFloat2 1.8s ease-in-out 0.3s infinite; }
+  .float3 { animation: dotFloat3 1.8s ease-in-out 0.6s infinite; }
 
   #gutai-text::placeholder,
   #gutai-text2::placeholder {
@@ -383,7 +398,7 @@
         <span data-serif="serif-intro">ボ ク は マ ジ マ ジ<br>こ の 森 に 住 む<br>妖 精 さ</span>
       </div>
       <div style="display:flex; justify-content:center; margin-top:20px; padding-bottom:16px;">
-        <span class="chara-svg" data-w="90" data-h="90"></span>
+        <span class="chara-svg" data-w="103" data-h="103"></span>
       </div>
     </div>
   </div>
@@ -404,7 +419,7 @@
         <div class="choice-label" style="font-weight:700;" data-serif="serif-choice">ど っ ち か な ー ？</div>
       </div>
       <div style="text-align:center; margin-top:8px;">
-        <span class="chara-svg" data-w="80" data-h="95"></span>
+        <span class="chara-svg" data-w="94" data-h="111"></span>
       </div>
     </div>
   </div>
@@ -413,7 +428,7 @@
   <div class="screen" id="screen-gutai-input">
     <div class="card" style="position:relative; min-height:320px;">
       <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
-        <span class="chara-svg" data-w="65" data-h="78"></span>
+        <span class="chara-svg" data-w="77" data-h="93"></span>
         <div style="font-size:14px; letter-spacing:3px; color:#333; font-weight:700;" data-serif="serif-gutai-in">身 近 な も の か な ぁ 〜</div>
       </div>
 
@@ -470,7 +485,7 @@
   <div class="screen" id="screen-oboroke-input">
     <div class="card" style="position:relative; min-height:320px;">
       <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-        <span class="chara-svg" data-w="60" data-h="72"></span>
+        <span class="chara-svg" data-w="72" data-h="86"></span>
         <div style="font-size:13px; letter-spacing:3px; color:#333; line-height:1.9; font-weight:700;" data-serif="serif-oboroke-in">朝 日 が 嫌 な<br>時 も あ る さ 。</div>
       </div>
 
@@ -537,7 +552,7 @@
         <div style="font-size:13px; letter-spacing:3px; color:var(--text); font-weight:700; line-height:2.2; transform:rotate(-8deg); transform-origin:left top; margin-top:16px;">
           <span id="serif-reaction"></span>
         </div>
-        <span class="chara-svg" data-w="75" data-h="90"></span>
+        <span class="chara-svg" data-w="90" data-h="108"></span>
       </div>
       <div id="reaction-badge" class="result-badge-lime" style="font-size:17px;min-height:56px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;"></div>
     </div>
@@ -548,7 +563,7 @@
     <div class="card" style="position:relative; min-height:260px;" onclick="goTo('screen-oboroke-input2')">
       <div class="tap-hint">タップで次へ</div>
       <div style="display:flex; align-items:center; gap:12px; margin-bottom:28px;">
-        <span class="chara-svg" data-w="65" data-h="78"></span>
+        <span class="chara-svg" data-w="77" data-h="93"></span>
         <div style="font-size:14px; letter-spacing:3px; color:#333; line-height:1.8; font-weight:700;" data-serif="serif-prompt-o">こ っ ち は ど な い ？</div>
       </div>
       <div style="width:100%;background:var(--gray);color:var(--gray-text);border-radius:12px;padding:20px;font-family:inherit;font-size:18px;letter-spacing:3px;text-align:center;">マジおぼろげ</div>
@@ -560,7 +575,7 @@
     <div class="card" style="position:relative; min-height:260px;" onclick="goTo('screen-gutai-input2')">
       <div class="tap-hint">タップで次へ</div>
       <div style="display:flex; align-items:center; gap:12px; margin-bottom:28px;">
-        <span class="chara-svg" data-w="65" data-h="78"></span>
+        <span class="chara-svg" data-w="77" data-h="93"></span>
         <div style="font-size:14px; letter-spacing:3px; color:#333; line-height:1.8; font-weight:700;" data-serif="serif-prompt-g">こ っ ち は ど う ？</div>
       </div>
       <button onclick="goTo('screen-gutai-input2')" style="width:100%;background:var(--lime);color:var(--lime-text);font-weight:bold;border:none;border-radius:12px;padding:20px;font-family:inherit;font-size:18px;letter-spacing:3px;cursor:pointer;transition:all 0.2s;">マジぐたい</button>
@@ -571,7 +586,7 @@
   <div class="screen" id="screen-oboroke-input2">
     <div class="card" style="position:relative; min-height:320px;">
       <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-        <span class="chara-svg" data-w="60" data-h="72"></span>
+        <span class="chara-svg" data-w="72" data-h="86"></span>
         <div style="font-size:13px; letter-spacing:3px; color:#333; line-height:1.9; font-weight:700;" data-serif="serif-oboroke-in2">石 の 上 っ て 、<br>寒 い よ ね</div>
       </div>
       <div class="dots-row" style="margin-bottom:6px;">
@@ -601,7 +616,7 @@
   <div class="screen" id="screen-gutai-input2">
     <div class="card" style="position:relative; min-height:320px;">
       <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-        <span class="chara-svg" data-w="60" data-h="72"></span>
+        <span class="chara-svg" data-w="72" data-h="86"></span>
         <div style="font-size:13px; letter-spacing:3px; color:#333; line-height:1.9; font-weight:700;" data-serif="serif-gutai-in2">木 漏 れ 日 っ て 、<br>眠 く な る よ ね ー</div>
       </div>
       <div class="dots-row" style="margin-bottom:6px;">
@@ -633,7 +648,7 @@
     <div class="card" style="position:relative; min-height:300px;" onclick="goTo('screen-kokoni')">
       <div class="tap-hint">タップで次へ</div>
       <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
-        <span class="chara-svg" data-w="55" data-h="66"></span>
+        <span class="chara-svg" data-w="66" data-h="79"></span>
         <div style="font-size:13px;letter-spacing:3px;color:#333; font-weight:700;" data-serif="serif-combined">ち ょ っ と 並 べ た</div>
       </div>
       <div class="stacked-badges">
@@ -654,7 +669,7 @@
       <div id="kokoni-gutai" class="result-badge-lime" style="font-size:17px;min-height:56px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;"></div>
       <div style="display:flex;justify-content:flex-end;align-items:center;gap:8px;">
         <div style="font-size:12px;letter-spacing:3px;color:#333; font-weight:700;" data-serif="serif-kokoni">こ こ に 何 か あ る か も ね</div>
-        <span class="chara-svg" data-w="48" data-h="58"></span>
+        <span class="chara-svg" data-w="57" data-h="69"></span>
       </div>
     </div>
   </div>
@@ -664,17 +679,17 @@
     <div style="position:relative;width:100%;height:100%;display:flex;flex-direction:column;background:#fff;overflow:hidden;">
       <!-- ヘッダー -->
       <div style="display:flex;align-items:center;gap:10px;padding:16px 20px 0;flex-shrink:0;position:relative;z-index:2;">
-        <span class="chara-svg" data-w="36" data-h="42"></span>
+        <span class="chara-svg" data-w="43" data-h="50"></span>
         <div style="font-size:11px;letter-spacing:3px;color:#333;font-weight:700;" data-serif="serif-tamatta">貯 ま っ た ね ー</div>
       </div>
       <!-- 木エリア（白背景） -->
       <div id="tamatta-tree" style="position:relative;flex:1;overflow:hidden;background:#fff;"></div>
       <!-- 地面の線 -->
-      <div style="height:1px;background:#ccc;flex-shrink:0;position:relative;z-index:2;"></div>
-      <!-- 地層エリア（ベージュ） -->
-      <div id="tamatta-strata" style="position:relative;height:38%;flex-shrink:0;background:#EDCFA3;overflow:hidden;"></div>
+      <div style="height:1px;background:#A0845A;flex-shrink:0;position:relative;z-index:2;"></div>
+      <!-- 地層エリア（木くず地面） -->
+      <div id="tamatta-strata" style="position:relative;height:38%;flex-shrink:0;background:#B8956A;overflow:hidden;"></div>
       <!-- タップで次へ -->
-      <div onclick="goTo('screen-end')" style="text-align:center;padding:10px;color:#333;font-size:13px;letter-spacing:0.2em;flex-shrink:0;font-weight:700;cursor:pointer;background:#EDCFA3;">タップで次へ</div>
+      <div onclick="goTo('screen-end')" style="text-align:center;padding:10px;color:#ffffff;font-size:13px;letter-spacing:0.2em;flex-shrink:0;font-weight:700;cursor:pointer;background:#A07848;">タップで次へ</div>
     </div>
   </div>
 
@@ -1642,7 +1657,7 @@
     goTo('screen-combined');
   }
 
-  // ===== TAMATTA: シンプルツリー + 地層 =====
+  // ===== TAMATTA: 北欧白針葉樹 + 地層 =====
   let treeAnim = null;
 
   function renderTamatta() {
@@ -1653,16 +1668,13 @@
     strataEl.innerHTML = '';
     if (treeAnim) { cancelAnimationFrame(treeAnim); treeAnim = null; }
 
-    // 全ラウンドの単語収集（ぐたい・おぼろげ両方）
     const gutaiWords   = [];
     const oborokeWords = [];
     history.forEach(entry => {
       if (entry.gutai)   gutaiWords.push(entry.gutai);
       if (entry.oboroke) oborokeWords.push(entry.oboroke);
     });
-    // 木の枝に乗せる単語：全部（ぐたい＋おぼろげ）
-    const treeWords = [...gutaiWords, ...oborokeWords];
-    // 地層に表示する単語：全部（ぐたい＋おぼろげ）
+    const treeWords   = [...gutaiWords, ...oborokeWords];
     const strataWords = [...gutaiWords, ...oborokeWords];
     if (treeWords.length === 0) return;
 
@@ -1676,70 +1688,54 @@
     treeEl.appendChild(canvas);
     const ctx = canvas.getContext('2d');
 
-    // 枝構造を生成
+    // 茶色の木カラー
+    const TRUNK_COLOR  = '#6B4423';
+    const BRANCH_COLOR = '#8C6239';
+    const LEAF_COLOR   = '#A07848';
+
     const branches = [];
     const TRUNK_X = TW * 0.5;
-    const TRUNK_BOTTOM = TH; // 地面
-
-    function addBranch(x, y, angle, len, depth, word) {
-      branches.push({ x, y, angle, len, depth, word, prog: depth === 0 ? 0 : 0 });
-    }
+    const TRUNK_BOTTOM = TH;
+    const trunkLen = TH * 0.48;
 
     // 幹
-    const trunkLen = TH * 0.45;
-    addBranch(TRUNK_X, TRUNK_BOTTOM, -Math.PI / 2, trunkLen, 0, null);
+    branches.push({ x: TRUNK_X, y: TRUNK_BOTTOM, angle: -Math.PI/2, len: trunkLen, depth: 0, word: null, prog: 0 });
 
-    // 枝を単語数に応じて生成
-    const wordCount = treeWords.length;
     const BASE_ANGLE = -Math.PI / 2;
-
-    // 枝先の座標計算
-    function branchEnd(b) {
-      return {
-        x: b.x + Math.cos(b.angle) * b.len,
-        y: b.y + Math.sin(b.angle) * b.len,
-      };
-    }
-
-    // 左右対称に大枝を追加
-    const trunkEnd = { x: TRUNK_X, y: TRUNK_BOTTOM - trunkLen };
     const bigBranchAngles = [
-      BASE_ANGLE - 0.65, BASE_ANGLE + 0.65,
-      BASE_ANGLE - 1.1,  BASE_ANGLE + 1.1,
-      BASE_ANGLE - 0.3,  BASE_ANGLE + 0.3,
+      BASE_ANGLE - 0.55, BASE_ANGLE + 0.55,
+      BASE_ANGLE - 0.85, BASE_ANGLE + 0.85,
+      BASE_ANGLE - 0.35, BASE_ANGLE + 0.35,
     ];
-    const bigLen = trunkLen * 0.55;
-
-    // 大枝（最大6本）- 全単語を割り当て
-    const bigCount = Math.min(wordCount, 6);
+    const bigLen = trunkLen * 0.52;
+    const bigCount = Math.min(treeWords.length, 6);
     const bigBranches = [];
+
     for (let i = 0; i < bigCount; i++) {
       const ang = bigBranchAngles[i % bigBranchAngles.length];
-      const t = 0.5 + (i % 3) * 0.18;
-      const sx = TRUNK_X;
-      const sy = TRUNK_BOTTOM - trunkLen * t;
-      const bl = bigLen * (0.7 + Math.random() * 0.4);
-      const b = { x: sx, y: sy, angle: ang, len: bl, depth: 1, word: treeWords[i] || null, prog: 0 };
+      const t   = 0.48 + (i % 3) * 0.16;
+      const sx  = TRUNK_X;
+      const sy  = TRUNK_BOTTOM - trunkLen * t;
+      const bl  = bigLen * (0.7 + Math.random() * 0.3);
+      const b   = { x: sx, y: sy, angle: ang, len: bl, depth: 1, word: treeWords[i] || null, prog: 0 };
       branches.push(b);
       bigBranches.push(b);
     }
 
-    // 小枝（大枝から派生）
-    bigBranches.forEach((parent, pi) => {
-      const pe = branchEnd(parent);
-      const subCount = 1 + (pi % 2);
-      for (let s = 0; s < subCount; s++) {
-        const side = (s % 2 === 0 ? 1 : -1);
-        const ang  = parent.angle + side * (0.35 + Math.random() * 0.3);
-        const sl   = parent.len * (0.45 + Math.random() * 0.25);
-        branches.push({ x: pe.x, y: pe.y, angle: ang, len: sl, depth: 2, word: null, prog: 0 });
+    // 小枝
+    bigBranches.forEach((parent) => {
+      const ex = parent.x + Math.cos(parent.angle) * parent.len;
+      const ey = parent.y + Math.sin(parent.angle) * parent.len;
+      for (let s = 0; s < 2; s++) {
+        const side = s % 2 === 0 ? 1 : -1;
+        const ang  = parent.angle + side * (0.4 + Math.random() * 0.25);
+        const sl   = parent.len * (0.38 + Math.random() * 0.2);
+        branches.push({ x: ex, y: ey, angle: ang, len: sl, depth: 2, word: null, prog: 0 });
       }
     });
 
-    // アニメーション（成長）
-    let growIdx = 0;
-    let growProg = 0;
-    const GROW_SPD = 0.035;
+    let growIdx = 0, growProg = 0;
+    const GROW_SPD = 0.032;
     let frame = 0;
 
     function drawBranch(b) {
@@ -1747,28 +1743,37 @@
       const ex = b.x + Math.cos(b.angle) * b.len * b.prog;
       const ey = b.y + Math.sin(b.angle) * b.len * b.prog;
 
-      // 太さ：幹>大枝>小枝
-      const sw = b.depth === 0 ? 4.5 : b.depth === 1 ? 2.8 : 1.4;
+      // 幹：グラデーション、枝：単色
+      if (b.depth === 0) {
+        const grad = ctx.createLinearGradient(b.x, b.y, ex, ey);
+        grad.addColorStop(0, '#4A2E12');
+        grad.addColorStop(1, '#7A5230');
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 5;
+      } else if (b.depth === 1) {
+        ctx.strokeStyle = '#8C6239';
+        ctx.lineWidth = 2.2;
+      } else {
+        ctx.strokeStyle = '#A07848';
+        ctx.lineWidth = 1.1;
+      }
       ctx.beginPath();
       ctx.moveTo(b.x, b.y);
       ctx.lineTo(ex, ey);
-      ctx.strokeStyle = '#8C6239';
-      ctx.lineWidth   = sw;
-      ctx.lineCap     = 'round';
+      ctx.lineCap = 'round';
       ctx.stroke();
 
-      // 大枝先のぐたい単語ラベル（成長完了後）
+      // 枝先の単語ラベル（緑色）
       if (b.depth === 1 && b.word && b.prog >= 1) {
-        const lx = ex + Math.cos(b.angle) * 6;
-        const ly = ey + Math.sin(b.angle) * 6;
+        const lx = ex + Math.cos(b.angle) * 7;
+        const ly = ey + Math.sin(b.angle) * 7;
         ctx.save();
-        ctx.font = '500 10px Inter, sans-serif';
-        ctx.fillStyle = '#278007';
+        ctx.font = '600 10px Inter, sans-serif';
+        ctx.fillStyle = '#00712B';
         ctx.textAlign = Math.cos(b.angle) >= 0 ? 'left' : 'right';
         ctx.textBaseline = 'middle';
-        // 複数行対応（最大8文字で折返し）
-        const maxLen = 8;
         const text = b.word;
+        const maxLen = 8;
         if (text.length <= maxLen) {
           ctx.fillText(text, lx, ly);
         } else {
@@ -1784,38 +1789,97 @@
       frame++;
       ctx.clearRect(0, 0, TW, TH);
 
-      // 成長
       if (growIdx < branches.length) {
         growProg += GROW_SPD;
         branches[growIdx].prog = Math.min(growProg, 1);
         if (growProg >= 1) { growIdx++; growProg = 0; }
       }
-
-      // 幹は常に先に完全描画
       branches[0].prog = 1;
       branches.forEach(b => drawBranch(b));
     }
     loop();
 
-    // ===== 地層エリア：全単語（ぐたい＋おぼろげ）=====
-    const SW = strataEl.offsetWidth || 320;
+    // ===== 地層エリア：木くず地面 =====
+    const SW = strataEl.offsetWidth  || 320;
     const SH = strataEl.offsetHeight || 120;
 
-    // ランダム配置（重ならないよう）
+    const sCanvas = document.createElement('canvas');
+    sCanvas.width  = SW;
+    sCanvas.height = SH;
+    sCanvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;';
+    strataEl.appendChild(sCanvas);
+    const sCtx = sCanvas.getContext('2d');
+
+    // ベースグラデーション（奥が暗め、手前が明るめ）
+    const grd = sCtx.createLinearGradient(0, 0, 0, SH);
+    grd.addColorStop(0,   '#A07848');
+    grd.addColorStop(0.4, '#B8956A');
+    grd.addColorStop(1,   '#C9A87A');
+    sCtx.fillStyle = grd;
+    sCtx.fillRect(0, 0, SW, SH);
+
+    // ムラ（暗い染み）
+    for (let i = 0; i < 18; i++) {
+      const mx = Math.random() * SW;
+      const my = Math.random() * SH;
+      const mr = 20 + Math.random() * 40;
+      const mg = sCtx.createRadialGradient(mx, my, 0, mx, my, mr);
+      mg.addColorStop(0,   'rgba(80,50,20,0.18)');
+      mg.addColorStop(1,   'rgba(80,50,20,0)');
+      sCtx.fillStyle = mg;
+      sCtx.fillRect(mx - mr, my - mr, mr * 2, mr * 2);
+    }
+
+    // 明るいムラ
+    for (let i = 0; i < 12; i++) {
+      const mx = Math.random() * SW;
+      const my = Math.random() * SH;
+      const mr = 15 + Math.random() * 30;
+      const mg = sCtx.createRadialGradient(mx, my, 0, mx, my, mr);
+      mg.addColorStop(0,   'rgba(220,185,130,0.22)');
+      mg.addColorStop(1,   'rgba(220,185,130,0)');
+      sCtx.fillStyle = mg;
+      sCtx.fillRect(mx - mr, my - mr, mr * 2, mr * 2);
+    }
+
+    // 木くず（細い線）
+    for (let i = 0; i < 220; i++) {
+      const cx  = Math.random() * SW;
+      const cy  = Math.random() * SH;
+      const len = 4 + Math.random() * 18;
+      const ang = Math.random() * Math.PI;
+      const r   = Math.random();
+      // 白っぽい木くず〜暗い枯れ葉
+      const col = r < 0.4
+        ? `rgba(220,200,160,${0.5 + Math.random() * 0.4})`  // 明るい木くず
+        : r < 0.7
+        ? `rgba(160,110,60,${0.4 + Math.random() * 0.35})`  // 中間の枯れ葉
+        : `rgba(90,55,25,${0.3 + Math.random() * 0.3})`;    // 暗い枯れ枝
+      const lw = 0.8 + Math.random() * 1.6;
+      sCtx.beginPath();
+      sCtx.moveTo(cx - Math.cos(ang) * len / 2, cy - Math.sin(ang) * len / 2);
+      sCtx.lineTo(cx + Math.cos(ang) * len / 2, cy + Math.sin(ang) * len / 2);
+      sCtx.strokeStyle = col;
+      sCtx.lineWidth   = lw;
+      sCtx.lineCap     = 'round';
+      sCtx.stroke();
+    }
+
+    // 単語を地面に馴染む茶色文字で配置
     const placed = [];
     strataWords.forEach((word, i) => {
-      const margin = 16;
+      const margin = 18;
       let x, y, tries = 0;
       do {
         x = margin + Math.random() * (SW - margin * 2 - 80);
-        y = margin + Math.random() * (SH - margin * 2 - 20);
+        y = margin + Math.random() * (SH - margin * 2 - 18);
         tries++;
-      } while (tries < 30 && placed.some(p => Math.abs(p.x - x) < 72 && Math.abs(p.y - y) < 24));
+      } while (tries < 30 && placed.some(p => Math.abs(p.x - x) < 72 && Math.abs(p.y - y) < 22));
       placed.push({ x, y });
 
       const div = document.createElement('div');
       div.textContent = word;
-      const opacity = 0.55 + (i % 3) * 0.12;
+      const opacity = 0.6 + (i % 3) * 0.12;
       div.style.cssText = `
         position:absolute;
         left:${x}px;
@@ -1826,6 +1890,7 @@
         letter-spacing:0.12em;
         white-space:nowrap;
         user-select:none;
+        text-shadow:0 1px 2px rgba(220,185,130,0.6);
       `;
       strataEl.appendChild(div);
     });
