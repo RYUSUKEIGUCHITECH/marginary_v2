@@ -295,7 +295,7 @@
 
   <!-- ====== SCREEN 1: TITLE ====== -->
   <div class="screen active" id="screen-title">
-    <div style="width:100%;height:100%;cursor:pointer;position:relative;overflow:hidden;" onclick="goTo('screen-intro')">
+    <div style="width:100%;height:100%;cursor:pointer;position:relative;overflow:hidden;" onclick="titleTap()">
       <div style="width:100%;position:relative;overflow:hidden;height:260px;position:absolute;top:50%;left:0;transform:translateY(-50%);">
         <svg id="title-svg" width="100%" height="260" viewBox="0 0 800 471" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style="display:block;">
           <rect width="800" height="471" fill="white"/>
@@ -383,11 +383,10 @@
     </div>
   </div>
 
-  <!-- ====== SCREEN 2: INTRO ====== -->
-  <div class="screen tap-screen" id="screen-intro">
-    <div class="card" style="position:relative; min-height:320px;" onclick="goTo('screen-choice')">
+  <!-- ====== SCREEN 2a: 初回INTRO ====== -->
+  <div class="screen tap-screen" id="screen-intro-first">
+    <div class="card" style="position:relative; min-height:320px;" onclick="goTo('screen-intro')">
       <div class="tap-hint">タップで次へ</div>
-      <!-- Corner mosaic: FIX 1 - 木のrectをCSS変数--greenで塗る -->
       <svg width="100" height="160" style="position:absolute;top:0;left:0;" viewBox="0 0 100 160" xmlns="http://www.w3.org/2000/svg">
         <rect x="0" y="0" width="45" height="70" class="gc"/>
         <rect x="45" y="0" width="20" height="160" fill="#8C6239"/>
@@ -397,17 +396,60 @@
         <circle cx="10" cy="32" r="6" fill="white"/><circle cx="26" cy="32" r="6" fill="white"/>
         <circle cx="10" cy="50" r="6" fill="white"/>
       </svg>
-      <!-- Right top -->
       <svg width="80" height="80" style="position:absolute;top:0;right:0;" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
         <rect x="0" y="0" width="80" height="40" class="gc"/>
         <polygon points="80,0 80,80 0,80" class="gc"/>
       </svg>
       <div style="text-align:center; font-size:14px; letter-spacing:3px; line-height:2.2; color:#333; font-weight:700; margin-top:52px; padding: 0 16px;">
-        <span data-serif="serif-intro">ボ ク は マ ジ マ ジ<br>こ の 森 に 住 む<br>妖 精 さ</span>
+        ボ ク は マ ジ マ ジ<br>こ の 森 に 住 む<br>妖 精 さ
       </div>
       <div style="display:flex; justify-content:center; margin-top:20px; padding-bottom:16px;">
         <span class="chara-svg" data-w="103" data-h="103"></span>
       </div>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN 2: INTRO ======-->
+  <div class="screen" id="screen-intro">
+    <div class="card" id="intro-card" onclick="introTap()" style="position:relative; min-height:340px; cursor:pointer;">
+      <!-- 左上装飾 -->
+      <svg width="100" height="160" style="position:absolute;top:0;left:0;" viewBox="0 0 100 160" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="45" height="70" class="gc"/>
+        <rect x="45" y="0" width="20" height="160" fill="#8C6239"/>
+        <rect x="0" y="70" width="45" height="50" class="gc"/>
+        <rect x="0" y="120" width="45" height="40" class="gc"/>
+        <circle cx="10" cy="14" r="6" fill="white"/><circle cx="26" cy="14" r="6" fill="white"/>
+        <circle cx="10" cy="32" r="6" fill="white"/><circle cx="26" cy="32" r="6" fill="white"/>
+        <circle cx="10" cy="50" r="6" fill="white"/>
+      </svg>
+      <!-- 右上装飾 -->
+      <svg width="80" height="80" style="position:absolute;top:0;right:0;" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="80" height="40" class="gc"/>
+        <polygon points="80,0 80,80 0,80" class="gc"/>
+      </svg>
+
+      <!-- セリフ -->
+      <div style="text-align:center; font-size:14px; letter-spacing:3px; line-height:2.4; color:#333; font-weight:700; margin-top:52px; padding: 0 16px;">
+        <span data-serif="serif-intro"></span>
+      </div>
+
+      <!-- キャラ -->
+      <div style="display:flex; justify-content:center; margin-top:16px;">
+        <span class="chara-svg" data-w="103" data-h="103"></span>
+      </div>
+
+      <!-- ことばを置いていくボタン（最初は非表示） -->
+      <div id="intro-place-btn" style="margin-top:24px; opacity:0; transition:opacity 0.6s ease; pointer-events:none;">
+        <button onclick="event.stopPropagation(); goTo('screen-choice')" style="
+          width:100%; padding:16px; border:none; border-radius:12px;
+          background:var(--lime); color:var(--lime-text);
+          font-size:13px; font-weight:700; letter-spacing:3px;
+          font-family:inherit; cursor:pointer;
+        ">ことばを置いていく</button>
+      </div>
+
+      <!-- タップヒント -->
+      <div id="intro-tap-hint" class="tap-hint">タップで次へ</div>
     </div>
   </div>
 
@@ -701,6 +743,26 @@
     </div>
   </div>
 
+  <!-- ====== SCREEN: キャラ選択 ====== -->
+  <div class="screen" id="screen-chara-select">
+    <div style="width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:32px 24px;">
+
+      <div style="font-size:14px;letter-spacing:0.3em;color:#333;margin-bottom:28px;font-weight:700;">
+        だれと話す？
+      </div>
+
+      <!-- キャラグリッド -->
+      <div id="chara-select-grid" style="
+        display:grid;
+        grid-template-columns:1fr 1fr 1fr;
+        gap:20px 16px;
+        width:100%;
+        justify-items:center;
+      "></div>
+
+    </div>
+  </div>
+
   <!-- ====== SCREEN END ====== -->
   <div class="screen" id="screen-end">
     <div class="card" style="position:relative; min-height:360px; text-align:center;">
@@ -719,6 +781,51 @@
   const ALL_CHARAS = ['majimaji','yurayura','kasa','concrete','sun','namake'];
 
   // FIX 4: エンディングのキャラグリッドはマジマジ固定緑(#00712B)で描画
+  function renderCharaSelectGrid() {
+    const grid = document.getElementById('chara-select-grid');
+    if (!grid) return;
+    const CHARA_NAMES = {
+      majimaji: 'マジマジ',
+      yurayura: 'ユラユランゴ',
+      kasa:     'ムッシュ',
+      concrete: 'カワラちゃん',
+      sun:      'テカリ王子',
+      namake:   'ナマケール',
+    };
+    grid.innerHTML = ALL_CHARAS.map((chara, i) => {
+      const svgHtml = charaInnerSVGFixed(chara, 90, 90);
+      const name = CHARA_NAMES[chara] || chara;
+      const delay = (i * 0.3).toFixed(1);
+      return `<div
+        onclick="selectCharaAndStart('${chara}')"
+        onmousedown="this.style.transform='scale(0.92)'"
+        onmouseup="this.style.transform='scale(1)'"
+        ontouchstart="this.style.transform='scale(0.92)'"
+        ontouchend="this.style.transform='scale(1)'"
+        style="
+          display:flex;flex-direction:column;align-items:center;gap:8px;
+          cursor:pointer;transition:transform 0.15s;
+          animation: charaFloat ${2.2 + (i % 3) * 0.4}s ease-in-out ${delay}s infinite;
+        "
+      >
+        <div style="padding:6px;">${svgHtml}</div>
+        <span style="
+          font-size:9px;letter-spacing:0.18em;
+          color:#333;
+          font-weight:400;
+          white-space:nowrap;
+        ">${name}</span>
+      </div>`;
+    }).join('');
+  }
+
+  function selectCharaAndStart(chara) {
+    currentChara = chara;
+    applyCharaConfig(chara);
+    updateAllCharaSVG(chara);
+    goTo('screen-intro');
+  }
+
   function renderEndGrid() {
     const grid = document.getElementById('end-chara-grid');
     if (!grid) return;
@@ -916,7 +1023,7 @@
     majimaji: {
       green: '#00712B', lime: '#00712B', limeText: '#ffffff', grayText: '#666666',
       obokeDot: '#00712B', gutaiDot: '#8C6239',
-      serif_intro:    'ボ ク は マ ジ マ ジ<br>こ の 森 に 住 む<br>妖 精 さ',
+      serif_intro:    'ま た 、 来 た ん だ ね ー',
       serif_choice:   'ど っ ち か な ー ？',
       serif_gutai_in: '身 近 な も の か な ぁ 〜',
       serif_gutai_res:'言 葉 に す る と<br>軽 く な り か も ね',
@@ -945,7 +1052,7 @@
       green: '#FF7BAC', lime: '#FF7BAC', grayText: '#666666', limeText: '#ffffff',
       // FIX 2&3: マジマジ以外のおぼろげドット→キャラ色、ぐたい白丸→#8C6239
       obokeDot: '#FF7BAC', gutaiDot: '#8C6239',
-      serif_intro:    '私 、 カ ワ ラ ち ゃ ん 。<br>よ ろ し く ね ！',
+      serif_intro:    'ま た 、<br>来 て く れ た の ね',
       serif_choice:   'ど っ ち か し ら ？',
       serif_gutai_in: '今 っ ぽ い 方 で い い よ 。',
       serif_gutai_res:'パ ッ と 思 い つ い た の で い い 。',
@@ -973,7 +1080,7 @@
     kasa: {
       green: '#005598', lime: '#005598', limeText: '#ffffff',
       obokeDot: '#005598', gutaiDot: '#8C6239',
-      serif_intro:    'ワ タ ク シ 、 ム ッ シ ュ<br>ア ン ブ レ ー ラ',
+      serif_intro:    'ま た 、<br>来 た ム ッ シ ュ か 。',
       serif_choice:   'ど っ ち ム ッ シ ュ ？',
       serif_gutai_in: 'そ こ ま で 考 え な く て い い ム ッ シ ュ',
       serif_gutai_res:'そ れ で も い い ム ッ シ ュ',
@@ -1001,7 +1108,7 @@
     yurayura: {
       green: '#E6E6E6', lime: '#777777', limeText: '#ffffff', grayText: '#666666',
       obokeDot: '#E6E6E6', gutaiDot: '#8C6239',
-      serif_intro:    'ボ ク は ユ ラ ユ ラ ン ゴ<br>あ ん ま 考 え な い ン ゴ',
+      serif_intro:    'ま た 来 た ン ゴ',
       serif_choice:   'ど っ ち で も い い ン ゴ',
       serif_gutai_in: '思 い つ い た こ と で い い ン ゴ',
       serif_gutai_res:'思 い つ き か ら 広 が る ン ゴ',
@@ -1029,7 +1136,7 @@
     namake: {
       green: '#FBEFD2', lime: '#FBEFD2', limeText: '#555555',
       obokeDot: '#FBEFD2', gutaiDot: '#8C6239',
-      serif_intro:    'ナ マ ケ ー ル だ よ ん',
+      serif_intro:    'ま た 来 た よ ー ん',
       serif_choice:   'テ キ ト ー で い い よ ん',
       serif_gutai_in: '眠 い と き は 寝 る に か ぎ る よ ん',
       serif_gutai_res:'昼 起 き る と 得 し た<br>気 分 に な る よ ん',
@@ -1057,7 +1164,7 @@
     sun: {
       green: '#EB6100', lime: '#EB6100', limeText: '#ffffff',
       obokeDot: '#EB6100', gutaiDot: '#8C6239',
-      serif_intro:    '俺 は テ カ リ 王 子 ！<br>ガ ン ガ ン 行 こ う ぜ ！',
+      serif_intro:    'お う 、 来 た な ！',
       serif_choice:   'ど っ ち か ら 行 こ う か ？',
       serif_gutai_in: '身 近 な も の は 想 像 つ く よ な ！',
       serif_gutai_res:'嫌 な も ん も 見 方 次 第 だ ぜ ！',
@@ -1161,6 +1268,31 @@
   let currentDepth = null;
 
   // ===== NAVIGATION =====
+  // intro画面のタップ処理
+  // タイトルタップ：初回かどうかで分岐
+  function titleTap() {
+    const isFirstVisit = !localStorage.getItem('marginary_visited');
+    if (isFirstVisit) {
+      localStorage.setItem('marginary_visited', '1');
+      localStorage.setItem('marginary_first_intro', '1');
+      goTo('screen-intro-first');
+    } else {
+      goTo('screen-chara-select');
+    }
+  }
+
+  let introPhase = 0;
+  function introTap() {
+    if (introPhase !== 0) return;
+    introPhase = 1;
+    const btn = document.getElementById('intro-place-btn');
+    const hint = document.getElementById('intro-tap-hint');
+    const card = document.getElementById('intro-card');
+    if (btn) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
+    if (hint) hint.style.display = 'none';
+    if (card) card.style.cursor = 'default';
+  }
+
   function goTo(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
@@ -1171,6 +1303,26 @@
     });
     if (id === 'screen-choice') {
       initChoiceScreen();
+    }
+    if (id === 'screen-chara-select') {
+      renderCharaSelectGrid();
+    }
+    if (id === 'screen-intro') {
+      introPhase = 0;
+      const btn = document.getElementById('intro-place-btn');
+      const hint = document.getElementById('intro-tap-hint');
+      const card = document.getElementById('intro-card');
+      if (btn) { btn.style.opacity = '0'; btn.style.pointerEvents = 'none'; }
+      if (hint) hint.style.display = 'block';
+      if (card) card.style.cursor = 'pointer';
+      // 初回は「話していく？」、2回目以降はキャラのセリフ
+      const isFirstIntro = localStorage.getItem('marginary_first_intro') === '1';
+      if (isFirstIntro) {
+        localStorage.removeItem('marginary_first_intro');
+        document.querySelectorAll('[data-serif="serif-intro"]').forEach(el => {
+          el.innerHTML = '話 し て い く ？';
+        });
+      }
     }
     if (id === 'screen-oboroke-input2') {
       // あさめ/ふかめ時はセリフを差し替え
