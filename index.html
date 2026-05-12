@@ -428,6 +428,9 @@
         <polygon points="80,0 80,80 0,80" class="gc"/>
       </svg>
 
+      <!-- 過去の言葉（背景にうっすら） -->
+      <div id="intro-past-words" style="position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:20px;"></div>
+
       <!-- セリフ -->
       <div style="text-align:center; font-size:14px; letter-spacing:3px; line-height:2.4; color:#333; font-weight:700; margin-top:52px; padding: 0 16px;">
         <span data-serif="serif-intro"></span>
@@ -1269,6 +1272,89 @@
 
   // ===== NAVIGATION =====
   // intro画面のタップ処理
+  // ================================================================
+  // ===== v3: フラグメント保存・取得 =====
+  // ================================================================
+  function saveFragment(text, character, modePair) {
+    if (!text || text.trim().length < 2) return;
+    let fragments = getFragments();
+    fragments.push({
+      id: Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+      text: text.trim(),
+      character: character || 'majimaji',
+      modePair: modePair || 'abstract_concrete',
+      createdAt: new Date().toISOString(),
+    });
+    fragments = fragments.slice(-50);
+    try { localStorage.setItem('marginary_fragments', JSON.stringify(fragments)); } catch(e) {}
+  }
+
+  function getFragments() {
+    try {
+      const raw = localStorage.getItem('marginary_fragments');
+      return raw ? JSON.parse(raw) : [];
+    } catch(e) { return []; }
+  }
+
+  function renderIntroPastWords() {
+    const container = document.getElementById('intro-past-words');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const fragments = getFragments();
+    if (fragments.length === 0) return;
+
+    // 最大8件、ランダムに選ぶ
+    const shuffled = fragments.slice().sort(() => Math.random() - 0.5).slice(0, 8);
+
+    // 配置済み領域（中央付近は避ける）
+    const placed = [];
+    shuffled.forEach((f, i) => {
+      const text = f.text;
+      let x, y, tries = 0;
+      do {
+        x = 8 + Math.random() * 72; // 8〜80%
+        y = 8 + Math.random() * 78; // 8〜86%
+        tries++;
+        // 中央エリア（キャラ・セリフ周辺）を避ける
+        const nearCenter = (x > 25 && x < 75) && (y > 30 && y < 75);
+        if (nearCenter && tries < 20) continue;
+        // 他の言葉と被りすぎない
+        const tooClose = placed.some(p => Math.abs(p.x - x) < 18 && Math.abs(p.y - y) < 12);
+        if (tooClose && tries < 25) continue;
+        break;
+      } while (tries < 30);
+      placed.push({ x, y });
+
+      const el = document.createElement('div');
+      el.textContent = text;
+      const opacity = 0.5 + Math.random() * 0.15; // 0.5〜0.65
+      const size = 9 + Math.floor(Math.random() * 4); // 9〜12px
+      const rotate = -8 + Math.random() * 16; // -8〜8deg
+      el.style.cssText = `
+        position: absolute;
+        left: ${x}%;
+        top: ${y}%;
+        font-size: ${size}px;
+        letter-spacing: 0.12em;
+        color: rgba(102,102,102,${opacity});
+        font-weight: 400;
+        white-space: nowrap;
+        transform: rotate(${rotate}deg);
+        pointer-events: none;
+        user-select: none;
+        opacity: 0;
+        transition: opacity ${1.5 + i * 0.3}s ease ${0.4 + i * 0.2}s;
+      `;
+      container.appendChild(el);
+
+      // フェードイン
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        el.style.opacity = '1';
+      }));
+    });
+  }
+
   // タイトルタップ：初回かどうかで分岐
   function titleTap() {
     const isFirstVisit = !localStorage.getItem('marginary_visited');
@@ -1323,6 +1409,8 @@
           el.innerHTML = '話 し て い く ？';
         });
       }
+      // 過去の言葉を背景に表示
+      renderIntroPastWords();
     }
     if (id === 'screen-oboroke-input2') {
       // あさめ/ふかめ時はセリフを差し替え
@@ -1690,6 +1778,10 @@
       ? document.getElementById('gutai-text').value.trim()
       : document.getElementById('oboroke-text').value.trim();
 
+    // v3: 入力を保存
+    const modePair = currentPair === 'depth' ? 'shallow_deep' : 'abstract_concrete';
+    saveFragment(val, currentChara, modePair);
+
     const cat = classifyInput(val);
     lastInputCategory = cat;
 
@@ -1812,6 +1904,10 @@
     document.getElementById('kokoni-oboroke').style.display = oborokeVal ? 'flex' : 'none';
 
     history.push({ gutai: gutaiVal, oboroke: oborokeVal, chara: currentChara, category: lastInputCategory });
+
+    // v3: 2つ目の入力も保存
+    const modePair2 = currentPair === 'depth' ? 'shallow_deep' : 'abstract_concrete';
+    if (oborokeVal) saveFragment(oborokeVal, currentChara, modePair2);
 
     renderEndGrid();
     goTo('screen-combined');
