@@ -443,7 +443,7 @@
 
       <!-- ことばを置いていくボタン（最初は非表示） -->
       <div id="intro-place-btn" style="margin-top:24px; opacity:0; transition:opacity 0.6s ease; pointer-events:none;">
-        <button onclick="event.stopPropagation(); goTo('screen-choice')" style="
+        <button onclick="event.stopPropagation(); goTo('screen-question')" style="
           width:100%; padding:16px; border:none; border-radius:12px;
           background:var(--lime); color:var(--lime-text);
           font-size:13px; font-weight:700; letter-spacing:3px;
@@ -453,6 +453,122 @@
 
       <!-- タップヒント -->
       <div id="intro-tap-hint" class="tap-hint">タップで次へ</div>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN: 気になること入力 ====== -->
+  <div class="screen" id="screen-question">
+    <div class="card" style="position:relative; min-height:320px;">
+      <svg width="100" height="160" style="position:absolute;top:0;left:0;" viewBox="0 0 100 160" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="45" height="70" class="gc"/>
+        <rect x="45" y="0" width="20" height="160" fill="#8C6239"/>
+        <rect x="0" y="70" width="45" height="50" class="gc"/>
+        <rect x="0" y="120" width="45" height="40" class="gc"/>
+        <circle cx="10" cy="14" r="6" fill="white"/><circle cx="26" cy="14" r="6" fill="white"/>
+        <circle cx="10" cy="32" r="6" fill="white"/><circle cx="26" cy="32" r="6" fill="white"/>
+        <circle cx="10" cy="50" r="6" fill="white"/>
+      </svg>
+      <div style="display:flex;align-items:center;gap:12px;margin-top:52px;margin-bottom:12px;padding:0 8px;justify-content:flex-end;">
+        <div style="font-size:13px;letter-spacing:0.2em;line-height:2.2;color:#333;font-weight:700;text-align:right;">
+          <span data-serif="serif-question"></span>
+        </div>
+        <span class="chara-svg" data-w="72" data-h="86"></span>
+      </div>
+      <div class="dots-row" style="margin-bottom:6px;">
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float2"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float3"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float2"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float3"></div>
+      </div>
+      <textarea id="question-text" rows="2"
+        placeholder="気になってること…"
+        oninput="checkQuestionInput()"
+        style="width:100%;background:#f2f2f2;border:none;border-radius:12px;padding:16px;font-family:inherit;font-size:16px;letter-spacing:0.1em;color:#333;resize:none;outline:none;line-height:1.6;caret-color:var(--green);margin-bottom:16px;"></textarea>
+      <button class="btn-next" id="question-next-btn" disabled onclick="goTo('screen-noise')">次へ</button>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN: ノイズセリフ ====== -->
+  <div class="screen tap-screen" id="screen-noise">
+    <div class="card" style="position:relative; min-height:320px;" onclick="goTo('screen-pad')">
+      <div class="tap-hint">タップで次へ</div>
+      <svg width="80" height="80" style="position:absolute;top:0;right:0;" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="80" height="40" class="gc"/>
+        <polygon points="80,0 80,80 0,80" class="gc"/>
+      </svg>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:16px;margin-top:52px;padding:0 16px;">
+        <span class="chara-svg" data-w="88" data-h="88"></span>
+        <div id="noise-serif" style="font-size:13px;letter-spacing:0.2em;color:#333;font-weight:700;line-height:2.4;text-align:center;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN: 2Dグラデーションパッド ====== -->
+  <div class="screen" id="screen-pad">
+    <div class="card" style="position:relative; min-height:400px;">
+      <div style="font-size:12px;letter-spacing:0.22em;color:#999;text-align:center;margin-bottom:16px;font-weight:400;">どんな感じで気になってる？</div>
+
+      <!-- パッド -->
+      <div style="position:relative;margin-bottom:20px;">
+        <!-- グラデーション背景 -->
+        <div id="grad-pad" style="
+          width:100%;
+          padding-bottom:100%;
+          border-radius:16px;
+          position:relative;
+          cursor:crosshair;
+          background: linear-gradient(to bottom, #2a2a2a, #e0e0e0),
+                      linear-gradient(to right, #888, var(--lime));
+          background-blend-mode: multiply;
+          touch-action: none;
+        ">
+          <!-- 軸ラベル -->
+          <div id="pad-label-top" style="position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:9px;letter-spacing:0.2em;color:rgba(255,255,255,0.7);font-weight:700;white-space:nowrap;"></div>
+          <div id="pad-label-bottom" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-size:9px;letter-spacing:0.2em;color:rgba(0,0,0,0.35);font-weight:700;white-space:nowrap;"></div>
+          <div id="pad-label-left" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:9px;letter-spacing:0.15em;color:rgba(255,255,255,0.55);font-weight:700;writing-mode:vertical-rl;"></div>
+          <div id="pad-label-right" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:9px;letter-spacing:0.15em;color:rgba(0,0,0,0.35);font-weight:700;writing-mode:vertical-rl;"></div>
+          <!-- ドット -->
+          <div id="pad-dot" style="
+            position:absolute;
+            width:28px;height:28px;
+            border-radius:50%;
+            background:white;
+            box-shadow:0 2px 12px rgba(0,0,0,0.3);
+            transform:translate(-50%,-50%);
+            top:50%;left:50%;
+            pointer-events:none;
+            transition:box-shadow 0.15s;
+          "></div>
+        </div>
+      </div>
+
+      <!-- 選択中ラベル -->
+      <div id="pad-label" style="text-align:center;font-size:11px;letter-spacing:0.2em;color:#888;margin-bottom:20px;font-weight:400;min-height:18px;"></div>
+
+      <button class="btn-next" id="pad-next-btn" onclick="goTo('screen-detail')">次へ</button>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN: さらに詳しく入力 ====== -->
+  <div class="screen" id="screen-detail">
+    <div class="card" style="position:relative; min-height:320px;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:48px;margin-bottom:16px;text-align:center;">
+        <span class="chara-svg" data-w="72" data-h="86"></span>
+        <div style="font-size:13px;letter-spacing:0.2em;color:#333;font-weight:700;line-height:2.4;" data-serif="serif-detail"></div>
+      </div>
+      <div class="dots-row" style="margin-bottom:6px;">
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float2"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float3"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float2"></div>
+        <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float3"></div>
+      </div>
+      <textarea id="detail-text" rows="3"
+        placeholder="もう少し…"
+        oninput="checkDetailInput()"
+        style="width:100%;background:#f2f2f2;border:none;border-radius:12px;padding:16px;font-family:inherit;font-size:16px;letter-spacing:0.1em;color:#333;resize:none;outline:none;line-height:1.6;caret-color:var(--green);margin-bottom:16px;"></textarea>
+      <button class="btn-next" id="detail-next-btn" disabled onclick="submitDetail()">次へ</button>
     </div>
   </div>
 
@@ -742,7 +858,7 @@
       <!-- 地層エリア（木くず地面） -->
       <div id="tamatta-strata" style="position:relative;height:38%;flex-shrink:0;background:#B8956A;overflow:hidden;"></div>
       <!-- タップで次へ -->
-      <div onclick="goTo('screen-end')" style="text-align:center;padding:10px;color:#ffffff;font-size:13px;letter-spacing:0.2em;flex-shrink:0;font-weight:700;cursor:pointer;background:#A07848;">タップで次へ</div>
+      <div onclick="goTo('screen-library')" style="text-align:center;padding:10px;color:#ffffff;font-size:13px;letter-spacing:0.2em;flex-shrink:0;font-weight:700;cursor:pointer;background:#A07848;">タップで次へ</div>
     </div>
   </div>
 
@@ -762,6 +878,96 @@
         width:100%;
         justify-items:center;
       "></div>
+
+    </div>
+  </div>
+
+  <!-- ====== SCREEN: 図書館 ====== -->
+  <div class="screen" id="screen-library">
+    <div style="width:100%;height:100%;display:flex;flex-direction:column;background:#fff;">
+
+      <!-- SVG背景（絶対配置） -->
+      <div style="position:absolute;inset:0;pointer-events:none;z-index:0;">
+        <svg width="100%" height="100%" viewBox="0 0 800 699" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.6;"><g clip-path="url(#clip0_461_472b)">
+<rect width="800" height="699" fill="white"/>
+<path d="M197.04 116L98 287.39H183.534L282.574 116H197.04Z" fill="#FBEFD2"/>
+<path d="M197.04 526.896L98 698.287H183.534L282.574 526.896H197.04Z" fill="#8C6239"/>
+<rect x="98" y="287.393" width="85.6951" height="410.897" fill="#8C6239"/>
+<path d="M282.574 526.897V116L183.695 287.39V699.386L282.574 526.897Z" fill="#8C6239"/>
+<path d="M282.735 322.547L183.695 493.937H269.229L368.269 322.547H282.735Z" fill="#FBEFD2"/>
+<path d="M282.735 441.201L183.695 612.591H269.229L368.269 441.201H282.735Z" fill="#FBEFD2"/>
+<path d="M282.735 212.682L183.695 384.072H269.229L368.269 212.682H282.735Z" fill="#FBEFD2"/>
+<path d="M530.04 212.682L431 384.072H516.534L615.574 212.682H530.04Z" fill="#FBEFD2"/>
+<path d="M530.04 322.547L431 493.937H516.534L615.574 322.547H530.04Z" fill="#FBEFD2"/>
+<path d="M530.04 441.201L431 612.591H516.534L615.574 441.201H530.04Z" fill="#FBEFD2"/>
+<path d="M615.735 116L516.695 287.39H602.229L701.269 116H615.735Z" fill="#FBEFD2"/>
+<path d="M615.735 526.896L516.695 698.287H602.229L701.269 526.896H615.735Z" fill="#8C6239"/>
+<rect x="516.695" y="287.393" width="85.6951" height="410.897" fill="#8C6239"/>
+<path d="M701.269 526.897V116L602.39 287.39V699.386L701.269 526.897Z" fill="#8C6239"/>
+</g><defs><clipPath id="clip0_461_472b"><rect width="800" height="699" fill="white"/></clipPath></defs></svg>
+        <!-- 保存した言葉を背景に薄く表示 -->
+        <div id="lib-saved-bg"></div>
+      </div>
+
+      <!-- スクロールコンテンツ -->
+      <div style="position:relative;flex:1;overflow-y:auto;z-index:1;">
+
+        <!-- セクション1：哲学者の言葉 ＋ 思想断片 -->
+        <div style="padding:24px 20px 16px;">
+          <div style="margin-bottom:20px;">
+            <div style="font-size:9px;letter-spacing:0.28em;color:#bbb;margin-bottom:10px;font-weight:400;">ことばが、ある</div>
+            <div id="library-quote-text" style="font-family:'Inter',sans-serif;font-weight:500;font-size:14px;letter-spacing:0.08em;line-height:2.0;color:#333;margin-bottom:6px;"></div>
+            <div id="library-quote-author" style="font-family:'Inter',sans-serif;font-weight:500;font-size:10px;letter-spacing:0.18em;color:#999;text-align:right;"></div>
+          </div>
+          <div style="height:1px;background:rgba(0,0,0,0.06);margin-bottom:20px;"></div>
+          <div style="font-size:9px;letter-spacing:0.28em;color:#bbb;margin-bottom:14px;font-weight:400;">近い断片</div>
+          <div id="lib-fragments"></div>
+        </div>
+
+        <!-- セクション2：山 -->
+        <div id="lib-mountain-section" style="min-height:280px;position:relative;background:linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(235,228,218,0.7) 50%, rgba(195,180,160,0.85) 100%);overflow:hidden;padding-bottom:48px;">
+          <div style="font-size:9px;letter-spacing:0.28em;color:rgba(100,80,60,0.5);padding:20px 20px 0;font-weight:400;">近いことば</div>
+          <!-- 山のSVG -->
+          <svg width="100%" viewBox="0 0 390 160" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+            <path d="M0 160 L70 50 L140 100 L210 15 L280 75 L350 35 L390 55 L390 160 Z" fill="rgba(175,158,138,0.3)"/>
+            <path d="M0 160 L90 90 L180 130 L270 55 L390 95 L390 160 Z" fill="rgba(155,138,118,0.2)"/>
+          </svg>
+          <!-- 「近い」ことばエリア -->
+          <div id="lib-mountain-words" style="position:relative;padding:0 20px;margin-top:-20px;"></div>
+        </div>
+
+      </div>
+
+      <!-- 次へ -->
+      <div onclick="goTo('screen-end')" style="position:relative;z-index:1;text-align:center;padding:12px;color:#333;font-size:10px;letter-spacing:0.22em;font-weight:400;cursor:pointer;border-top:1px solid rgba(0,0,0,0.06);flex-shrink:0;background:rgba(255,255,255,0.9);">つ ぎ へ</div>
+
+      <!-- タップポップアップ -->
+      <div id="lib-word-popup" style="
+        display:none;position:absolute;inset:0;z-index:100;
+        background:rgba(0,0,0,0.35);
+        justify-content:center;align-items:center;
+      " onclick="closeMountainPopup()">
+        <div onclick="event.stopPropagation()" style="
+          background:#fff;border-radius:20px;padding:28px 24px;
+          width:calc(100% - 64px);max-width:300px;
+        ">
+          <div id="lib-popup-text" style="font-family:'Inter',sans-serif;font-weight:500;font-size:13px;letter-spacing:0.08em;line-height:1.9;color:#333;margin-bottom:20px;text-align:center;"></div>
+          <div style="display:flex;gap:10px;">
+            <button onclick="mountainWordAction('save')" style="
+              flex:1;padding:14px 8px;border:none;border-radius:12px;
+              background:var(--lime);color:var(--lime-text);
+              font-family:inherit;font-size:11px;letter-spacing:0.18em;
+              font-weight:700;cursor:pointer;
+            ">保存する</button>
+            <button onclick="mountainWordAction('delete')" style="
+              flex:1;padding:14px 8px;border:1px solid #e0e0e0;border-radius:12px;
+              background:none;color:#aaa;
+              font-family:inherit;font-size:11px;letter-spacing:0.18em;
+              font-weight:400;cursor:pointer;
+            ">違う</button>
+          </div>
+        </div>
+      </div>
 
     </div>
   </div>
@@ -1036,6 +1242,8 @@
       serif_kokoni:   'こ こ に 何 か あ る か も ね',
       serif_tamatta:  '貯 ま っ た ね ー',
       serif_end:      'ま た 気 が 向 い た ら<br>来 る と い い よ ー',
+      serif_question: 'な ん か 生 き て て<br>気 に な る こ と<br>あ る ？',
+      serif_detail:   'そ れ っ て 、<br>ど ん な 感 じ ？',
       label_oboroke: 'マ ジ お ぼ ろ げ',
       label_gutai:   'マ ジ ぐ た い',
       label_asame:   'マ ジ あ さ め',
@@ -1046,6 +1254,13 @@
       serif_oboroke_res:'床 に 転 が る と 、<br>軽 く な る こ と<br>も あ る よ',
       serif_gutai_in2:'木 漏 れ 日 っ て 、<br>眠 く な る よ ね ー',
       serif_oboroke_in:'朝 日 が 嫌 な<br>時 も あ る さ 。',
+      reaction_serifs: [
+        '石 の 上 っ て 、<br>寒 い よ ね',
+        '朝 日 が 嫌 な<br>時 も あ る さ 。',
+        '木 漏 れ 日 っ て 、<br>眠 く な る よ ね ー',
+        'い き 当 た り ば っ た り<br>も い い よ ー',
+        'ボ ク も よ く<br>わ か ら な い よ ー',
+      ],
       serif_gutai_res_asame:  'と り あ え ず 言 っ て み る',
       serif_gutai_res_fukame: 'そ の 言 葉 の は じ ま り',
       serif_oboroke_in2_asame: 'ほ ん と に 寒 い',
@@ -1065,6 +1280,8 @@
       serif_kokoni:   'こ こ 気 に な る ね',
       serif_tamatta:  '進 ん だ わ ね 。',
       serif_end:      'ま た 来 て ね ー ！',
+      serif_question: '何 か 気 に な る こ と<br>あ る か し ら ？',
+      serif_detail:   'も う 少 し<br>教 え て ？',
       label_oboroke: 'ま だ 言 葉 に な っ て な い 感 じ',
       label_gutai:   '具 体 的 な こ と',
       label_asame:   '見 え る と こ',
@@ -1075,6 +1292,13 @@
       serif_oboroke_res:'そ れ っ て 、 な ん で だ ろ ね 。',
       serif_gutai_in2:'今 っ ぽ い 方 で い い よ 。',
       serif_oboroke_in:'そ れ っ て 、 な ん で だ ろ ね 。',
+      reaction_serifs: [
+        'そ れ っ て 、<br>な ん で だ ろ ね 。',
+        'パ ッ と 思 い つ い た<br>の で い い 。',
+        '少 し 整 理 し て<br>み ま し ょ う か',
+        'な か な か 難 し い<br>わ よ ね',
+        'ま た 明 日 に<br>し よ う よ',
+      ],
       serif_gutai_res_asame:  'お も い つ い た こ と',
       serif_gutai_res_fukame: 'ち ょ っ と 気 に な る ね 、 そ れ',
       serif_oboroke_in2_asame: 'ま あ そ う い う 感 じ だ よ ね',
@@ -1093,6 +1317,8 @@
       serif_kokoni:   'こ こ か も ム ッ シ ュ',
       serif_tamatta:  '貯 ま っ た ム ッ シ ュ',
       serif_end:      'ま た 来 る ム ッ シ ュ',
+      serif_question: '気 に な る こ と<br>あ る ム ッ シ ュ ？',
+      serif_detail:   'そ れ 、<br>ど ん な 感 じ ム ッ シ ュ ？',
       label_oboroke: 'ま だ ぼ ん や り し て る',
       label_gutai:   '身 の 回 り の こ と',
       label_asame:   'そ の ま ま',
@@ -1103,6 +1329,13 @@
       serif_oboroke_res:'そ れ も い い ム ッ シ ュ',
       serif_gutai_in2:'そ こ ま で 考 え な く て い い ム ッ シ ュ',
       serif_oboroke_in:'そ れ も い い ム ッ シ ュ',
+      reaction_serifs: [
+        'そ れ も い い<br>ム ッ シ ュ',
+        '少 し 離 れ て<br>見 る ム ッ シ ュ',
+        '深 い ム ッ シ ュ',
+        '角 度 を 変 え て<br>み る ム ッ シ ュ',
+        'な か な か 難 し い<br>ム ッ シ ュ',
+      ],
       serif_gutai_res_asame:  'そ の ま ま ム ッ シ ュ',
       serif_gutai_res_fukame: '言 葉 の 奥 ム ッ シ ュ',
       serif_oboroke_in2_asame: 'そ れ で よ ろ し い ム ッ シ ュ',
@@ -1121,6 +1354,8 @@
       serif_kokoni:   'こ こ か も ン ゴ',
       serif_tamatta:  '貯 ま っ た ン ゴ',
       serif_end:      'ま た 来 る ン ゴ',
+      serif_question: 'な ん か 引 っ か か っ<br>て る ン ゴ ？',
+      serif_detail:   'そ れ 、<br>ど ん な 感 じ ン ゴ ？',
       label_oboroke: 'ま だ は っ き り し な い',
       label_gutai:   '思 い つ き は す る',
       label_asame:   '近 い と こ',
@@ -1131,6 +1366,13 @@
       serif_oboroke_res:'決 め る 必 要 な い ン ゴ',
       serif_gutai_in2:'思 い つ い た こ と で い い ン ゴ',
       serif_oboroke_in:'決 め る 必 要 な い ン ゴ',
+      reaction_serifs: [
+        '決 め る 必 要<br>な い ン ゴ',
+        'ふ わ っ と し て<br>て い い ン ゴ',
+        'そ の ま ま で<br>い い ン ゴ',
+        'ゆ れ て る ま ま<br>で い い ン ゴ',
+        'な ん か そ う い う<br>感 じ ン ゴ',
+      ],
       serif_gutai_res_asame:  '流 し て い い ン ゴ',
       serif_gutai_res_fukame: '言 葉 の 続 き ン ゴ',
       serif_oboroke_in2_asame: 'い ま そ ん な 感 じ ン ゴ',
@@ -1149,6 +1391,8 @@
       serif_kokoni:   '気 に な る よ ん',
       serif_tamatta:  '貯 ま っ た よ ん',
       serif_end:      'ま た 来 る よ ん',
+      serif_question: 'な ん か 気 に な る<br>こ と あ る よ ん？',
+      serif_detail:   'ど ん な 感 じ か<br>教 え て よ ん',
       label_oboroke: 'わ か ら な い',
       label_gutai:   '目 に つ い た も の',
       label_asame:   'テ キ ト ー',
@@ -1159,6 +1403,13 @@
       serif_oboroke_res:'日 向 ぼ っ こ は 苦 手 だ よ ん',
       serif_gutai_in2:'眠 い と き は 寝 る に か ぎ る よ ん',
       serif_oboroke_in:'日 向 ぼ っ こ は 苦 手 だ よ ん',
+      reaction_serifs: [
+        '日 向 ぼ っ こ は<br>苦 手 だ よ ん',
+        'ゆ っ く り で<br>い い よ ん',
+        'な ん と か な る<br>よ ん',
+        'ま あ い い よ ん',
+        '寝 て れ ば<br>い い よ ん',
+      ],
       serif_gutai_res_asame:  'テ キ ト ー で い い よ ん',
       serif_gutai_res_fukame: '気 に な る 言 葉 よ ん',
       serif_oboroke_in2_asame: 'ま あ そ ん な 日 も あ る よ ん',
@@ -1177,6 +1428,8 @@
       serif_kokoni:   'こ こ が 気 に な る ぜ ？',
       serif_tamatta:  '進 ん だ な 、',
       serif_end:      'ま た 来 い よ ！',
+      serif_question: 'な ん か 引 っ か か っ<br>て る こ と あ る か ？',
+      serif_detail:   'そ れ 、<br>ど ん な 感 じ だ ？',
       label_oboroke: 'な ん か よ か っ た こ と',
       label_gutai:   '気 に な っ て る こ と',
       label_asame:   '一 歩',
@@ -1187,6 +1440,13 @@
       serif_oboroke_res:'ル ー テ ィ ン っ て だ る い よ な ！',
       serif_gutai_in2:'身 近 な も の は 想 像 つ く よ な ！',
       serif_oboroke_in:'ル ー テ ィ ン っ て だ る い よ な ！',
+      reaction_serifs: [
+        'ル ー テ ィ ン っ て<br>だ る い よ な ！',
+        'そ こ か ら 光 る と こ<br>見 つ け よ う ぜ ！',
+        'や っ て み れ ば<br>変 わ る ぜ ！',
+        'そ の 調 子 だ ぜ ！',
+        'い い と こ も あ る<br>は ず だ ぜ ！',
+      ],
       serif_gutai_res_asame:  'と り あ え ず 出 す ！',
       serif_gutai_res_fukame: '言 葉 の 裏 側 ！',
       serif_oboroke_in2_asame: 'そ う い う 時 も あ る な ！',
@@ -1248,6 +1508,8 @@
       'serif-prompt-g':   cfg.serif_prompt_g,
       'serif-gutai-in2':  cfg.serif_gutai_in2,
       'serif-oboroke-in': cfg.serif_oboroke_in,
+      'serif-question':   cfg.serif_question,
+      'serif-detail':     cfg.serif_detail,
     };
     Object.entries(serifMap).forEach(([key, text]) => {
       document.querySelectorAll(`[data-serif="${key}"]`).forEach(el => {
@@ -1355,6 +1617,228 @@
     });
   }
 
+  // ================================================================
+  // ===== 新フロー：気になること → パッド → 詳しく =====
+  // ================================================================
+
+  // パッドの選択値（0〜1）
+  let padX = 0.5; // 0=おぼろげ, 1=ぐたい
+  let padY = 0.5; // 0=深め, 1=浅め
+
+  function checkQuestionInput() {
+    const el  = document.getElementById('question-text');
+    const btn = document.getElementById('question-next-btn');
+    if (btn) btn.disabled = !(el && el.value.trim().length > 0);
+  }
+
+  function checkDetailInput() {
+    const el  = document.getElementById('detail-text');
+    const btn = document.getElementById('detail-next-btn');
+    if (btn) btn.disabled = !(el && el.value.trim().length > 0);
+  }
+
+  function getPadLabel(x, y) {
+    const cfg = CHARA_CONFIG[currentChara] || CHARA_CONFIG.majimaji;
+    const xLabel = x < 0.35 ? (cfg.label_oboroke || 'マジおぼろげ').replace(/\s/g,'')
+                 : x > 0.65 ? (cfg.label_gutai   || 'マジぐたい').replace(/\s/g,'')
+                 : 'どちらでもない';
+    const yLabel = y < 0.35 ? (cfg.label_asame  || 'マジ浅め').replace(/\s/g,'')
+                 : y > 0.65 ? (cfg.label_fukame || 'マジ深め').replace(/\s/g,'')
+                 : '';
+    return [yLabel, xLabel].filter(Boolean).join(' × ');
+  }
+
+  // ================================================================
+  // ===== ノイズ的セリフ =====
+  // ================================================================
+  const NOISE_SERIFS = {
+    majimaji: [
+      '石 の 上 っ て 、<br>寒 い よ ね',
+      '朝 日 が 嫌 な<br>時 も あ る さ 。',
+      '木 漏 れ 日 っ て 、<br>眠 く な る よ ね ー',
+      '雨 の 日 の 土 の<br>に お い 、 好 き だ よ ー',
+      'ボ ク 、 昨 日 も<br>こ こ に い た よ ー',
+    ],
+    concrete: [
+      'ケ ー キ と プ リ ン 、<br>ど っ ち か し ら ね 。',
+      'こ の 前 の 雨 、<br>す ご か っ た わ ね 。',
+      '空 っ て い つ も<br>そ こ に あ る の よ ね 。',
+      'お 茶 、 飲 む ？<br>あ る け ど 。',
+    ],
+    kasa: [
+      '傘 っ て 、 な ぜ<br>な く す の か ム ッ シ ュ 。',
+      '雨 が 降 る 前 の<br>空 気 、 知 っ て る ム ッ シ ュ ？',
+      '石 は 冷 た い<br>ム ッ シ ュ 。',
+      'こ こ 、 静 か だ<br>ム ッ シ ュ 。',
+    ],
+    yurayura: [
+      '風 が 吹 い た ン ゴ',
+      '雲 、 ゆ っ く り<br>動 い て る ン ゴ',
+      'さ っ き 葉 っ ぱ<br>落 ち た ン ゴ',
+      'な ん か 眠 い ン ゴ',
+    ],
+    namake: [
+      '日 向 ぼ っ こ 、<br>し た い よ ん 。',
+      '昨 日 い っ ぱ い<br>寝 た よ ん 。',
+      'お な か す い た<br>よ ん 。',
+      'ゆ っ く り で<br>い い よ ん 。',
+    ],
+    sun: [
+      '今 日 も 出 て る ぜ ！',
+      '朝 っ て い い よ な ！<br>と ん で も な く 。',
+      '影 が 長 く な っ て<br>き た ぜ ！',
+      '雲 の 上 っ て 俺 の<br>テ リ ト リ ー だ ぜ ！',
+    ],
+  };
+
+  function renderNoiseSerif() {
+    const pool = NOISE_SERIFS[currentChara] || NOISE_SERIFS.majimaji;
+    const text = pool[Math.floor(Math.random() * pool.length)];
+    const el = document.getElementById('noise-serif');
+    if (el) el.innerHTML = text;
+  }
+
+  // ================================================================
+  // ===== リフレームセリフ生成 =====
+  // ================================================================
+  // キャラ別：そもそも論を使うかどうか
+  const REFRAME_STYLE = {
+    majimaji: 'both',    // 両方
+    concrete: 'angle',   // 別角度
+    kasa:     'both',
+    yurayura: 'word',    // そもそも論
+    namake:   'angle',
+    sun:      'angle',
+  };
+
+  // テキストから核心キーワードを抽出（助詞・一般語を除く）
+  function extractKeyword(text) {
+    const stopWords = ['が','は','を','に','で','と','の','も','て','た','な','ね','よ','か','し','く','い','う','え','お','あ','っ','ん'];
+    const chars = [...text].filter(c => !stopWords.includes(c) && c.trim());
+    // 2文字以上の塊を探す
+    const words = text.match(/[\u4e00-\u9fff\u3040-\u309f\u30a0-\u30ff]{2,}/g) || [];
+    return words[0] || text.slice(0, 4);
+  }
+
+  function generateReframeSerif(inputText) {
+    const cfg   = CHARA_CONFIG[currentChara] || CHARA_CONFIG.majimaji;
+    const style = REFRAME_STYLE[currentChara] || 'both';
+    const kw    = extractKeyword(inputText);
+
+    const angleTemplates = {
+      majimaji: [`${kw} っ て 、 別 の 見 方 も<br>あ る か も ね ー`, `${kw} 、 違 う 角 度 か ら<br>見 る と ど う だ ろ ー`],
+      concrete: [`${kw} っ て 、 見 方 に よ っ て<br>変 わ る わ よ ね 。`, `${kw} の 別 の 面 、<br>あ る か も ね 。`],
+      kasa:     [`${kw} 、 距 離 を 置 く と<br>違 う ム ッ シ ュ 。`, `${kw} っ て 、 角 度 に よ る<br>ム ッ シ ュ 。`],
+      yurayura: [`${kw} 、 ゆ ら ゆ ら し て<br>る ン ゴ 。`, `${kw} 、 別 の 感 じ も<br>あ る ン ゴ 。`],
+      namake:   [`${kw} 、 寝 た ら 変 わ る<br>か も よ ん 。`, `${kw} っ て 、 明 日 は<br>違 う か も よ ん 。`],
+      sun:      [`${kw} 、 見 方 次 第 で<br>変 わ る ぜ ！`, `${kw} っ て 、 そ こ か ら<br>だ ぜ ！`],
+    };
+    const wordTemplates = {
+      majimaji: [`${kw} っ て 、 な ん だ ろ ね ー`, `そ も そ も ${kw} っ て<br>な ん だ ろ ー`],
+      concrete: [`${kw} っ て 、 な ん か し ら ね 。`, `${kw} 、 ど う い う こ と<br>な の か し ら 。`],
+      kasa:     [`${kw} っ て 、 な ん だ ろ<br>ム ッ シ ュ 。`, `そ も そ も ${kw} っ て<br>な ん ム ッ シ ュ ？`],
+      yurayura: [`${kw} っ て な ん ン ゴ 。`, `そ も そ も ${kw} 、<br>よ く わ か ら ん ン ゴ 。`],
+      namake:   [`${kw} っ て 、 な ん よ ん 。`, `${kw} 、 ふ わ っ と<br>し て る よ ん 。`],
+      sun:      [`${kw} っ て 、 な ん だ ！`, `そ も そ も ${kw} っ て<br>な ん だ ぜ ！`],
+    };
+
+    const aPool = angleTemplates[currentChara] || angleTemplates.majimaji;
+    const wPool = wordTemplates[currentChara]  || wordTemplates.majimaji;
+
+    if (style === 'angle') return aPool[Math.floor(Math.random() * aPool.length)];
+    if (style === 'word')  return wPool[Math.floor(Math.random() * wPool.length)];
+    // both: ランダムにどちらか
+    const pool = Math.random() < 0.5 ? aPool : wPool;
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  function initPad() {
+    padX = 0.5; padY = 0.5;
+    const pad   = document.getElementById('grad-pad');
+    const dot   = document.getElementById('pad-dot');
+    const label = document.getElementById('pad-label');
+    if (!pad || !dot) return;
+
+    const cfg = CHARA_CONFIG[currentChara] || CHARA_CONFIG.majimaji;
+
+    // 軸ラベルをキャラ独自ワードに設定
+    const lTop    = document.getElementById('pad-label-top');
+    const lBottom = document.getElementById('pad-label-bottom');
+    const lLeft   = document.getElementById('pad-label-left');
+    const lRight  = document.getElementById('pad-label-right');
+    if (lTop)    lTop.textContent    = (cfg.label_asame   || 'マジ浅め').replace(/\s/g,'');
+    if (lBottom) lBottom.textContent = (cfg.label_fukame  || 'マジ深め').replace(/\s/g,'');
+    if (lLeft)   lLeft.textContent   = (cfg.label_oboroke || 'マジおぼろげ').replace(/\s/g,'');
+    if (lRight)  lRight.textContent  = (cfg.label_gutai   || 'マジぐたい').replace(/\s/g,'');
+    pad.style.background = `
+      linear-gradient(to bottom, rgba(20,20,20,0.85) 0%, rgba(220,220,220,0.85) 100%),
+      linear-gradient(to right, #aaaaaa 0%, ${cfg.lime} 100%)
+    `;
+    pad.style.backgroundBlendMode = 'multiply';
+
+    dot.style.left = '50%';
+    dot.style.top  = '50%';
+    if (label) label.textContent = getPadLabel(0.5, 0.5);
+
+    function updateDot(clientX, clientY) {
+      const rect = pad.getBoundingClientRect();
+      padX = Math.max(0, Math.min(1, (clientX - rect.left)  / rect.width));
+      padY = Math.max(0, Math.min(1, (clientY - rect.top)   / rect.height));
+      dot.style.left = (padX * 100) + '%';
+      dot.style.top  = (padY * 100) + '%';
+      if (label) label.textContent = getPadLabel(padX, padY);
+    }
+
+    pad.onmousedown = e => {
+      updateDot(e.clientX, e.clientY);
+      const move = ev => updateDot(ev.clientX, ev.clientY);
+      const up   = () => { document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up); };
+      document.addEventListener('mousemove', move);
+      document.addEventListener('mouseup', up);
+    };
+    pad.ontouchstart = e => {
+      e.preventDefault();
+      updateDot(e.touches[0].clientX, e.touches[0].clientY);
+      const move = ev => { ev.preventDefault(); updateDot(ev.touches[0].clientX, ev.touches[0].clientY); };
+      const end  = () => { pad.removeEventListener('touchmove', move); pad.removeEventListener('touchend', end); };
+      pad.addEventListener('touchmove', move, { passive: false });
+      pad.addEventListener('touchend', end);
+    };
+  }
+
+  function submitDetail() {
+    const questionVal = (document.getElementById('question-text')?.value || '').trim();
+    const detailVal   = (document.getElementById('detail-text')?.value   || '').trim();
+
+    // padXとpadYからモードを決定
+    const isGutai   = padX >= 0.5;
+    const isFukame  = padY >= 0.5;
+    const derivedMode  = isGutai ? 'gutai' : 'oboroke';
+    const derivedDepth = isFukame ? 'fukame' : 'asame';
+
+    // gutai-text に questionVal をセット（木の1本目枝に表示される）
+    if (isGutai) {
+      const el = document.getElementById('gutai-text');
+      if (el) el.value = questionVal;
+    } else {
+      const el = document.getElementById('oboroke-text');
+      if (el) el.value = questionVal;
+    }
+
+    // モードをセット
+    mode = derivedMode;
+    currentDepth = derivedDepth;
+
+    // 保存
+    const modePair = 'abstract_concrete';
+    saveFragment(questionVal, currentChara, modePair);
+    if (detailVal) saveFragment(detailVal, currentChara, modePair);
+
+    // 掛け合いへ（新フローフラグをセット）
+    fromNewFlow = true;
+    showDialogue(derivedMode);
+  }
+
   // タイトルタップ：初回かどうかで分岐
   function titleTap() {
     const isFirstVisit = !localStorage.getItem('marginary_visited');
@@ -1387,6 +1871,33 @@
       el.offsetHeight;
       el.style.animation = '';
     });
+    if (id === 'screen-question') {
+      // セリフを再適用
+      const cfg = CHARA_CONFIG[currentChara] || CHARA_CONFIG.majimaji;
+      document.querySelectorAll('[data-serif="serif-question"]').forEach(el => {
+        el.innerHTML = cfg.serif_question || '';
+      });
+      const el = document.getElementById('question-text');
+      if (el) el.value = '';
+      const btn = document.getElementById('question-next-btn');
+      if (btn) btn.disabled = true;
+    }
+    if (id === 'screen-noise') {
+      renderNoiseSerif();
+    }
+    if (id === 'screen-pad') {
+      initPad();
+    }
+    if (id === 'screen-detail') {
+      const cfg = CHARA_CONFIG[currentChara] || CHARA_CONFIG.majimaji;
+      document.querySelectorAll('[data-serif="serif-detail"]').forEach(el => {
+        el.innerHTML = cfg.serif_detail || '';
+      });
+      const el = document.getElementById('detail-text');
+      if (el) el.value = '';
+      const btn = document.getElementById('detail-next-btn');
+      if (btn) btn.disabled = true;
+    }
     if (id === 'screen-choice') {
       initChoiceScreen();
     }
@@ -1428,6 +1939,9 @@
     }
     if (id === 'screen-tamatta') {
       setTimeout(() => renderTamatta(), 80);
+    }
+    if (id === 'screen-library') {
+      renderLibrary();
     }
   }
 
@@ -1813,17 +2327,18 @@
     badge.textContent = val;
     badge.className = dialogueType === 'gutai' ? 'result-badge-lime' : 'result-badge-gray';
 
-    // キャラの反応セリフ：あさめ/ふかめ時は差し替え
+    // リフレームセリフ：入力内容からズラすセリフを生成
     const serifEl = document.getElementById('serif-reaction');
+    const inputForReframe = document.getElementById('question-text')?.value.trim()
+      || document.getElementById('detail-text')?.value.trim()
+      || val;
     let serifText;
-    if (currentDepth === 'asame') {
-      serifText = cfg.serif_gutai_res_asame || cfg.serif_gutai_res || '';
-    } else if (currentDepth === 'fukame') {
-      serifText = cfg.serif_gutai_res_fukame || cfg.serif_gutai_res || '';
+    if (inputForReframe) {
+      serifText = generateReframeSerif(inputForReframe);
+    } else if (cfg.reaction_serifs && cfg.reaction_serifs.length > 0) {
+      serifText = cfg.reaction_serifs[Math.floor(Math.random() * cfg.reaction_serifs.length)];
     } else {
-      serifText = dialogueType === 'gutai'
-        ? (cfg.serif_gutai_res || '')
-        : (cfg.serif_oboroke_res || '');
+      serifText = cfg.serif_gutai_res || '';
     }
     serifEl.innerHTML = serifText;
 
@@ -1838,8 +2353,55 @@
     showDialogue(type);
   }
 
+  // 新フローから来たかどうかのフラグ
+  let fromNewFlow = false;
+
   function afterFirst(type) {
     const cfg = CHARA_CONFIG[currentChara] || CHARA_CONFIG.majimaji;
+
+    // 新フロー（question→pad→detail）から来た場合はcombined/kokoniをスキップ
+    if (fromNewFlow) {
+      fromNewFlow = false;
+      const val       = type === 'gutai'
+        ? document.getElementById('gutai-text')?.value.trim()
+        : document.getElementById('oboroke-text')?.value.trim();
+      const detailVal = document.getElementById('detail-text')?.value.trim() || '';
+
+      const cfg = CHARA_CONFIG[currentChara] || CHARA_CONFIG.majimaji;
+      const depthLabel = currentDepth === 'fukame'
+        ? (cfg.label_fukame || 'マジ深め').replace(/\s/g,'')
+        : currentDepth === 'asame'
+        ? (cfg.label_asame  || 'マジ浅め').replace(/\s/g,'')
+        : '';
+      const xLabel = padX < 0.5
+        ? (cfg.label_oboroke || 'マジおぼろげ').replace(/\s/g,'')
+        : (cfg.label_gutai   || 'マジぐたい').replace(/\s/g,'');
+
+      // 1本目：気になること（深度ラベル付き）
+      history.push({
+        gutai:      val || '',
+        oboroke:    '',
+        chara:      currentChara,
+        category:   lastInputCategory,
+        depthLabel,
+        xLabel,
+      });
+      // 2本目：それどんな感じ（ラベルなし）
+      if (detailVal) {
+        history.push({
+          gutai:      detailVal,
+          oboroke:    '',
+          chara:      currentChara,
+          category:   lastInputCategory,
+          depthLabel: '',
+          xLabel:     '',
+        });
+      }
+
+      renderEndGrid();
+      goTo('screen-tamatta');
+      return;
+    }
 
     if (currentDepth === 'asame') {
       currentDepth = 'fukame';
@@ -1854,7 +2416,6 @@
       if (el) el.placeholder = label;
       goTo('screen-gutai-input2');
     } else {
-      // 通常のおぼろげ/ぐたいペア
       goTo(type === 'gutai' ? 'screen-prompt-oboroke' : 'screen-prompt-gutai');
     }
   }
@@ -1927,12 +2488,18 @@
     const gutaiWords   = [];
     const oborokeWords = [];
     history.forEach(entry => {
-      if (entry.gutai)   gutaiWords.push(entry.gutai);
-      if (entry.oboroke) oborokeWords.push(entry.oboroke);
+      if (entry.gutai)   gutaiWords.push({ text: entry.gutai,   depthLabel: entry.depthLabel || '', xLabel: entry.xLabel || '' });
+      if (entry.oboroke) oborokeWords.push({ text: entry.oboroke, depthLabel: '', xLabel: '' });
     });
-    const treeWords   = [...gutaiWords, ...oborokeWords];
-    const strataWords = [...gutaiWords, ...oborokeWords];
+    const treeWords = [...gutaiWords, ...oborokeWords];
     if (treeWords.length === 0) return;
+
+    // 地層はfragmentsから（木と重複しない過去の言葉）
+    const treeTexts  = new Set(treeWords.map(w => w.text));
+    const strataWords = getFragments()
+      .map(f => f.text)
+      .filter(t => !treeTexts.has(t))
+      .slice(-20);
 
     // ===== 木エリア：Canvas =====
     const TW = treeEl.offsetWidth  || 320;
@@ -1973,7 +2540,13 @@
       const sx  = TRUNK_X;
       const sy  = TRUNK_BOTTOM - trunkLen * t;
       const bl  = bigLen * (0.7 + Math.random() * 0.3);
-      const b   = { x: sx, y: sy, angle: ang, len: bl, depth: 1, word: treeWords[i] || null, prog: 0 };
+      const tw  = treeWords[i] || null;
+      const b   = {
+        x: sx, y: sy, angle: ang, len: bl, depth: 1,
+        word:       tw ? tw.text       : null,
+        depthLabel: tw ? (tw.depthLabel + (tw.xLabel ? '·' + tw.xLabel : '')) : '',
+        prog: 0
+      };
       branches.push(b);
       bigBranches.push(b);
     }
@@ -2019,7 +2592,7 @@
       ctx.lineCap = 'round';
       ctx.stroke();
 
-      // 枝先の単語ラベル（緑色）
+      // 枝先の単語ラベル（深度ラベル付き）
       if (b.depth === 1 && b.word && b.prog >= 1) {
         const lx = ex + Math.cos(b.angle) * 7;
         const ly = ey + Math.sin(b.angle) * 7;
@@ -2028,13 +2601,21 @@
         ctx.fillStyle = '#00712B';
         ctx.textAlign = Math.cos(b.angle) >= 0 ? 'left' : 'right';
         ctx.textBaseline = 'middle';
-        const text = b.word;
-        const maxLen = 8;
-        if (text.length <= maxLen) {
-          ctx.fillText(text, lx, ly);
+        const wordText  = b.word.length > 8 ? b.word.slice(0, 8) : b.word;
+        const depthText = b.depthLabel || '';
+        if (depthText) {
+          ctx.fillText(wordText, lx, ly - 8);
+          ctx.font = '400 8px Inter, sans-serif';
+          ctx.fillStyle = '#8C9E6A';
+          ctx.fillText(depthText, lx, ly + 6);
         } else {
-          ctx.fillText(text.slice(0, maxLen), lx, ly - 7);
-          ctx.fillText(text.slice(maxLen),    lx, ly + 7);
+          const maxLen = 8;
+          if (b.word.length <= maxLen) {
+            ctx.fillText(b.word, lx, ly);
+          } else {
+            ctx.fillText(b.word.slice(0, maxLen), lx, ly - 7);
+            ctx.fillText(b.word.slice(maxLen),    lx, ly + 7);
+          }
         }
         ctx.restore();
       }
@@ -2152,13 +2733,411 @@
     });
   }
 
+  // ================================================================
+  // ===== 図書館：哲学者の言葉 =====
+  // ================================================================
+  const PHILOSOPHY_QUOTES = [
+    // 疲れ・休息
+    { keywords: ['疲れ','しんどい','だるい','休みたい','眠い','つらい','辛い'],
+      text: '休息とは何もしないことではない。回復することだ。',
+      author: 'ヴォルテール' },
+    { keywords: ['疲れ','しんどい','だるい','休みたい','眠い'],
+      text: '疲れた魂には、静けさが薬になる。',
+      author: 'パスカル' },
+
+    // 不安・心配
+    { keywords: ['不安','心配','怖い','こわい','怖','ドキドキ'],
+      text: '我々を苦しめるのは、物事そのものではなく、物事についての考え方である。',
+      author: 'エピクテトス' },
+    { keywords: ['不安','心配','悩む','迷う'],
+      text: '明日のことを思い悩むな。明日のことは明日が心配してくれる。',
+      author: 'マタイ伝' },
+
+    // 孤独・ひとり
+    { keywords: ['孤独','ひとり','一人','さびしい','寂しい'],
+      text: '孤独に慣れた人間だけが、自分自身に出会える。',
+      author: 'ニーチェ' },
+    { keywords: ['孤独','ひとり','一人'],
+      text: '自分自身と向き合う時間を持たない人は、自分を知ることができない。',
+      author: 'ソクラテス' },
+
+    // 変化・変わりたい
+    { keywords: ['変わりたい','変えたい','変化','変わる'],
+      text: '万物は流れる。同じ川に二度入ることはできない。',
+      author: 'ヘラクレイトス' },
+    { keywords: ['変わりたい','変化','成長'],
+      text: 'あなたが変わらなければ、何も変わらない。',
+      author: 'ジム・ローン' },
+
+    // 仕事・学校
+    { keywords: ['仕事','会社','職場','上司','同僚'],
+      text: '仕事とは、自分を表現する場である。だから、手を抜くことは自分を貶めることだ。',
+      author: 'カール・マルクス' },
+    { keywords: ['学校','勉強','授業','先生','友達'],
+      text: '教育とは、学校で習ったことをすべて忘れた後に残るものだ。',
+      author: 'アインシュタイン' },
+
+    // 時間
+    { keywords: ['時間','暇','忙しい','急ぐ','遅い'],
+      text: '時間は、使い方を知っている者にとっては十分にある。',
+      author: 'ゲーテ' },
+    { keywords: ['時間','過去','未来','後悔'],
+      text: '過去は変えられない。しかし、過去の意味は変えられる。',
+      author: 'アドラー' },
+
+    // 感情・気持ち
+    { keywords: ['悲しい','かなしい','泣きたい','涙'],
+      text: '悲しみは、心が深く感じている証拠だ。',
+      author: 'ヴィクトール・ユゴー' },
+    { keywords: ['楽しい','うれしい','幸せ','しあわせ'],
+      text: '幸福とは、求めるものではなく、気づくものである。',
+      author: 'バートランド・ラッセル' },
+    { keywords: ['怒り','むかつく','イライラ','腹立つ'],
+      text: '怒りを持つことは、他人の過ちに対して自分を罰することだ。',
+      author: 'ブッダ' },
+
+    // 人間関係
+    { keywords: ['友達','友人','恋人','家族','親','兄弟'],
+      text: '他者を理解しようとする努力こそが、人間関係の始まりだ。',
+      author: 'カント' },
+    { keywords: ['裏切り','信頼','嘘','うそ'],
+      text: '信頼は築くのに長い時間がかかるが、壊れるのは一瞬だ。',
+      author: 'フランシス・ベーコン' },
+
+    // わからない・迷い
+    { keywords: ['わからない','迷う','どうしよう','決められない','迷い'],
+      text: '無知の知こそが、知恵の始まりである。',
+      author: 'ソクラテス' },
+    { keywords: ['わからない','答え','正解'],
+      text: '問いを持ち続けることが、答えを見つけることより大切なこともある。',
+      author: 'リルケ' },
+
+    // 自然・日常
+    { keywords: ['空','雲','風','雨','自然','木','花','海'],
+      text: '自然の中に答えはないが、静けさがある。',
+      author: 'ルソー' },
+    { keywords: ['朝','夜','昼','夕','夕焼け','朝日'],
+      text: '毎朝、世界は新しく生まれ直す。',
+      author: 'ボードレール' },
+
+    // デフォルト
+    { keywords: [],
+      text: 'よく生きることは、よく考えることから始まる。',
+      author: 'アリストテレス' },
+    { keywords: [],
+      text: '人間は考える葦である。',
+      author: 'パスカル' },
+    { keywords: [],
+      text: '汝自身を知れ。',
+      author: 'ソクラテス' },
+  ];
+
+  function pickPhilosophyQuote() {
+    // 最近の入力フラグメントからキーワードを拾う
+    const fragments = getFragments();
+    const recentTexts = fragments.slice(-6).map(f => f.text).join('');
+
+    // キーワードマッチ
+    const matched = PHILOSOPHY_QUOTES.filter(q =>
+      q.keywords.length > 0 && q.keywords.some(kw => recentTexts.includes(kw))
+    );
+
+    if (matched.length > 0) {
+      return matched[Math.floor(Math.random() * matched.length)];
+    }
+
+    // マッチなし → デフォルトからランダム
+    const defaults = PHILOSOPHY_QUOTES.filter(q => q.keywords.length === 0);
+    return defaults[Math.floor(Math.random() * defaults.length)];
+  }
+
+  // ================================================================
+  // ===== 思想断片データベース =====
+  // ================================================================
+  const THOUGHT_FRAGMENTS = [
+    { id: 'tf001', text: '疲労は存在の証明である。', author: 'カミュ', tags: ['疲れ','しんどい','だるい','疲労','つらい'] },
+    { id: 'tf002', text: '不安とは自由のめまいである。', author: 'キェルケゴール', tags: ['不安','怖い','心配','めまい','ドキドキ'] },
+    { id: 'tf003', text: '他者は地獄である。', author: 'サルトル', tags: ['人間関係','他人','友達','職場','学校','嫌い'] },
+    { id: 'tf004', text: '生とは何かを問うことをやめたとき、人は死ぬ。', author: 'カミュ', tags: ['生きる','意味','死','問い'] },
+    { id: 'tf005', text: '孤独は人を偉大にし、あるいは小さくする。', author: 'ニーチェ', tags: ['孤独','ひとり','一人','さびしい'] },
+    { id: 'tf006', text: '怠惰は繁栄の母である。', author: 'モンテーニュ', tags: ['眠い','休み','だるい','やる気','ぼーっと'] },
+    { id: 'tf007', text: '真実はつねに奇妙である。', author: 'バイロン', tags: ['わからない','不思議','なぜ','謎'] },
+    { id: 'tf008', text: '変化こそが唯一の永続するものだ。', author: 'ヘラクレイトス', tags: ['変化','変わる','違う','変わりたい'] },
+    { id: 'tf009', text: '怒りは短い狂気である。', author: 'ホラティウス', tags: ['怒り','むかつく','イライラ','腹立つ'] },
+    { id: 'tf010', text: '愛するとは、相手の中に神を見ることだ。', author: 'ドストエフスキー', tags: ['好き','愛','恋','恋人'] },
+    { id: 'tf011', text: '時間は最も賢明な相談相手である。', author: 'ペリクレス', tags: ['時間','忙しい','急ぐ','待つ','余裕'] },
+    { id: 'tf012', text: '我々は幸福になるためではなく、幸福だと思うために生きている。', author: 'ラロシュフコー', tags: ['幸せ','楽しい','うれしい','しあわせ'] },
+    { id: 'tf013', text: '人は働くために食うのではなく、食うために働く。', author: 'マルクス', tags: ['仕事','会社','働く','職場'] },
+    { id: 'tf014', text: '学校とは、退屈の練習場だ。', author: 'シオラン', tags: ['学校','勉強','授業','宿題'] },
+    { id: 'tf015', text: '明日できることを今日するな。', author: 'マーク・トウェイン', tags: ['面倒','後回し','やる気','先延ばし','めんどう','めんど'] },
+    { id: 'tf016', text: '眠りは小さな死である。', author: 'ショーペンハウアー', tags: ['眠い','眠れない','睡眠','夢','寝れない'] },
+    { id: 'tf017', text: '存在するとは、知覚されることである。', author: 'バークリー', tags: ['存在','見られる','認められる','目立つ'] },
+    { id: 'tf018', text: 'お金は自由の道具だが、目的になると足枷になる。', author: 'ルソー', tags: ['お金','年収','給料','貧しい','金','稼ぐ'] },
+    { id: 'tf019', text: '健康とは、生命が沈黙している状態のことだ。', author: 'ルノー', tags: ['体','健康','病気','痛い','身体'] },
+    { id: 'tf020', text: '家族とは、世界中で最も難しい人間関係である。', author: 'バーナード・ショー', tags: ['家族','親','兄弟','姉妹','実家'] },
+    { id: 'tf021', text: '未来はすでに来ている。ただ均等に分配されていないだけだ。', author: 'ウィリアム・ギブソン', tags: ['未来','可能性','変化','社会'] },
+    { id: 'tf022', text: '自分自身を知ることが、すべての知恵の始まりだ。', author: 'アリストテレス', tags: ['自分','わからない','迷い','自己'] },
+    { id: 'tf023', text: '退屈は何か恐ろしいことの予告編である。', author: 'ボードレール', tags: ['暇','退屈','つまらない','何もない'] },
+    { id: 'tf024', text: '悲しみはそれ自体が贈り物である。', author: 'ラビンドラナート・タゴール', tags: ['悲しい','泣きたい','涙','かなしい'] },
+    { id: 'tf025', text: '人は選択によって自分を作る。', author: 'サルトル', tags: ['迷う','選択','どっち','決められない','選べない'] },
+  ];
+
+  // 思想断片マッチング
+  function matchFragments(inputTexts) {
+    const combined = inputTexts.join(' ');
+    const scored = THOUGHT_FRAGMENTS.map(f => {
+      const score = f.tags.filter(tag => combined.includes(tag)).length;
+      return { ...f, score };
+    }).filter(f => f.score > 0);
+    scored.sort((a, b) => b.score - a.score);
+    return scored.slice(0, 3);
+  }
+
+  // 保存済み断片を取得/保存
+  function getSavedFragments() {
+    try { return JSON.parse(localStorage.getItem('marginary_saved_fragments') || '[]'); } catch(e) { return []; }
+  }
+  function saveThoughtFragment(fragment) {
+    const saved = getSavedFragments();
+    if (!saved.find(f => f.id === fragment.id)) {
+      saved.push({ ...fragment, savedAt: new Date().toISOString() });
+      localStorage.setItem('marginary_saved_fragments', JSON.stringify(saved));
+    }
+  }
+
+  // 図書館を描画
+  function renderLibrary() {
+    const quote = pickPhilosophyQuote();
+    saveQuote(quote);
+
+    // 哲学者の言葉
+    const textEl   = document.getElementById('library-quote-text');
+    const authorEl = document.getElementById('library-quote-author');
+    if (textEl)   textEl.textContent = quote.text;
+    if (authorEl) authorEl.textContent = '― ' + quote.author;
+
+    // 思想断片：最近の入力テキストでマッチング
+    const recentTexts = getFragments().slice(-6).map(f => f.text);
+    const historyTexts = history.slice(-2).map(e => [e.gutai, e.oboroke]).flat().filter(Boolean);
+    const allTexts = [...historyTexts, ...recentTexts];
+    const matched = matchFragments(allTexts);
+    renderFragmentCards(matched);
+
+    // 山に「近い」言葉を表示
+    renderMountainWords();
+
+    // 保存した言葉を背景に表示
+    renderSavedBackground();
+  }
+
+  // 「近い」を選んだ言葉を localStorage で管理
+  function getCloseWords() {
+    try { return JSON.parse(localStorage.getItem('marginary_close_words') || '[]'); } catch(e) { return []; }
+  }
+  function addCloseWord(text) {
+    const words = getCloseWords();
+    if (!words.includes(text)) { words.push(text); localStorage.setItem('marginary_close_words', JSON.stringify(words)); }
+  }
+  function removeCloseWord(text) {
+    const words = getCloseWords().filter(w => w !== text);
+    localStorage.setItem('marginary_close_words', JSON.stringify(words));
+  }
+
+  // 保存した言葉を localStorage で管理（テキスト単体）
+  function getSavedWords() {
+    try { return JSON.parse(localStorage.getItem('marginary_saved_words') || '[]'); } catch(e) { return []; }
+  }
+  function addSavedWord(text) {
+    const words = getSavedWords();
+    if (!words.includes(text)) { words.push(text); localStorage.setItem('marginary_saved_words', JSON.stringify(words)); }
+  }
+
+  // 山に「近い」言葉を描画
+  function renderMountainWords() {
+    const container = document.getElementById('lib-mountain-words');
+    if (!container) return;
+    const words = getCloseWords();
+    if (words.length === 0) {
+      container.innerHTML = '<div style="font-size:11px;letter-spacing:0.14em;color:rgba(120,100,80,0.4);padding:12px 0;text-align:center;">近いを選んだことばが現れる</div>';
+      return;
+    }
+    container.innerHTML = words.map((w, i) => {
+      const left = 5 + (i * 23) % 70;
+      const mt   = 8 + (i * 17) % 24;
+      return `<div onclick="openMountainPopup('${w.replace(/'/g, "\\'")}')" style="
+        display:inline-block;
+        margin-left:${left}%;
+        margin-top:${mt}px;
+        padding:6px 12px;
+        background:rgba(255,255,255,0.75);
+        border:1px solid rgba(150,130,110,0.2);
+        border-radius:20px;
+        font-family:'Inter',sans-serif;
+        font-size:11px;
+        letter-spacing:0.1em;
+        color:rgba(80,60,40,0.75);
+        cursor:pointer;
+        transition:transform 0.15s;
+        user-select:none;
+      " onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'"
+        ontouchstart="this.style.transform='scale(0.95)'" ontouchend="this.style.transform='scale(1)'"
+      >${w}</div>`;
+    }).join('');
+  }
+
+  // 保存した言葉を背景に薄く表示
+  function renderSavedBackground() {
+    const container = document.getElementById('lib-saved-bg');
+    if (!container) return;
+    const words = getSavedWords();
+    container.innerHTML = words.map((w, i) => {
+      const top  = 5  + (i * 19) % 85;
+      const left = 5  + (i * 31) % 80;
+      const rot  = -6 + (i * 7)  % 12;
+      const op   = 0.28 + (i % 3) * 0.08;
+      return `<div style="
+        position:absolute;
+        top:${top}%;left:${left}%;
+        font-family:'Inter',sans-serif;
+        font-size:10px;letter-spacing:0.12em;
+        color:rgba(80,60,40,${op});
+        transform:rotate(${rot}deg);
+        white-space:nowrap;
+        pointer-events:none;
+        user-select:none;
+      ">${w}</div>`;
+    }).join('');
+  }
+
+  // ポップアップ
+  let currentMountainWord = '';
+  function openMountainPopup(text) {
+    currentMountainWord = text;
+    const popup   = document.getElementById('lib-word-popup');
+    const popText = document.getElementById('lib-popup-text');
+    if (popup)   { popup.style.display = 'flex'; }
+    if (popText) popText.textContent = text;
+  }
+  function closeMountainPopup() {
+    const popup = document.getElementById('lib-word-popup');
+    if (popup) popup.style.display = 'none';
+    currentMountainWord = '';
+  }
+  function mountainWordAction(action) {
+    if (!currentMountainWord) return;
+    if (action === 'save') {
+      addSavedWord(currentMountainWord);
+      removeCloseWord(currentMountainWord);
+      renderSavedBackground();
+      renderMountainWords();
+    } else if (action === 'delete') {
+      removeCloseWord(currentMountainWord);
+      renderMountainWords();
+    }
+    closeMountainPopup();
+  }
+
+  function renderFragmentCards(fragments) {
+    const container = document.getElementById('lib-fragments');
+    if (!container) return;
+
+    if (fragments.length === 0) {
+      container.innerHTML = `<div style="font-size:12px;letter-spacing:0.12em;color:#bbb;font-weight:400;padding:16px 0;">まだ近い言葉が見つからない</div>`;
+      return;
+    }
+
+    const saved = getSavedFragments().map(f => f.id);
+
+    container.innerHTML = fragments.map(f => {
+      const isSaved = saved.includes(f.id);
+      return `<div id="fragment-card-${f.id}" style="
+        background: rgba(255,255,255,0.82);
+        border: 1px solid rgba(0,0,0,0.06);
+        border-radius: 14px;
+        padding: 16px;
+        margin-bottom: 12px;
+        backdrop-filter: blur(4px);
+      ">
+        <div style="font-family:'Inter',sans-serif;font-weight:500;font-size:13px;letter-spacing:0.08em;line-height:1.9;color:#333;margin-bottom:8px;">${f.text}</div>
+        <div style="font-family:'Inter',sans-serif;font-size:10px;letter-spacing:0.16em;color:#aaa;margin-bottom:12px;">― ${f.author}</div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="reactFragment('${f.id}','close')" style="
+            flex:1;padding:8px 4px;border:1px solid #e0e0e0;border-radius:8px;
+            background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;
+            color:#aaa;cursor:pointer;transition:all 0.2s;
+          ">近い</button>
+          <button onclick="reactFragment('${f.id}','far')" style="
+            flex:1;padding:8px 4px;border:1px solid #e0e0e0;border-radius:8px;
+            background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;
+            color:#aaa;cursor:pointer;transition:all 0.2s;
+          ">違う</button>
+          <button onclick="reactFragment('${f.id}','save')" style="
+            flex:1;padding:8px 4px;border:1px solid ${isSaved ? 'var(--lime)' : '#e0e0e0'};border-radius:8px;
+            background:${isSaved ? 'var(--lime)' : 'none'};font-family:inherit;font-size:10px;letter-spacing:0.14em;
+            color:${isSaved ? 'var(--lime-text)' : '#aaa'};cursor:pointer;transition:all 0.2s;
+          ">${isSaved ? '保存済' : '保存'}</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function reactFragment(id, reaction) {
+    const fragment = THOUGHT_FRAGMENTS.find(f => f.id === id);
+    if (!fragment) return;
+
+    if (reaction === 'save') {
+      saveThoughtFragment(fragment);
+      addSavedWord(fragment.text + '　― ' + fragment.author);
+      renderSavedBackground();
+      const card = document.getElementById('fragment-card-' + id);
+      if (card) {
+        const saveBtn = card.querySelectorAll('button')[2];
+        if (saveBtn) {
+          saveBtn.style.background = 'var(--lime)';
+          saveBtn.style.borderColor = 'var(--lime)';
+          saveBtn.style.color = 'var(--lime-text)';
+          saveBtn.textContent = '保存済';
+        }
+      }
+    } else if (reaction === 'close') {
+      // 「近い」→ 山に追加、カードを薄く
+      addCloseWord(fragment.text);
+      renderMountainWords();
+      const card = document.getElementById('fragment-card-' + id);
+      if (card) { card.style.opacity = '0.4'; card.style.transition = 'opacity 0.4s'; }
+    } else if (reaction === 'far') {
+      // 「違う」→ カードをフェードアウトして削除
+      const card = document.getElementById('fragment-card-' + id);
+      if (card) {
+        card.style.opacity = '0';
+        card.style.transition = 'opacity 0.4s';
+        setTimeout(() => card.remove(), 400);
+      }
+    }
+  }
+
+  function saveQuote(quote) {
+    try {
+      const saved = getQuotes();
+      if (saved.some(q => q.text === quote.text)) return;
+      saved.unshift(quote);
+      localStorage.setItem('marginary_quotes', JSON.stringify(saved.slice(0, 10)));
+    } catch(e) {}
+  }
+
+  function getQuotes() {
+    try {
+      const raw = localStorage.getItem('marginary_quotes');
+      return raw ? JSON.parse(raw) : [];
+    } catch(e) { return []; }
+  }
+
   // ===== 新ラウンド開始 =====
   function startNewRound(chara) {
     currentChara = chara;
-    // CSS変数を先に更新してからSVGを再描画
     applyCharaConfig(chara);
     updateAllCharaSVG(chara);
-    ['gutai-text','oboroke-text','gutai-text2','oboroke-text2'].forEach(id => {
+    ['gutai-text','oboroke-text','gutai-text2','oboroke-text2','question-text','detail-text'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.value = '';
     });
@@ -2166,6 +3145,9 @@
     document.getElementById('oboroke-next-btn').disabled = true;
     if (document.getElementById('gutai2-next-btn')) document.getElementById('gutai2-next-btn').disabled = true;
     if (document.getElementById('oboroke2-next-btn')) document.getElementById('oboroke2-next-btn').disabled = true;
+    if (document.getElementById('question-next-btn')) document.getElementById('question-next-btn').disabled = true;
+    if (document.getElementById('detail-next-btn')) document.getElementById('detail-next-btn').disabled = true;
+    padX = 0.5; padY = 0.5;
     mode = '';
     goTo('screen-intro');
   }
@@ -2177,7 +3159,8 @@
     applyCharaConfig('majimaji');
     updateAllCharaSVG('majimaji');
     mode = '';
-    ['gutai-text','oboroke-text','gutai-text2','oboroke-text2'].forEach(id => {
+    padX = 0.5; padY = 0.5;
+    ['gutai-text','oboroke-text','gutai-text2','oboroke-text2','question-text','detail-text'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.value = '';
     });
