@@ -709,7 +709,7 @@
   <div class="screen" id="screen-dialogue">
     <div class="card" style="position:relative; min-height:320px; padding:28px 24px 32px;">
       <div id="dialogue-lines" style="margin-bottom:32px;"></div>
-      <button class="btn-next" onclick="goToFirstResult()">次へ</button>
+      <button class="btn-next" onclick="afterFirst(dialogueType)">次へ</button>
     </div>
   </div>
 
@@ -887,8 +887,8 @@
     <div style="width:100%;height:100%;display:flex;flex-direction:column;background:#fff;">
 
       <!-- SVG背景（絶対配置） -->
-      <div style="position:absolute;inset:0;pointer-events:none;z-index:0;">
-        <svg width="100%" height="100%" viewBox="0 0 800 699" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.6;"><g clip-path="url(#clip0_461_472b)">
+      <div style="position:absolute;inset:0;z-index:0;">
+        <svg width="100%" height="100%" viewBox="0 0 800 699" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.6;pointer-events:none;"><g clip-path="url(#clip0_461_472b)">
 <rect width="800" height="699" fill="white"/>
 <path d="M197.04 116L98 287.39H183.534L282.574 116H197.04Z" fill="#FBEFD2"/>
 <path d="M197.04 526.896L98 698.287H183.534L282.574 526.896H197.04Z" fill="#8C6239"/>
@@ -911,37 +911,18 @@
 
       <!-- スクロールコンテンツ -->
       <div style="position:relative;flex:1;overflow-y:auto;z-index:1;">
-
-        <!-- セクション1：哲学者の言葉 ＋ 思想断片 -->
-        <div style="padding:24px 20px 16px;">
-          <div style="margin-bottom:20px;">
-            <div style="font-size:9px;letter-spacing:0.28em;color:#bbb;margin-bottom:10px;font-weight:400;">ことばが、ある</div>
-            <div id="library-quote-text" style="font-family:'Inter',sans-serif;font-weight:500;font-size:14px;letter-spacing:0.08em;line-height:2.0;color:#333;margin-bottom:6px;"></div>
-            <div id="library-quote-author" style="font-family:'Inter',sans-serif;font-weight:500;font-size:10px;letter-spacing:0.18em;color:#999;text-align:right;"></div>
-          </div>
-          <div style="height:1px;background:rgba(0,0,0,0.06);margin-bottom:20px;"></div>
-          <div style="font-size:9px;letter-spacing:0.28em;color:#bbb;margin-bottom:14px;font-weight:400;">近い断片</div>
+        <div style="padding:24px 20px 0;">
+          <div style="font-size:12px;letter-spacing:0.12em;color:#333;font-weight:400;">気になる概念を選ぶ</div>
+        </div>
+        <div style="padding:16px 20px 32px;">
           <div id="lib-fragments"></div>
         </div>
-
-        <!-- セクション2：山 -->
-        <div id="lib-mountain-section" style="min-height:280px;position:relative;background:linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(235,228,218,0.7) 50%, rgba(195,180,160,0.85) 100%);overflow:hidden;padding-bottom:48px;">
-          <div style="font-size:9px;letter-spacing:0.28em;color:rgba(100,80,60,0.5);padding:20px 20px 0;font-weight:400;">近いことば</div>
-          <!-- 山のSVG -->
-          <svg width="100%" viewBox="0 0 390 160" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;">
-            <path d="M0 160 L70 50 L140 100 L210 15 L280 75 L350 35 L390 55 L390 160 Z" fill="rgba(175,158,138,0.3)"/>
-            <path d="M0 160 L90 90 L180 130 L270 55 L390 95 L390 160 Z" fill="rgba(155,138,118,0.2)"/>
-          </svg>
-          <!-- 「近い」ことばエリア -->
-          <div id="lib-mountain-words" style="position:relative;padding:0 20px;margin-top:-20px;"></div>
-        </div>
-
       </div>
 
-      <!-- 次へ -->
-      <div onclick="goTo('screen-end')" style="position:relative;z-index:1;text-align:center;padding:12px;color:#333;font-size:10px;letter-spacing:0.22em;font-weight:400;cursor:pointer;border-top:1px solid rgba(0,0,0,0.06);flex-shrink:0;background:rgba(255,255,255,0.9);">つ ぎ へ</div>
+      <!-- 次へ（山ページへ） -->
+      <div onclick="goTo('screen-mountain')" style="position:relative;z-index:1;text-align:center;padding:12px;color:#333;font-size:10px;letter-spacing:0.22em;font-weight:400;cursor:pointer;border-top:1px solid rgba(0,0,0,0.06);flex-shrink:0;background:rgba(255,255,255,0.9);">つ ぎ へ</div>
 
-      <!-- タップポップアップ -->
+      <!-- 従来のタップポップアップ（定義なし概念用フォールバック） -->
       <div id="lib-word-popup" style="
         display:none;position:absolute;inset:0;z-index:100;
         background:rgba(0,0,0,0.35);
@@ -972,6 +953,37 @@
     </div>
   </div>
 
+  <!-- ====== SCREEN: 気になった概念（山） ====== -->
+  <div class="screen" id="screen-mountain">
+    <div style="width:100%;height:100%;display:flex;flex-direction:column;background:#fff;">
+
+      <!-- 保存した概念の背景 -->
+      <div style="position:absolute;inset:0;z-index:0;">
+        <div id="mountain-saved-bg"></div>
+      </div>
+
+      <!-- コンテンツ -->
+      <div style="position:relative;flex:1;overflow-y:auto;z-index:1;">
+        <div style="padding:24px 20px 12px;">
+          <div style="font-size:12px;letter-spacing:0.12em;color:#333;font-weight:400;">気になった概念</div>
+        </div>
+
+        <!-- 山エリア -->
+        <div style="position:relative;min-height:300px;background:linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(235,228,218,0.7) 50%, rgba(195,180,160,0.85) 100%);overflow:hidden;padding-bottom:56px;">
+          <svg width="100%" viewBox="0 0 390 160" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;margin-top:20px;pointer-events:none;">
+            <path d="M0 160 L70 50 L140 100 L210 15 L280 75 L350 35 L390 55 L390 160 Z" fill="rgba(175,158,138,0.3)"/>
+            <path d="M0 160 L90 90 L180 130 L270 55 L390 95 L390 160 Z" fill="rgba(155,138,118,0.2)"/>
+          </svg>
+          <div id="lib-mountain-words" style="position:relative;padding:0 20px;margin-top:-20px;"></div>
+        </div>
+      </div>
+
+      <!-- 次へ -->
+      <div onclick="goTo('screen-end')" style="position:relative;z-index:1;text-align:center;padding:12px;color:#333;font-size:10px;letter-spacing:0.22em;font-weight:400;cursor:pointer;border-top:1px solid rgba(0,0,0,0.06);flex-shrink:0;background:rgba(255,255,255,0.9);">つ ぎ へ</div>
+
+    </div>
+  </div>
+
   <!-- ====== SCREEN END ====== -->
   <div class="screen" id="screen-end">
     <div class="card" style="position:relative; min-height:360px; text-align:center;">
@@ -979,7 +991,243 @@
       <!-- FIX 4: エンディングのキャラグリッドはマジマジ固定緑 -->
       <div class="chara-grid" id="end-chara-grid"></div>
       <div style="font-size:13px;letter-spacing:0.05em;color:#333;margin-bottom:14px;font-weight:700;">キャラをタップして続ける</div>
-      <button class="btn-restart" onclick="restart()">最初に戻る</button>
+      <button onclick="goTo('screen-depth-list')" style="
+        width:100%;margin-top:12px;padding:16px;
+        border:1.5px solid #333;border-radius:12px;
+        background:none;font-family:inherit;
+        font-size:11px;letter-spacing:0.22em;color:#333;
+        cursor:pointer;
+      ">知的な深み編集 →</button>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN: 深み一覧 ====== -->
+  <div class="screen" id="screen-depth-list" style="background:#f8f8f6;">
+    <div style="width:100%;height:100%;display:flex;flex-direction:column;">
+      <!-- ヘッダー -->
+      <div style="padding:32px 24px 20px;flex-shrink:0;">
+        <div style="font-size:9px;letter-spacing:0.32em;color:#bbb;margin-bottom:10px;">DEPTH STUDIO</div>
+        <div style="font-size:18px;letter-spacing:0.06em;color:#222;font-weight:500;line-height:1.5;">違和感から問いをつくり、<br>知的な深みを育てる</div>
+        <!-- インフォボタン -->
+        <div onclick="openDepthInfoModal()" style="display:inline-flex;align-items:center;gap:6px;margin-top:12px;cursor:pointer;">
+          <div style="width:18px;height:18px;border-radius:50%;border:1.5px solid #666;display:flex;align-items:center;justify-content:center;">
+            <span style="font-size:10px;color:#666;font-weight:700;line-height:1;">?</span>
+          </div>
+          <span style="font-size:10px;letter-spacing:0.16em;color:#666;">知的な深みとは</span>
+        </div>
+      </div>
+      <!-- 新規作成 -->
+      <div style="padding:0 24px 20px;flex-shrink:0;">
+        <button onclick="startNewDepthEntry()" style="
+          width:100%;padding:14px;
+          border:1.5px solid #222;border-radius:4px;
+          background:none;font-family:inherit;
+          font-size:11px;letter-spacing:0.22em;color:#222;
+          cursor:pointer;text-align:left;
+          display:flex;align-items:center;justify-content:space-between;
+        ">
+          <span>新しい問いを作る</span>
+          <span style="font-size:18px;line-height:1;">+</span>
+        </button>
+      </div>
+      <!-- 一覧 -->
+      <div id="depth-list-container" style="flex:1;overflow-y:auto;padding:0 24px 32px;"></div>
+      <!-- 戻る -->
+      <div onclick="goTo('screen-end')" style="flex-shrink:0;padding:16px 24px;border-top:1px solid #e8e8e4;font-size:10px;letter-spacing:0.2em;color:#aaa;cursor:pointer;">← 戻る</div>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN: 深み編集（ステップ式） ====== -->
+  <div class="screen" id="screen-depth-edit" style="background:#f8f8f6;">
+    <div style="width:100%;height:100%;display:flex;flex-direction:column;">
+
+      <!-- ヘッダー：ステップインジケーター -->
+      <div style="padding:24px 24px 16px;flex-shrink:0;border-bottom:1px solid #e8e8e4;background:#f8f8f6;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+          <!-- ステップドット -->
+          <div id="step-dot-1" style="width:6px;height:6px;border-radius:50%;background:#222;transition:all 0.3s;"></div>
+          <div style="flex:1;height:1px;background:#e0e0da;"></div>
+          <div id="step-dot-2" style="width:6px;height:6px;border-radius:50%;background:#d0d0cc;transition:all 0.3s;"></div>
+          <div style="flex:1;height:1px;background:#e0e0da;"></div>
+          <div id="step-dot-3" style="width:6px;height:6px;border-radius:50%;background:#d0d0cc;transition:all 0.3s;"></div>
+        </div>
+        <div style="display:flex;align-items:baseline;justify-content:space-between;">
+          <div>
+            <div id="step-label" style="font-size:9px;letter-spacing:0.28em;color:#bbb;margin-bottom:3px;">STEP 1 / 3</div>
+            <div id="step-title" style="font-size:15px;font-weight:500;letter-spacing:0.06em;color:#222;">違和感を選ぶ</div>
+          </div>
+          <button id="step-save-btn" onclick="saveDepthEntry()" style="
+            display:none;padding:8px 16px;border:none;border-radius:3px;
+            background:#222;color:#f8f8f6;
+            font-family:inherit;font-size:9px;letter-spacing:0.2em;cursor:pointer;
+          ">保存する</button>
+        </div>
+      </div>
+
+      <!-- ステップ本文 -->
+      <div style="flex:1;overflow-y:auto;">
+
+        <!-- STEP 1: 違和感を選ぶ -->
+        <div id="depth-step-1" style="padding:20px 24px 32px;">
+          <div style="font-size:11px;letter-spacing:0.1em;color:#aaa;margin-bottom:16px;line-height:1.8;">
+            気になること、もやもやしたこと。<br>複数選んでもOK。
+          </div>
+          <div id="depth-source-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+        </div>
+
+        <!-- STEP 2: 概念を選ぶ -->
+        <div id="depth-step-2" style="display:none;padding:20px 24px 32px;">
+          <div style="font-size:11px;letter-spacing:0.1em;color:#aaa;margin-bottom:16px;line-height:1.8;">
+            違和感に近い概念や断片を選ぶ。<br>タップで定義を確認、＋で選択。
+          </div>
+          <!-- タブ -->
+          <div style="display:flex;gap:0;margin-bottom:16px;border-bottom:1px solid #e0e0da;">
+            <button id="tab-btn-concepts" onclick="switchDepthTab('concepts')" style="
+              flex:1;padding:10px 4px;border:none;background:none;
+              font-family:inherit;font-size:9px;letter-spacing:0.22em;
+              color:#222;cursor:pointer;border-bottom:2px solid #222;
+            ">保存した概念</button>
+            <button id="tab-btn-fragments" onclick="switchDepthTab('fragments')" style="
+              flex:1;padding:10px 4px;border:none;background:none;
+              font-family:inherit;font-size:9px;letter-spacing:0.22em;
+              color:#aaa;cursor:pointer;border-bottom:2px solid transparent;
+            ">関連する断片</button>
+          </div>
+          <div id="tab-panel-concepts">
+            <div id="depth-concepts-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+          </div>
+          <div id="tab-panel-fragments" style="display:none;">
+            <div id="depth-fragments-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+          </div>
+        </div>
+
+        <!-- STEP 3: ことばを紡ぐ -->
+        <div id="depth-step-3" style="display:none;padding:20px 24px 32px;">
+          <div style="font-size:11px;letter-spacing:0.1em;color:#aaa;margin-bottom:24px;line-height:1.8;">
+            違和感を言語化する。<br>問いを立て、自分だけの概念名をつける。
+          </div>
+
+          <!-- 問い -->
+          <div style="margin-bottom:28px;">
+            <div style="font-size:9px;letter-spacing:0.28em;color:#999;margin-bottom:10px;">問い</div>
+            <textarea id="depth-question" placeholder="この違和感から、どんな問いが生まれる？" style="
+              width:100%;min-height:88px;
+              border:none;border-bottom:1px solid #d0d0cc;
+              border-radius:0;background:transparent;
+              font-family:inherit;font-size:13px;
+              letter-spacing:0.06em;line-height:2.0;color:#222;
+              resize:none;outline:none;padding:4px 0;
+              box-sizing:border-box;
+            "></textarea>
+          </div>
+
+          <!-- 概念名 -->
+          <div style="margin-bottom:28px;">
+            <div style="font-size:9px;letter-spacing:0.28em;color:#999;margin-bottom:10px;">概念名</div>
+            <input id="depth-concept-name" type="text" placeholder="この感覚に名前をつけるなら..." style="
+              width:100%;border:none;border-bottom:1px solid #d0d0cc;
+              border-radius:0;background:transparent;
+              font-family:inherit;font-size:15px;font-weight:500;
+              letter-spacing:0.08em;color:#222;
+              outline:none;padding:4px 0;
+              box-sizing:border-box;
+            ">
+          </div>
+
+          <!-- メモ -->
+          <div style="margin-bottom:28px;">
+            <div style="font-size:9px;letter-spacing:0.28em;color:#999;margin-bottom:10px;">メモ</div>
+            <textarea id="depth-memo" placeholder="気づいたこと、つながったこと、何でも。" style="
+              width:100%;min-height:72px;
+              border:none;border-bottom:1px solid #d0d0cc;
+              border-radius:0;background:transparent;
+              font-family:inherit;font-size:12px;
+              letter-spacing:0.04em;line-height:2.0;color:#444;
+              resize:none;outline:none;padding:4px 0;
+              box-sizing:border-box;
+            "></textarea>
+          </div>
+
+          <!-- 削除 -->
+          <div id="depth-delete-area" style="display:none;margin-top:8px;">
+            <button onclick="deleteCurrentDepthEntry()" style="
+              width:100%;padding:12px;
+              border:1px solid #ddd;border-radius:3px;
+              background:none;font-family:inherit;
+              font-size:10px;letter-spacing:0.18em;color:#ccc;
+              cursor:pointer;
+            ">このエントリを削除する</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- フッター：ナビゲーション -->
+      <div style="flex-shrink:0;border-top:1px solid #e8e8e4;background:#f8f8f6;display:flex;align-items:center;">
+        <div id="step-back-area" style="padding:16px 24px;font-size:10px;letter-spacing:0.2em;color:#333;cursor:pointer;min-width:80px;" onclick="depthStepBack()">← 戻る</div>
+        <div style="flex:1;"></div>
+        <div id="step-next-area" style="padding:16px 24px;font-size:10px;letter-spacing:0.2em;color:#333;cursor:pointer;font-weight:500;" onclick="depthStepNext()">次へ →</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ====== 概念定義ポップアップ ====== -->
+  <div id="concept-def-popup" style="
+    display:none;position:fixed;inset:0;z-index:200;
+    background:rgba(0,0,0,0.4);
+    justify-content:center;align-items:center;
+  " onclick="closeConceptDefPopup()">
+    <div onclick="event.stopPropagation()" style="
+      background:#f8f8f6;border-radius:4px;
+      padding:28px 24px;
+      width:calc(100% - 48px);max-width:340px;
+      max-height:70vh;overflow-y:auto;
+    ">
+      <div id="cdp-concept" style="font-size:17px;font-weight:500;letter-spacing:0.06em;color:#222;margin-bottom:4px;"></div>
+      <div id="cdp-author" style="font-size:10px;letter-spacing:0.16em;color:#bbb;margin-bottom:18px;"></div>
+      <div id="cdp-desc" style="font-size:12px;letter-spacing:0.06em;line-height:2.0;color:#444;margin-bottom:20px;"></div>
+      <div id="cdp-themes" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px;"></div>
+      <button onclick="closeConceptDefPopup()" style="
+        width:100%;padding:12px;border:1px solid #d0d0cc;border-radius:3px;
+        background:none;font-family:inherit;font-size:10px;
+        letter-spacing:0.2em;color:#888;cursor:pointer;
+      ">閉じる</button>
+    </div>
+  </div>
+
+  <!-- ====== 知的な深みとは モーダル ====== -->
+  <div id="depth-info-modal" style="
+    display:none;position:fixed;inset:0;z-index:300;
+    background:rgba(0,0,0,0.45);
+    justify-content:center;align-items:center;
+  " onclick="closeDepthInfoModal()">
+    <div onclick="event.stopPropagation()" style="
+      background:#f8f8f6;border-radius:4px;
+      padding:32px 28px;
+      width:calc(100% - 48px);max-width:340px;
+    ">
+      <div style="font-size:9px;letter-spacing:0.28em;color:#bbb;margin-bottom:16px;">DEPTH STUDIO</div>
+      <div style="font-size:16px;font-weight:500;letter-spacing:0.06em;color:#222;margin-bottom:20px;">知的な深みとは</div>
+      <div style="font-size:12px;letter-spacing:0.06em;line-height:2.2;color:#444;">
+        人類の文脈に接続された、個人の意味性から成る。
+        <br><br>
+        個人の意味性は、
+        <br>
+        <span style="display:inline-block;margin-left:1em;">個人の実存的な違和感</span>
+        <br>
+        <span style="display:inline-block;margin-left:1em;">内的宇宙</span>
+        <br>
+        <span style="display:inline-block;margin-left:1em;">アート的衝動</span>
+        <br>
+        から成る。
+      </div>
+      <button onclick="closeDepthInfoModal()" style="
+        width:100%;margin-top:28px;padding:12px;
+        border:1px solid #d0d0cc;border-radius:3px;
+        background:none;font-family:inherit;
+        font-size:10px;letter-spacing:0.2em;color:#888;cursor:pointer;
+      ">閉じる</button>
     </div>
   </div>
 
@@ -996,7 +1244,7 @@
     const CHARA_NAMES = {
       majimaji: 'マジマジ',
       yurayura: 'ユラユランゴ',
-      kasa:     'ムッシュ',
+      kasa:     'ムッシュアンブレラ',
       concrete: 'カワラちゃん',
       sun:      'テカリ王子',
       namake:   'ナマケール',
@@ -1943,6 +2191,11 @@
     if (id === 'screen-library') {
       renderLibrary();
     }
+    if (id === 'screen-mountain') {
+      renderMountainWords();
+      renderMountainSavedBg();
+    }
+    initDepthScreens(id);
   }
 
   // ===== 選択画面の初期化（ランダムペア） =====
@@ -2299,6 +2552,7 @@
     const cat = classifyInput(val);
     lastInputCategory = cat;
 
+    // 掛け合いの内容を先に準備しておく
     const pool = DIALOGUES[currentChara] || DIALOGUES.majimaji;
     const catPool = pool.filter(d => d.category === cat);
     const defPool = pool.filter(d => d.category === 'default');
@@ -2306,14 +2560,15 @@
     const data = candidates[Math.floor(Math.random() * candidates.length)];
     const partner = data.partner;
     const container = document.getElementById('dialogue-lines');
-
     container.innerHTML = data.lines.map((line, i) => {
       const isSelf = line.s === 'self';
       const chara  = isSelf ? currentChara : partner;
       const isLast = i === data.lines.length - 1;
       return bubbleHTML(chara, isSelf, line.t, isLast ? '0' : '18px');
     }).join('');
-    goTo('screen-dialogue');
+
+    // リアクション（リフレーム）を先に表示
+    goToFirstResult();
   }
 
   function goToFirstResult() {
@@ -2327,7 +2582,7 @@
     badge.textContent = val;
     badge.className = dialogueType === 'gutai' ? 'result-badge-lime' : 'result-badge-gray';
 
-    // リフレームセリフ：入力内容からズラすセリフを生成
+    // リフレームセリフ
     const serifEl = document.getElementById('serif-reaction');
     const inputForReframe = document.getElementById('question-text')?.value.trim()
       || document.getElementById('detail-text')?.value.trim()
@@ -2346,7 +2601,8 @@
   }
 
   function afterReaction() {
-    afterFirst(dialogueType);
+    // リアクションの後に掛け合いへ
+    goTo('screen-dialogue');
   }
 
   function showFirstResult(type) {
@@ -2485,21 +2741,50 @@
     strataEl.innerHTML = '';
     if (treeAnim) { cancelAnimationFrame(treeAnim); treeAnim = null; }
 
-    const gutaiWords   = [];
-    const oborokeWords = [];
-    history.forEach(entry => {
-      if (entry.gutai)   gutaiWords.push({ text: entry.gutai,   depthLabel: entry.depthLabel || '', xLabel: entry.xLabel || '' });
-      if (entry.oboroke) oborokeWords.push({ text: entry.oboroke, depthLabel: '', xLabel: '' });
-    });
-    const treeWords = [...gutaiWords, ...oborokeWords];
-    if (treeWords.length === 0) return;
+    // historyから「気になること(gutai)」と「それどんな感じ(detailVal)」のペアを組み立て
+    // 新フロー: history[n] = { gutai: 気になること, depthLabel, xLabel }
+    //          history[n+1] = { gutai: それどんな感じ, depthLabel:'', xLabel:'' }
+    // → ペア: [{ main, detail, depthLabel, xLabel }, ...]
+    const pairs = [];
+    const used = new Set();
+    for (let i = 0; i < history.length; i++) {
+      if (used.has(i)) continue;
+      const e = history[i];
+      if (!e.gutai && !e.oboroke) continue;
+      const mainText = e.gutai || e.oboroke || '';
+      // 次のエントリがラベルなし = detail
+      let detailText = '';
+      if (i + 1 < history.length) {
+        const next = history[i + 1];
+        if (next.gutai && !next.depthLabel && !next.xLabel) {
+          detailText = next.gutai;
+          used.add(i + 1);
+        }
+      }
+      pairs.push({
+        main:       mainText,
+        detail:     detailText,
+        depthLabel: e.depthLabel || '',
+        xLabel:     e.xLabel     || '',
+      });
+      used.add(i);
+    }
+    if (pairs.length === 0) return;
 
-    // 地層はfragmentsから（木と重複しない過去の言葉）
-    const treeTexts  = new Set(treeWords.map(w => w.text));
+    // 今回の入力テキストセット
+    const treeTexts = new Set(pairs.flatMap(p => [p.main, p.detail]).filter(Boolean));
+
+    // 過去の入力（fragments）から今回以外のものを追加枝葉に
+    const pastFrags = getFragments()
+      .map(f => f.text)
+      .filter(t => !treeTexts.has(t) && t)
+      .slice(-12); // 最大12件
+
+    // 地層はfragmentsのさらに古いものから
     const strataWords = getFragments()
       .map(f => f.text)
-      .filter(t => !treeTexts.has(t))
-      .slice(-20);
+      .filter(t => !treeTexts.has(t) && !pastFrags.includes(t))
+      .slice(-12);
 
     // ===== 木エリア：Canvas =====
     const TW = treeEl.offsetWidth  || 320;
@@ -2511,7 +2796,6 @@
     treeEl.appendChild(canvas);
     const ctx = canvas.getContext('2d');
 
-    // 茶色の木カラー
     const TRUNK_COLOR  = '#6B4423';
     const BRANCH_COLOR = '#8C6239';
     const LEAF_COLOR   = '#A07848';
@@ -2522,7 +2806,7 @@
     const trunkLen = TH * 0.48;
 
     // 幹
-    branches.push({ x: TRUNK_X, y: TRUNK_BOTTOM, angle: -Math.PI/2, len: trunkLen, depth: 0, word: null, prog: 0 });
+    branches.push({ x: TRUNK_X, y: TRUNK_BOTTOM, angle: -Math.PI/2, len: trunkLen, depth: 0, word: null, depthLabel: '', prog: 0 });
 
     const BASE_ANGLE = -Math.PI / 2;
     const bigBranchAngles = [
@@ -2531,48 +2815,98 @@
       BASE_ANGLE - 0.35, BASE_ANGLE + 0.35,
     ];
     const bigLen = trunkLen * 0.52;
-    const bigCount = Math.min(treeWords.length, 6);
-    const bigBranches = [];
+    const bigCount = Math.min(pairs.length, 6);
 
     for (let i = 0; i < bigCount; i++) {
       const ang = bigBranchAngles[i % bigBranchAngles.length];
       const t   = 0.48 + (i % 3) * 0.16;
       const sx  = TRUNK_X;
       const sy  = TRUNK_BOTTOM - trunkLen * t;
-      const bl  = bigLen * (0.7 + Math.random() * 0.3);
-      const tw  = treeWords[i] || null;
-      const b   = {
+      const bl  = bigLen * (0.72 + (i % 3) * 0.08);
+      const pair = pairs[i];
+      const label = pair.depthLabel + (pair.xLabel ? '·' + pair.xLabel : '');
+
+      const mainBranch = {
         x: sx, y: sy, angle: ang, len: bl, depth: 1,
-        word:       tw ? tw.text       : null,
-        depthLabel: tw ? (tw.depthLabel + (tw.xLabel ? '·' + tw.xLabel : '')) : '',
-        prog: 0
+        word: pair.main, depthLabel: label, prog: 0,
       };
-      branches.push(b);
-      bigBranches.push(b);
+      branches.push(mainBranch);
+
+      // detail（2本目の答え）= main枝の先から生える小枝
+      if (pair.detail) {
+        const ex = sx + Math.cos(ang) * bl;
+        const ey = sy + Math.sin(ang) * bl;
+        // 少しだけ外向きに分岐
+        const side = (i % 2 === 0) ? 1 : -1;
+        const detailAng = ang + side * 0.45;
+        const detailLen = bl * 0.55;
+        branches.push({
+          x: ex, y: ey,
+          angle: detailAng,
+          len: detailLen,
+          depth: 2,
+          word: pair.detail,
+          depthLabel: '',
+          prog: 0,
+        });
+        // さらに細い飾り小枝 x1
+        const ex2 = ex + Math.cos(detailAng) * detailLen;
+        const ey2 = ey + Math.sin(detailAng) * detailLen;
+        branches.push({
+          x: ex2, y: ey2,
+          angle: detailAng + side * 0.3,
+          len: detailLen * 0.38,
+          depth: 3,
+          word: null, depthLabel: '',
+          prog: 0,
+        });
+      } else {
+        // detail なし → 飾り小枝
+        const ex = sx + Math.cos(ang) * bl;
+        const ey = sy + Math.sin(ang) * bl;
+        for (let s = 0; s < 2; s++) {
+          const side = s % 2 === 0 ? 1 : -1;
+          const a2 = ang + side * (0.4 + (i % 2) * 0.15);
+          branches.push({ x: ex, y: ey, angle: a2, len: bl * 0.35, depth: 3, word: null, depthLabel: '', prog: 0 });
+        }
+      }
     }
 
-    // 小枝
-    bigBranches.forEach((parent) => {
-      const ex = parent.x + Math.cos(parent.angle) * parent.len;
-      const ey = parent.y + Math.sin(parent.angle) * parent.len;
-      for (let s = 0; s < 2; s++) {
-        const side = s % 2 === 0 ? 1 : -1;
-        const ang  = parent.angle + side * (0.4 + Math.random() * 0.25);
-        const sl   = parent.len * (0.38 + Math.random() * 0.2);
-        branches.push({ x: ex, y: ey, angle: ang, len: sl, depth: 2, word: null, prog: 0 });
-      }
+    // 過去の入力を細い枝葉として幹上部に追加
+    const pastAngles = [
+      BASE_ANGLE - 0.3, BASE_ANGLE + 0.3,
+      BASE_ANGLE - 0.6, BASE_ANGLE + 0.6,
+      BASE_ANGLE - 0.15, BASE_ANGLE + 0.15,
+      BASE_ANGLE - 0.45, BASE_ANGLE + 0.45,
+      BASE_ANGLE - 0.7, BASE_ANGLE + 0.7,
+      BASE_ANGLE - 0.2, BASE_ANGLE + 0.2,
+    ];
+    const pastLen = trunkLen * 0.28;
+    pastFrags.forEach((text, i) => {
+      const ang = pastAngles[i % pastAngles.length];
+      // 幹の上部寄りに配置（今回の枝より上）
+      const t = 0.72 + (i % 4) * 0.06;
+      const sy = TRUNK_BOTTOM - trunkLen * Math.min(t, 0.94);
+      const bl = pastLen * (0.7 + (i % 3) * 0.12);
+      branches.push({
+        x: TRUNK_X, y: sy,
+        angle: ang, len: bl,
+        depth: 4,
+        word: text,
+        depthLabel: '',
+        prog: 0,
+        isPast: true,
+      });
     });
 
     let growIdx = 0, growProg = 0;
     const GROW_SPD = 0.032;
-    let frame = 0;
 
     function drawBranch(b) {
       if (b.prog <= 0) return;
       const ex = b.x + Math.cos(b.angle) * b.len * b.prog;
       const ey = b.y + Math.sin(b.angle) * b.len * b.prog;
 
-      // 幹：グラデーション、枝：単色
       if (b.depth === 0) {
         const grad = ctx.createLinearGradient(b.x, b.y, ex, ey);
         grad.addColorStop(0, '#4A2E12');
@@ -2581,10 +2915,17 @@
         ctx.lineWidth = 5;
       } else if (b.depth === 1) {
         ctx.strokeStyle = '#8C6239';
-        ctx.lineWidth = 2.2;
-      } else {
+        ctx.lineWidth = 2.4;
+      } else if (b.depth === 2) {
         ctx.strokeStyle = '#A07848';
-        ctx.lineWidth = 1.1;
+        ctx.lineWidth = 1.6;
+      } else if (b.depth === 3) {
+        ctx.strokeStyle = '#B89060';
+        ctx.lineWidth = 0.9;
+      } else {
+        // depth 4: 過去の入力 — より細く薄い
+        ctx.strokeStyle = '#C4A882';
+        ctx.lineWidth = 0.8;
       }
       ctx.beginPath();
       ctx.moveTo(b.x, b.y);
@@ -2592,30 +2933,45 @@
       ctx.lineCap = 'round';
       ctx.stroke();
 
-      // 枝先の単語ラベル（深度ラベル付き）
-      if (b.depth === 1 && b.word && b.prog >= 1) {
+      // 枝先ラベル
+      if (b.word && b.prog >= 1) {
         const lx = ex + Math.cos(b.angle) * 7;
         const ly = ey + Math.sin(b.angle) * 7;
         ctx.save();
-        ctx.font = '600 10px Inter, sans-serif';
-        ctx.fillStyle = '#00712B';
         ctx.textAlign = Math.cos(b.angle) >= 0 ? 'left' : 'right';
         ctx.textBaseline = 'middle';
-        const wordText  = b.word.length > 8 ? b.word.slice(0, 8) : b.word;
-        const depthText = b.depthLabel || '';
-        if (depthText) {
-          ctx.fillText(wordText, lx, ly - 8);
-          ctx.font = '400 8px Inter, sans-serif';
-          ctx.fillStyle = '#8C9E6A';
-          ctx.fillText(depthText, lx, ly + 6);
-        } else {
-          const maxLen = 8;
-          if (b.word.length <= maxLen) {
-            ctx.fillText(b.word, lx, ly);
+
+        if (b.depth === 1) {
+          // メインの答え：緑、やや大きめ
+          ctx.font = '600 10px Inter, sans-serif';
+          ctx.fillStyle = '#00712B';
+          const wordText  = b.word.length > 8 ? b.word.slice(0, 8) : b.word;
+          const depthText = b.depthLabel || '';
+          if (depthText) {
+            ctx.fillText(wordText, lx, ly - 8);
+            ctx.font = '400 8px Inter, sans-serif';
+            ctx.fillStyle = '#8C9E6A';
+            ctx.fillText(depthText, lx, ly + 6);
           } else {
-            ctx.fillText(b.word.slice(0, maxLen), lx, ly - 7);
-            ctx.fillText(b.word.slice(maxLen),    lx, ly + 7);
+            if (b.word.length <= 8) {
+              ctx.fillText(b.word, lx, ly);
+            } else {
+              ctx.fillText(b.word.slice(0, 8), lx, ly - 7);
+              ctx.fillText(b.word.slice(8),    lx, ly + 7);
+            }
           }
+        } else if (b.depth === 2) {
+          // detailの答え：薄い緑・小さめ
+          ctx.font = '400 9px Inter, sans-serif';
+          ctx.fillStyle = '#5A8A50';
+          const t = b.word.length > 7 ? b.word.slice(0, 7) + '…' : b.word;
+          ctx.fillText(t, lx, ly);
+        } else if (b.depth === 4) {
+          // 過去の入力：薄いグレーブラウン・最小
+          ctx.font = '400 8px Inter, sans-serif';
+          ctx.fillStyle = '#A08060';
+          const t = b.word.length > 6 ? b.word.slice(0, 6) + '…' : b.word;
+          ctx.fillText(t, lx, ly);
         }
         ctx.restore();
       }
@@ -2623,9 +2979,7 @@
 
     function loop() {
       treeAnim = requestAnimationFrame(loop);
-      frame++;
       ctx.clearRect(0, 0, TW, TH);
-
       if (growIdx < branches.length) {
         growProg += GROW_SPD;
         branches[growIdx].prog = Math.min(growProg, 1);
@@ -2854,41 +3208,535 @@
   // ================================================================
   // ===== 思想断片データベース =====
   // ================================================================
-  const THOUGHT_FRAGMENTS = [
-    { id: 'tf001', text: '疲労は存在の証明である。', author: 'カミュ', tags: ['疲れ','しんどい','だるい','疲労','つらい'] },
-    { id: 'tf002', text: '不安とは自由のめまいである。', author: 'キェルケゴール', tags: ['不安','怖い','心配','めまい','ドキドキ'] },
-    { id: 'tf003', text: '他者は地獄である。', author: 'サルトル', tags: ['人間関係','他人','友達','職場','学校','嫌い'] },
-    { id: 'tf004', text: '生とは何かを問うことをやめたとき、人は死ぬ。', author: 'カミュ', tags: ['生きる','意味','死','問い'] },
-    { id: 'tf005', text: '孤独は人を偉大にし、あるいは小さくする。', author: 'ニーチェ', tags: ['孤独','ひとり','一人','さびしい'] },
-    { id: 'tf006', text: '怠惰は繁栄の母である。', author: 'モンテーニュ', tags: ['眠い','休み','だるい','やる気','ぼーっと'] },
-    { id: 'tf007', text: '真実はつねに奇妙である。', author: 'バイロン', tags: ['わからない','不思議','なぜ','謎'] },
-    { id: 'tf008', text: '変化こそが唯一の永続するものだ。', author: 'ヘラクレイトス', tags: ['変化','変わる','違う','変わりたい'] },
-    { id: 'tf009', text: '怒りは短い狂気である。', author: 'ホラティウス', tags: ['怒り','むかつく','イライラ','腹立つ'] },
-    { id: 'tf010', text: '愛するとは、相手の中に神を見ることだ。', author: 'ドストエフスキー', tags: ['好き','愛','恋','恋人'] },
-    { id: 'tf011', text: '時間は最も賢明な相談相手である。', author: 'ペリクレス', tags: ['時間','忙しい','急ぐ','待つ','余裕'] },
-    { id: 'tf012', text: '我々は幸福になるためではなく、幸福だと思うために生きている。', author: 'ラロシュフコー', tags: ['幸せ','楽しい','うれしい','しあわせ'] },
-    { id: 'tf013', text: '人は働くために食うのではなく、食うために働く。', author: 'マルクス', tags: ['仕事','会社','働く','職場'] },
-    { id: 'tf014', text: '学校とは、退屈の練習場だ。', author: 'シオラン', tags: ['学校','勉強','授業','宿題'] },
-    { id: 'tf015', text: '明日できることを今日するな。', author: 'マーク・トウェイン', tags: ['面倒','後回し','やる気','先延ばし','めんどう','めんど'] },
-    { id: 'tf016', text: '眠りは小さな死である。', author: 'ショーペンハウアー', tags: ['眠い','眠れない','睡眠','夢','寝れない'] },
-    { id: 'tf017', text: '存在するとは、知覚されることである。', author: 'バークリー', tags: ['存在','見られる','認められる','目立つ'] },
-    { id: 'tf018', text: 'お金は自由の道具だが、目的になると足枷になる。', author: 'ルソー', tags: ['お金','年収','給料','貧しい','金','稼ぐ'] },
-    { id: 'tf019', text: '健康とは、生命が沈黙している状態のことだ。', author: 'ルノー', tags: ['体','健康','病気','痛い','身体'] },
-    { id: 'tf020', text: '家族とは、世界中で最も難しい人間関係である。', author: 'バーナード・ショー', tags: ['家族','親','兄弟','姉妹','実家'] },
-    { id: 'tf021', text: '未来はすでに来ている。ただ均等に分配されていないだけだ。', author: 'ウィリアム・ギブソン', tags: ['未来','可能性','変化','社会'] },
-    { id: 'tf022', text: '自分自身を知ることが、すべての知恵の始まりだ。', author: 'アリストテレス', tags: ['自分','わからない','迷い','自己'] },
-    { id: 'tf023', text: '退屈は何か恐ろしいことの予告編である。', author: 'ボードレール', tags: ['暇','退屈','つまらない','何もない'] },
-    { id: 'tf024', text: '悲しみはそれ自体が贈り物である。', author: 'ラビンドラナート・タゴール', tags: ['悲しい','泣きたい','涙','かなしい'] },
-    { id: 'tf025', text: '人は選択によって自分を作る。', author: 'サルトル', tags: ['迷う','選択','どっち','決められない','選べない'] },
-  ];
+  // Generated THOUGHT_FRAGMENTS_ALL - 1000 concepts
+// Total: 500 entries
+const THOUGHT_FRAGMENTS_ALL = [
+  {id:"c001",concept:"現象学的還元",desc:"日常の当たり前を一度括弧に入れて、純粋な経験そのものに戻る。",author:"フッサール",themes:["当たり前","疑う","見方","感覚"],mood:["なんか変","ふと気づいた","違和感"]},
+  {id:"c002",concept:"投企",desc:"人間は常に自分の可能性へと投げ出されている存在だ。",author:"ハイデガー",themes:["将来","可能性","自由","選択"],mood:["迷う","前に進めない","怖い"]},
+  {id:"c003",concept:"即自と対自",desc:"石は石のままだが、人間は自分を問うことで自分から逃れる。",author:"サルトル",themes:["自分","アイデンティティ","問い"],mood:["自分がわからない","ぐるぐる","定まらない"]},
+  {id:"c004",concept:"時間性",desc:"過去・現在・未来は人間の存在の中で一体となって流れる。",author:"ハイデガー",themes:["時間","過去","未来","記憶"],mood:["あのとき","もう戻れない","先が見えない"]},
+  {id:"c005",concept:"超人",desc:"既存の価値が崩れた後、自分で価値を創造する人間の姿。",author:"ニーチェ",themes:["価値観","創造","変化","強さ"],mood:["意味を探してる","自分で決めたい"]},
+  {id:"c006",concept:"永劫回帰",desc:"この瞬間が無限に繰り返されるとしたら、今どう生きるか。",author:"ニーチェ",themes:["繰り返し","今","意味","選択"],mood:["また同じ","変われない","今が大事"]},
+  {id:"c007",concept:"コギト",desc:"疑うことができる限り、疑っている自分だけは確かだ。",author:"デカルト",themes:["疑う","自分","確かなもの","基盤"],mood:["何も信じられない","よりどころがない"]},
+  {id:"c008",concept:"弁証法",desc:"矛盾するものがぶつかることで、より高い次元へ止揚される。",author:"ヘーゲル",themes:["矛盾","対立","変化","葛藤"],mood:["もやもや","ぶつかってる"]},
+  {id:"c009",concept:"プラグマティズム",desc:"真理とは役に立つものだ。観念の価値は実践によってのみ判断される。",author:"ジェームズ",themes:["役に立つ","意味","実践","価値"],mood:["なんの意味があるの","意味がない"]},
+  {id:"c010",concept:"モナド",desc:"すべての個体は孤立した単子だが、調和によって世界を反映する。",author:"ライプニッツ",themes:["孤独","繋がり","孤立","コミュニケーション"],mood:["伝わらない","孤独","わかり合えない"]},
+  {id:"c011",concept:"パラドックス",desc:"正しいように見えても矛盾を含む命題。思考の限界を示す裂け目。",author:"ラッセル",themes:["矛盾","論理","おかしい"],mood:["答えが出ない","詰んでる"]},
+  {id:"c012",concept:"虚無主義",desc:"価値や意味の根拠が失われ、すべてが等しく空虚に見える。",author:"ニーチェ",themes:["意味","虚無","価値観","空虚"],mood:["どうでもいい","意味ない","虚しい"]},
+  {id:"c013",concept:"不条理",desc:"意味を求める人間と、それに答えない世界の衝突。",author:"カミュ",themes:["意味","答えない","問い","生きる"],mood:["なんで","意味がない","それでも生きる"]},
+  {id:"c014",concept:"中庸",desc:"両極端を避け、状況に応じた適切な中間を見つけること。",author:"アリストテレス",themes:["バランス","中間","判断"],mood:["極端になってる","バランスがとれない"]},
+  {id:"c015",concept:"カイロス",desc:"測れない質的な時間。転換点として訪れる特別な瞬間。",author:"ギリシア哲学",themes:["チャンス","瞬間","タイミング","今"],mood:["今がその時","逃したくない"]},
+  {id:"c016",concept:"有限性",desc:"死という限界があるからこそ、生は意味を持ちうる。",author:"ハイデガー",themes:["死","有限","生きる","意味"],mood:["いつかは終わる","だから今","有限だから大事"]},
+  {id:"c017",concept:"間身体性",desc:"私の身体と他者の身体は、根本的に絡み合っている。",author:"メルロ＝ポンティ",themes:["身体","他者","繋がり","共感"],mood:["身体で感じる","言葉より先","体が知ってる"]},
+  {id:"c018",concept:"フロネーシス",desc:"普遍的な規則を状況に適用する実践的知恵。",author:"アリストテレス",themes:["判断","状況","知恵","実践"],mood:["状況によって違う","規則だけじゃない"]},
+  {id:"c019",concept:"身体図式",desc:"身体は意識に先立って世界を知覚している。感じることは考えることより先にある。",author:"メルロ＝ポンティ",themes:["身体","感覚","直感"],mood:["なんとなく","体が知ってる","センサー"]},
+  {id:"c020",concept:"アポリア",desc:"どう考えても出口のない難問。行き詰まりを直視することが思考の深化になる。",author:"プラトン",themes:["行き詰まり","難問","限界"],mood:["どうしようもない","答えが出ない","詰んでる"]},
+  {id:"c021",concept:"徳倫理学",desc:"行為の結果や規則より、どんな人間であるかが倫理の核心だ。",author:"アリストテレス",themes:["人格","生き方","誠実"],mood:["どんな人間でありたいか","規則だけじゃない"]},
+  {id:"c022",concept:"義務論",desc:"結果に関わらず、守るべき義務がある。",author:"カント",themes:["義務","規則","正しさ","道徳"],mood:["ルールを守るべき？","原則を曲げたくない"]},
+  {id:"c023",concept:"悪の陳腐さ",desc:"大きな悪は特別な悪人ではなく、考えることをやめた普通の人によって行われる。",author:"アーレント",themes:["悪","責任","思考停止","服従"],mood:["流されてた","考えてなかった"]},
+  {id:"c024",concept:"崇高",desc:"圧倒的な力や規模に接したとき、恐れとともに感じる奇妙な喜び。",author:"カント",themes:["自然","圧倒","感動","恐れ"],mood:["言葉を失った","すごすぎて","小さな自分を感じた"]},
+  {id:"c025",concept:"異化効果",desc:"慣れ親しんだものを奇妙に見せることで、無意識の受け入れを妨げる。",author:"ブレヒト",themes:["演劇","慣れ","違和感","問い直す"],mood:["普通じゃない感じ","当たり前に見えなくなった"]},
+  {id:"c026",concept:"アウラ",desc:"複製技術によって、芸術作品の一回性・現前性が失われる。",author:"ベンヤミン",themes:["芸術","本物","コピー","複製","SNS"],mood:["本物を見たい","コピーは違う","オリジナルの価値"]},
+  {id:"c027",concept:"差延",desc:"意味は他の言葉との差異から生まれ、完全な現前は永遠に先延ばしされる。",author:"デリダ",themes:["意味","差異","言葉","ズレ"],mood:["意味が捕まらない","ずれていく","完全には言えない"]},
+  {id:"c028",concept:"脱構築",desc:"あたりまえとされているものの内側には、必ず矛盾や排除が隠れている。",author:"デリダ",themes:["当たり前","常識","矛盾","価値観"],mood:["本当にそうなの？","疑い始めた","おかしい"]},
+  {id:"c029",concept:"ポリフォニー",desc:"単一の声ではなく、複数の声が対等に響き合う語りの形式。",author:"バフチン",themes:["声","複数","対話","多様性"],mood:["一つの答えじゃない","正解がない"]},
+  {id:"c030",concept:"パラダイムシフト",desc:"科学は積み上げではなく、時に根本的な世界観の転換として進む。",author:"クーン",themes:["変化","世界観","転換","常識"],mood:["前提が変わった","今までの見方が崩れた"]},
+  {id:"c031",concept:"反証可能性",desc:"いかなる証拠によっても反証されえない命題は、科学的ではない。",author:"ポパー",themes:["科学","真実","証拠","疑う"],mood:["証拠がない","信じ込んでた"]},
+  {id:"c032",concept:"ネガティブ・ケイパビリティ",desc:"答えのない状況を、急がずに耐え続ける能力。",author:"キーツ",themes:["曖昧","耐える","答え","ゆっくり"],mood:["答えが出なくていい","曖昧に耐える","急がなくていい"]},
+  {id:"c033",concept:"フロー状態",desc:"完全に集中して何かに没頭しているとき、自意識が消える。",author:"チクセントミハイ",themes:["集中","夢中","没頭"],mood:["無心になりたい","没頭したい","時間を忘れる"]},
+  {id:"c034",concept:"ストア的無関心",desc:"制御できないことに感情を動かさないことが、自由への道だ。",author:"エピクテトス",themes:["コントロール","受け入れる","執着","手放す"],mood:["どうにもならない","手放せない","苦しい"]},
+  {id:"c035",concept:"ソクラテス的対話",desc:"問いを繰り返すことで、相手の中にある知を引き出す。",author:"ソクラテス",themes:["問い","対話","自分で気づく"],mood:["自分で気づきたい","問いを持ち続ける"]},
+  {id:"c036",concept:"神秘体験",desc:"通常の意識を超えた合一の感覚。言語では完全には伝えられない。",author:"ジェームズ",themes:["神秘","感覚","言葉にできない"],mood:["説明できない感覚","言葉を超えてる"]},
+  {id:"c037",concept:"世俗化",desc:"宗教的権威が失われ、個人が意味の源泉を求めるようになった。",author:"ウェーバー",themes:["宗教","意味","個人","信仰"],mood:["何かを信じたい","よりどころがない"]},
+  {id:"c038",concept:"生の哲学",desc:"生命そのものの力や流れを、思考の中心に置く。",author:"ベルクソン",themes:["生きる","流れ","変化","本能"],mood:["生きてる感じがする","力がある"]},
+  {id:"c039",concept:"自己物語",desc:"人は経験をつなぎ合わせて「自分という物語」を作り、それに縛られる。",author:"リクール",themes:["自分","アイデンティティ","過去","物語"],mood:["ずっとそういう人間","また同じパターン"]},
+  {id:"c040",concept:"ケノーシス",desc:"自己を空にすることで、他者のための場所を作る。",author:"キリスト教神学",themes:["手放す","空っぽ","他者","受け入れる"],mood:["手放したい","空にしたい","受け入れられない"]},
+  {id:"c041",concept:"社会的事実",desc:"個人の意識とは独立して存在し、個人に外から圧力を加える集合的な力。",author:"デュルケーム",themes:["社会","規範","圧力","当たり前","空気"],mood:["仕方ない","従わされてる","空気が重い"]},
+  {id:"c042",concept:"官僚制の鉄の檻",desc:"合理化が進むほど、人間は目的を忘れた機械の歯車になる。",author:"ウェーバー",themes:["仕事","組織","規則","意味","効率"],mood:["歯車","やらされてる","意味を見失った"]},
+  {id:"c043",concept:"ヘゲモニー",desc:"支配は暴力だけでなく、文化や常識として広がることで維持される。",author:"グラムシ",themes:["支配","常識","文化","当たり前","権力"],mood:["当たり前だと思ってたけど","刷り込まれた"]},
+  {id:"c044",concept:"権力の毛細管",desc:"権力は上から降りてくるだけでなく、日常の細部まで浸透している。",author:"フーコー",themes:["権力","日常","規範","細部","監視"],mood:["なんか監視されてる","細かいところが窮屈"]},
+  {id:"c045",concept:"スケープゴート",desc:"集団の緊張を一人に向けることで、社会は均衡を保つ。",author:"ジラール",themes:["いじめ","排除","集団","責任転嫁","犠牲"],mood:["なぜ私だけ","押しつけられた","理不尽"]},
+  {id:"c046",concept:"コミュニタス",desc:"儀礼の過渡期に現れる、平等で濃密な繋がりの感覚。",author:"ターナー",themes:["繋がり","平等","一体感","仲間"],mood:["あの頃は特別だった","濃い繋がり"]},
+  {id:"c047",concept:"相対的剥奪",desc:"絶対的な貧しさより、比較して「自分だけ少ない」感覚が不満を生む。",author:"ストーファー",themes:["比較","不公平","嫉妬","格差","SNS"],mood:["あの人だけ","なぜ私だけ少ない"]},
+  {id:"c048",concept:"ラベリング理論",desc:"逸脱者は生まれるのではなく、社会のラベルが逸脱を作り出す。",author:"ベッカー",themes:["レッテル","評価","偏見"],mood:["そう見られてる","そういう人間にされた","烙印"]},
+  {id:"c049",concept:"承認の政治",desc:"人は尊厳を認められることを求める。承認の否定が多くの対立の根にある。",author:"ホネット",themes:["承認","尊厳","認められる","人間関係","評価"],mood:["軽く見られてる","尊重されてない"]},
+  {id:"c050",concept:"功利主義の罠",desc:"最大多数の最大幸福を追求すると、少数者が犠牲にされる。",author:"ミル",themes:["多数決","少数派","犠牲","正義","不公平"],mood:["少数だから負ける","誰かが損をする"]},
+  {id:"c051",concept:"無知のヴェール",desc:"もし自分がどんな立場に生まれるかを知らないとしたら、どんな社会制度を選ぶか。",author:"ロールズ",themes:["公平","社会","立場","格差"],mood:["公平な社会ってなに","立場が違えば見方が変わる"]},
+  {id:"c052",concept:"資本主義のリアリズム",desc:"資本主義に代わるシステムを想像することが、今や不可能に思えてしまう。",author:"フィッシャー",themes:["社会","変えられない","資本主義","格差"],mood:["仕方ない","変えられない","諦め"]},
+  {id:"c053",concept:"逃走線",desc:"支配や秩序から逃れようとする動きは、新しい生を切り開く可能性を持つ。",author:"ドゥルーズ",themes:["逃げる","逃げたい","自由","抵抗","違う道"],mood:["逃げたい","抜け出したい","別の場所へ"]},
+  {id:"c054",concept:"ポジティビティの暴力",desc:"肯定と励ましだけで満たされた空間は、批判と休息の場所を奪う。",author:"ハン",themes:["前向き","元気出して","頑張れ","自己啓発"],mood:["頑張れない","疲れた","そっとしてほしい"]},
+  {id:"c055",concept:"制度的暴力",desc:"学校・病院・刑務所などの施設は、規律を内面化させる装置として機能する。",author:"フーコー",themes:["学校","病院","規則","管理","制度"],mood:["縛られてる","管理されてる","従わされてる"]},
+  {id:"c056",concept:"サバルタン",desc:"声を持たない者は、その声を届ける言語を持てないことで、二重に周縁化される。",author:"スピヴァク",themes:["声","言えない","周縁","マイノリティ"],mood:["言っても届かない","無力感","どうせわかってもらえない"]},
+  {id:"c057",concept:"慣習の惰性",desc:"人は変えたほうがいいと知りながら、慣れた方法を続ける。",author:"ブルデュー",themes:["習慣","変わりたい","惰性","繰り返し"],mood:["また同じ","わかってるけど","変えられない"]},
+  {id:"c058",concept:"ゼロサム思考",desc:"誰かが得をすると自分が損をするという感覚が、協調を妨げる。",author:"サムエルソン",themes:["競争","嫉妬","比較","勝ち負け","不公平"],mood:["負けた気がする","羨ましい","不公平"]},
+  {id:"c059",concept:"意味の危機",desc:"近代化によって伝統的な意味の源泉が失われ、人は何のために生きるかを自分で作らなくなった。",author:"テイラー",themes:["意味","生きがい","目的","虚無"],mood:["なんのために","空虚","意味がない"]},
+  {id:"c060",concept:"共感疲労",desc:"他者の痛みに寄り添い続けることで、感じる力が消耗していく。",author:"フィゲイ",themes:["人間関係","感情","気を遣う","疲れ"],mood:["疲れた","気を遣い過ぎた","消耗した"]},
+  {id:"c061",concept:"ルサンチマン",desc:"自分より強い者への嫉妬や怨恨が、価値観を歪める。",author:"ニーチェ",themes:["嫉妬","不公平","比較","怒り"],mood:["むかつく","不公平","怒り","悔しい"]},
+  {id:"c062",concept:"慢性的疲労",desc:"疲れているのに休めない状態。社会が要求する過剰な自己最適化から生まれる。",author:"ハン",themes:["疲れ","休む","仕事","努力","自己啓発"],mood:["疲れた","しんどい","だるい","休みたい"]},
+  {id:"c063",concept:"透明性の強制",desc:"すべてを見せることを求められる社会では、影や内面が居場所を失う。",author:"ハン",themes:["SNS","見せる","承認","発信","プライバシー"],mood:["疲れた","窮屈","見られたくない"]},
+  {id:"c064",concept:"アノミー",desc:"規範が崩れたとき、人は何を基準にしてよいかわからなくなる。",author:"デュルケーム",themes:["迷い","社会","規範","基準"],mood:["迷う","よりどころがない","バラバラ","虚しい"]},
+  {id:"c065",concept:"ハビトゥス",desc:"育ちや環境が身体に染み込んで、無意識の行動パターンになったもの。",author:"ブルデュー",themes:["家族","育ち","環境","当たり前","親"],mood:["気づいたら","なんとなく","抜け出せない"]},
+  {id:"c066",concept:"承認欲求",desc:"他者から認められたいという欲求は、自己の根拠を外に求めることでもある。",author:"ヘーゲル",themes:["評価","認められたい","SNS","人間関係"],mood:["不安","寂しい","確認したい"]},
+  {id:"c067",concept:"時間の植民地化",desc:"余暇でさえ生産性の論理に支配され、休息が消えていく。",author:"ローザ",themes:["時間","休み","忙しい","効率","生産性"],mood:["休めない","焦る","追われる"]},
+  {id:"c068",concept:"液状化する社会",desc:"固定した関係や役割が溶け、人は常に流動する不確かさの中に置かれる。",author:"バウマン",themes:["将来","社会","変化","不安定","仕事"],mood:["不安","ふわふわ","根がない","定まらない"]},
+  {id:"c069",concept:"象徴的暴力",desc:"暴力と気づかれないまま行使される支配。常識や当たり前の形をとる。",author:"ブルデュー",themes:["規範","当たり前","空気","常識"],mood:["モヤモヤ","違和感","言えない","従ってしまう"]},
+  {id:"c070",concept:"ダブルバインド",desc:"矛盾した要求を同時に受けると、どう動いても正解がなくなる。",author:"ベイトソン",themes:["親","職場","要求","矛盾","板挟み"],mood:["どうしたらいい","逃げ場がない","詰んでる","苦しい"]},
+  {id:"c071",concept:"他者のまなざし",desc:"人は他者に見られることで初めて自分の存在を意識する。",author:"サルトル",themes:["人間関係","評価","承認","見られる"],mood:["緊張","窮屈","プレッシャー"]},
+  {id:"c072",concept:"疎外",desc:"自分が作ったものや行為が、自分のものではないように感じられる状態。",author:"マルクス",themes:["仕事","会社","作業","やる気","労働"],mood:["虚しい","つまらない","やる気ない"]},
+  {id:"c073",concept:"実存的不安",desc:"自由であることそのものが、人に重さをもたらす。",author:"キェルケゴール",themes:["迷い","選択","自由","将来","決断"],mood:["不安","怖い","迷う","どうしよう"]},
+  {id:"c074",concept:"パノプティコン",desc:"常に見られているかもしれないという感覚が、人を自ら従わせる。",author:"フーコー",themes:["学校","会社","規範","監視","評価"],mood:["窮屈","息苦しい","逃げたい","しんどい"]},
+  {id:"c075",concept:"分人",desc:"人は文脈ごとに異なる自分として存在する。本当の自分は複数ある。",author:"平野啓一郎",themes:["自分","本音","建前","役割","キャラ"],mood:["どれが本当","使い分け","疲れる","ズレる"]},
+  {id:"c076",concept:"ゾーエーとビオス",desc:"生き延びることと、意味のある生を送ることは、別のことだ。",author:"アガンベン",themes:["生きる意味","毎日","ルーティン","目的"],mood:["虚しい","ただ生きてる","なんのために","意味ない"]},
+  {id:"c077",concept:"マクドナルド化",desc:"効率・計算・予測・管理が社会のあらゆる場に広がり、人間的な曖昧さが失われる。",author:"リッツァー",themes:["効率","管理","規則","合理化","型"],mood:["息苦しい","融通きかない","つまらない"]},
+  {id:"c078",concept:"ケアの倫理",desc:"依存し合うことは弱さではなく、人間の根本的な条件だ。",author:"ノディングス",themes:["甘える","頼る","弱さ","助けを求める"],mood:["言えない","頼れない","一人でやらなきゃ"]},
+  {id:"c079",concept:"シミュラークル",desc:"本物のコピーのコピーが増殖し、やがてオリジナルが消える。",author:"ボードリヤール",themes:["SNS","イメージ","見せる","偽物"],mood:["虚しい","なんか嘘くさい","本物がわからない"]},
+  {id:"c080",concept:"予期的服従",desc:"禁止される前に、人は自ら規範に従いはじめる。",author:"フーコー",themes:["空気","言えない","自粛","同調","規範"],mood:["言えない","合わせてしまう","息苦しい","自分を抑える"]},
+  {id:"c081",concept:"根拠なき不安",desc:"何かが怖いのではなく、存在することそのものが不安の源になる。",author:"ハイデガー",themes:["不安","理由がわからない","漠然と","生きること"],mood:["なんか不安","理由がない","ふわふわ","落ち着かない"]},
+  {id:"c082",concept:"ノイズとしての感情",desc:"感情は合理的判断を邪魔するノイズではなく、情報そのものである。",author:"ダマシオ",themes:["感情","気持ち","モヤモヤ","理由がわからない"],mood:["なんとなく","うまく言えない","もやっとする"]},
+  {id:"c083",concept:"閾値としての退屈",desc:"退屈は空虚ではなく、何かが始まる直前の状態だ。",author:"ベンヤミン",themes:["暇","つまらない","退屈","やる気ない"],mood:["ぼーっとしてる","何もしたくない","虚しい"]},
+  {id:"c084",concept:"内なる他者",desc:"自分の中には、自分が知らない他者の声が住んでいる。",author:"バフチン",themes:["自分","本音","内省"],mood:["自分でも分からない","ちぐはぐ","なんでこう思うんだろう"]},
+  {id:"c085",concept:"怒りの政治学",desc:"怒りは感情的な反応ではなく、不正義を認識したサインである。",author:"ウォリス",themes:["怒り","不公平","社会","理不尽"],mood:["むかつく","腹立つ","許せない"]},
+  {id:"c086",concept:"アテンション・エコノミー",desc:"注意は希少資源となり、人々の意識が商品として売買されている。",author:"サイモン",themes:["SNS","スマホ","集中できない","情報"],mood:["気が散る","集中できない","止まれない","疲れた"]},
+  {id:"c087",concept:"否定性の欠如",desc:"現代社会は肯定と同意で満たされ、摩擦や抵抗が消えていく。",author:"ハン",themes:["SNS","空気","いいね","同調"],mood:["違和感","言えない","流されてる","なんか嫌"]},
+  {id:"c088",concept:"遅さの哲学",desc:"スピードへの強迫が、じっくり考え感じる能力を奪っていく。",author:"ヴィリリオ",themes:["時間","焦り","急ぐ","スマホ"],mood:["落ち着かない","焦る","ゆっくりしたい","追われてる"]},
+  {id:"c089",concept:"ルサンチマン2",desc:"弱者が強者を内心で否定することで、自らの無力感を価値へと転倒する。",author:"ニーチェ",themes:["嫉妬","弱さ","強さ","反転"],mood:["負けてるのに見下してる","本当は認めたくない"]},
+  {id:"c090",concept:"自由の重荷",desc:"選択肢が多すぎると、人は自由の重さに押しつぶされる。",author:"フロム",themes:["自由","選択","迷い","重い","不安"],mood:["自由すぎて迷う","選べない","選択肢が多すぎる"]},
+  {id:"c091",concept:"防衛機制",desc:"不安から自分を守るために、無意識が使う心理的な操作。",author:"フロイト",themes:["無意識","感情","否定","逃避","自己防衛"],mood:["直視できない","気づきたくない","避けてる"]},
+  {id:"c092",concept:"転移",desc:"過去の重要な人物への感情を、現在の相手に投影してしまう現象。",author:"フロイト",themes:["人間関係","感情","過去","繰り返し","親"],mood:["また同じパターン","なんでこんなに反応してしまうの","過去を引きずってる"]},
+  {id:"c093",concept:"影（シャドウ）",desc:"自分の中の受け入れられない部分が影として蓄積される。他者への過剰な反応はそこから来る。",author:"ユング",themes:["嫌いな部分","感情","他者","投影","自分"],mood:["なぜあの人がこんなに嫌なの","認めたくない"]},
+  {id:"c094",concept:"ペルソナ",desc:"社会に向けて作り上げた仮面。それが自分だと思い込むと、本来の自己を失う。",author:"ユング",themes:["仮面","役割","建前","本音","社会"],mood:["演じてる","本当の自分じゃない","仮面に疲れた"]},
+  {id:"c095",concept:"自己実現",desc:"人は潜在的な可能性を最大限に発揮しようとする欲求を持つ。",author:"マズロー",themes:["成長","可能性","自分","目標","夢"],mood:["もっとできるはず","何かが足りない","達成できてない"]},
+  {id:"c096",concept:"学習性無力感",desc:"何をしても変わらない経験を繰り返すと、行動する意欲そのものが失われる。",author:"セリグマン",themes:["あきらめ","無力感","変わらない","行動","やる気"],mood:["どうせ無駄","また失敗する","動けない","無力"]},
+  {id:"c097",concept:"認知の歪み",desc:"自動的に湧いてくる思考パターンが、現実を偏った方向で解釈させる。",author:"ベック",themes:["思考","解釈","ネガティブ","自動","パターン"],mood:["また同じ考え","悪いほうに解釈してしまう","止まらない"]},
+  {id:"c098",concept:"愛着理論",desc:"幼少期の養育者との関係が、その後の人間関係のパターンを形成する。",author:"ボウルビィ",themes:["親","幼少期","人間関係","信頼","愛着"],mood:["繰り返してる","なぜ同じ相手を選んでしまう","信頼できない"]},
+  {id:"c099",concept:"過補償",desc:"劣等感を埋めるために、過剰に反対方向へ努力してしまう。",author:"アドラー",themes:["努力","優越感","劣等感","頑張りすぎ"],mood:["認めてほしい","負けたくない","頑張りすぎてる"]},
+  {id:"c100",concept:"ライフスクリプト",desc:"幼い頃に決めた人生の台本を、大人になっても無意識に演じ続ける。",author:"バーン",themes:["繰り返し","パターン","幼少期","自動"],mood:["また同じ","決まってる感じ","抜け出せない"]},
+  {id:"c101",concept:"精神的外傷後成長",desc:"トラウマを経験した後、それ以前より深い意味や繋がりを感じることがある。",author:"テデスキ",themes:["困難","成長","回復","意味","変化"],mood:["辛かったけど","何かを得た","変わった"]},
+  {id:"c102",concept:"解離",desc:"耐えられない体験から自分を守るために、意識や感情が切り離される。",author:"ジャネ",themes:["解離","感情","現実感","感じない"],mood:["現実感がない","切り離されてる","感じられない"]},
+  {id:"c103",concept:"ダニングクルーガー効果",desc:"能力が低い人ほど自分の能力を過大評価し、能力が高い人ほど過小評価する。",author:"ダニング",themes:["自信","能力","評価","謙虚"],mood:["自信がありすぎた","知れば知るほど不安","無知の知"]},
+  {id:"c104",concept:"確証バイアス",desc:"自分の信念を支持する情報だけを集め、反証する情報を無視しやすい。",author:"ニコルソン",themes:["偏見","情報","先入観","SNS"],mood:["見たいものしか見えない","信じたいことを信じてた"]},
+  {id:"c105",concept:"認知的閉鎖欲求",desc:"曖昧さや不確実性を嫌い、早期に答えを出してしまおうとする傾向。",author:"クルグランスキー",themes:["不安","曖昧","答え","確実性"],mood:["はっきりしたい","もやもやが嫌","答えを求めすぎてる"]},
+  {id:"c106",concept:"反事実的思考",desc:"「もしあのとき違う選択をしていたら」という想像が、感情に強く影響する。",author:"ローゼンバウム",themes:["後悔","たられば","選択","過去","感情"],mood:["あのときこうすれば","後悔してる","別の道があった"]},
+  {id:"c107",concept:"フレーミング効果",desc:"同じ内容でも、表現の枠組みが変わると判断が変わる。",author:"カーネマン",themes:["言葉","表現","判断","見方","印象"],mood:["言い方で変わる","枠組みに乗せられた"]},
+  {id:"c108",concept:"セルフコンパッション",desc:"自己批判ではなく、自分自身に思いやりを向けることが回復力を高める。",author:"ネフ",themes:["自己批判","優しさ","自分","回復","ケア"],mood:["自分を責めすぎてる","もっと自分に優しく","完璧じゃなくていい"]},
+  {id:"c109",concept:"ソマティック・マーカー仮説",desc:"感情は理性的意思決定の妨げではなく、必要な情報として機能している。",author:"ダマシオ",themes:["感情","身体","判断","直感"],mood:["なんとなく嫌な感じ","体が嫌がってる","直感が正しかった"]},
+  {id:"c110",concept:"役割理論",desc:"人は常に何らかの役割を演じており、その役割と自分の間に摩擦が生じる。",author:"ゴッフマン",themes:["役割","キャラ","建前","本音","仕事"],mood:["疲れた","ズレる","本当の自分","演じてる"]},
+  {id:"c111",concept:"スティグマ",desc:"社会が特定の属性に貼るレッテルが、人のアイデンティティを縛る。",author:"ゴッフマン",themes:["差別","偏見","レッテル","障害","少数派"],mood:["傷つく","見られたくない","隠したい","わかってもらえない"]},
+  {id:"c112",concept:"内面化",desc:"外から押しつけられた規範や価値観が、いつのまにか自分のものになる。",author:"フロイト",themes:["当たり前","規範","親","社会","常識"],mood:["なんでそう思うんだろう","刷り込まれた","疑い始めた"]},
+  {id:"c113",concept:"認知的不協和",desc:"自分の信念と行動が矛盾するとき、人は辻褄を合わせようとする。",author:"フェスティンガー",themes:["矛盾","言い訳","後付け","迷い"],mood:["なんか変","自分に嘘ついてる","もやもや"]},
+  {id:"c114",concept:"マインドフルネスの逆説",desc:"今この瞬間に集中することを強要される社会は、逃げ場を奪う。",author:"ハン",themes:["瞑想","ストレス","自己啓発","余白","今"],mood:["頑張らなきゃ","ちゃんとしなきゃ","休んでも休めない"]},
+  {id:"c115",concept:"自己啓発の罠",desc:"変わろうとすること自体が、変われない自分を繰り返し確認させる。",author:"ハン",themes:["自己啓発","努力","変わりたい","成長"],mood:["また失敗した","変われない","自分を責める","焦る"]},
+  {id:"c116",concept:"感情の社会的構成",desc:"感情は自然に湧くものではなく、文化や文脈によって学習されるものだ。",author:"ルッツ",themes:["感情","気持ち","怒り","悲しみ","表現"],mood:["これは本当に自分の感情？","感情の名前がない","うまく言えない"]},
+  {id:"c117",concept:"身体の記憶",desc:"言葉にならない経験は、身体の中に蓄積される。",author:"ヴァン・デア・コーク",themes:["トラウマ","体","感覚","過去","緊張"],mood:["身体が反応する","理由がわからない","体が覚えてる"]},
+  {id:"c118",concept:"過剰適応",desc:"環境に適応しすぎた結果、自分の欲求や感覚がわからなくなる。",author:"ロジャーズ",themes:["適応","合わせる","自分","本音","疲れ"],mood:["自分がわからない","何がしたいの？","合わせすぎた","消えた"]},
+  {id:"c119",concept:"ステレオタイプの脅威",desc:"所属するグループについての否定的なステレオタイプが、パフォーマンスを下げる。",author:"スティール",themes:["偏見","ステレオタイプ","緊張","評価","プレッシャー"],mood:["代表させられてる","証明しなきゃ"]},
+  {id:"c120",concept:"傷つきやすさの力",desc:"傷つくことを認めることが、つながりの出発点になる。",author:"ブレネー・ブラウン",themes:["弱さ","傷つく","人間関係","本音","隠す"],mood:["見せたくない","恥ずかしい","怖い","弱くなれない"]},
+  {id:"c121",concept:"文化相対主義",desc:"ある文化の価値観を、別の文化の基準で評価することはできない。",author:"ボアズ",themes:["文化","価値観","当たり前","違い","理解"],mood:["なぜ理解されない","自分の常識が通じない"]},
+  {id:"c122",concept:"厚い記述",desc:"行為の表面ではなく、その行為に込められた意味の層を読み解くこと。",author:"ギアツ",themes:["意味","文化","行動","解釈","深読み"],mood:["表面じゃない","もっと深いものがある"]},
+  {id:"c123",concept:"リミナリティ",desc:"儀礼や変化の中間に置かれた、どこにも属さない曖昧な状態。",author:"ターナー",themes:["過渡期","変化","曖昧","中間","不安定"],mood:["どっちでもない","宙ぶらりん","定まらない"]},
+  {id:"c124",concept:"ブリコラージュ",desc:"手元にあるものを組み合わせて、目の前の問題を解決する創造的な実践。",author:"レヴィ＝ストロース",themes:["創造","工夫","即興","手元にあるもの"],mood:["手元でできることがある","創意工夫"]},
+  {id:"c125",concept:"ギフト経済",desc:"贈与と返礼が循環する社会では、経済は人間関係そのものだ。",author:"モース",themes:["贈与","人間関係","お返し","繋がり","義理"],mood:["重い","義理を感じる","純粋にあげられない"]},
+  {id:"c126",concept:"タブー",desc:"禁止は規則だけでなく、感染・汚染の感覚として身体に刻まれる。",author:"ダグラス",themes:["禁止","ルール","感染","汚れ","禁忌"],mood:["なんとなく嫌","触れたくない","体が拒否してる"]},
+  {id:"c127",concept:"ヘテロトピア",desc:"日常の秩序とは異質な、別の論理で動く特別な場所。",author:"フーコー",themes:["場所","異質","日常から離れる","別世界","居場所"],mood:["あそこは別世界","現実逃避したい","日常から出たい"]},
+  {id:"c128",concept:"神話的思考",desc:"論理より先に、二項対立や変換によって世界を理解するやり方。",author:"レヴィ＝ストロース",themes:["物語","神話","象徴","意味"],mood:["物語がほしい","意味づけしたい"]},
+  {id:"c129",concept:"シニフィアンとシニフィエ",desc:"言葉の音と意味の関係は恣意的だ。言葉は現実を写すのではなく、切り取る。",author:"ソシュール",themes:["言葉","意味","言語","表現"],mood:["言葉が足りない","言い方で変わる","うまく言えない"]},
+  {id:"c130",concept:"間テクスト性",desc:"どんな言葉も、先行するテキストの痕跡を含んでいる。",author:"クリステヴァ",themes:["文化","引用","影響","言葉"],mood:["オリジナルってなに","誰かの影響を受けてる"]},
+  {id:"c131",concept:"発話行為",desc:"言葉は情報を伝えるだけでなく、何かを行為として実行する。",author:"オースティン",themes:["言葉","行為","影響","約束","宣言"],mood:["言葉の重さ","言ったことの責任","言葉が現実を作る"]},
+  {id:"c132",concept:"神話作用",desc:"特定の価値観や権力関係を、自然で当然のものとして見せるメカニズム。",author:"バルト",themes:["当たり前","自然化","イデオロギー","メディア","常識"],mood:["なんで当然なの","誰かが決めた","疑い始めた"]},
+  {id:"c133",concept:"オリエンタリズム",desc:"西洋が「東洋」を他者化・固定化することで、支配を正当化してきた。",author:"サイード",themes:["偏見","他者化","文化","支配","イメージ"],mood:["そう見られてる","ステレオタイプ","自分のイメージを決められてる"]},
+  {id:"c134",concept:"ハイブリディティ",desc:"植民地化された文化は、支配文化と混淆することで新しい文化的形式を生む。",author:"バーバ",themes:["混血","文化","混淆","アイデンティティ"],mood:["どちらでもある","どちらでもない","境界にいる"]},
+  {id:"c135",concept:"ディアスポラ",desc:"故郷を離れて世界に散らばって生きる人々。帰れない場所への郷愁。",author:"ギルロイ",themes:["移住","故郷","アイデンティティ","帰れない","漂流"],mood:["ここが自分の場所じゃない","帰れない","どこにも属せない"]},
+  {id:"c136",concept:"サピア＝ウォーフ仮説",desc:"人が使う言語が、その人の思考や世界の見方を決定する。",author:"ウォーフ",themes:["言葉","思考","文化","表現","見方"],mood:["言葉がない","名前がつかない","言語化できない","うまく言えない"]},
+  {id:"c137",concept:"ノスタルジア",desc:"過去への郷愁は、過去そのものではなく、今の不満から生まれる。",author:"デイヴィス",themes:["過去","懐かしさ","今","失ったもの","戻りたい"],mood:["あの頃が良かった","戻りたい","今が嫌"]},
+  {id:"c138",concept:"想像の共同体",desc:"国民は実際に会ったことのない人々と繋がっているという共同幻想で成り立つ。",author:"アンダーソン",themes:["国","アイデンティティ","共同体","想像","メディア"],mood:["なぜ同じ国民と感じるの","作られた繋がり"]},
+  {id:"c139",concept:"ディスクール",desc:"何が語られ、何が語られないかを規定する、知と権力の複合的な体制。",author:"フーコー",themes:["言葉","語られない","権力","知識","枠組み"],mood:["言っていいことが決まってる","言えない","語れない感覚"]},
+  {id:"c140",concept:"コノテーション",desc:"言葉の辞書的意味と、文化的・感情的な含意は別物だ。",author:"バルト",themes:["言葉","意味","文化","感情","ニュアンス"],mood:["そういう意味で言ったんじゃない","裏の意味がある"]},
+  {id:"c141",concept:"メディアはメッセージ",desc:"内容より、メディアの形式そのものが人間の認知や社会を変える。",author:"マクルーハン",themes:["メディア","スマホ","SNS","情報","形式"],mood:["スマホに縛られてる","メディアが考えを変えてる"]},
+  {id:"c142",concept:"フィルターバブル",desc:"アルゴリズムが自分に合う情報だけを届け、異なる意見から隔離する。",author:"パリサー",themes:["SNS","情報","偏り","エコーチェンバー","アルゴリズム"],mood:["同じ意見しか見えない","違う意見に触れない","閉じてる"]},
+  {id:"c143",concept:"スペクタクルの社会",desc:"現実の経験が、その見せ物・表象に置き換えられていく。",author:"ドゥボール",themes:["SNS","見せる","パフォーマンス","現実","表象"],mood:["見せるために生きてる","演じてる","経験より写真"]},
+  {id:"c144",concept:"ポスト真実",desc:"感情的な訴えが、客観的事実よりも世論形成に大きく影響する時代。",author:"デントン",themes:["真実","感情","事実","メディア","政治"],mood:["何が本当かわからない","感情が勝ってる","事実が通じない"]},
+  {id:"c145",concept:"監視資本主義",desc:"人間の行動データが商品化され、予測・操作のために使われる。",author:"ズボフ",themes:["監視","データ","SNS","プライバシー","操作"],mood:["見られてる","データを使われてる","自分が商品になってる"]},
+  {id:"c146",concept:"デジタル労働",desc:"SNSに投稿し、クリックし、反応することが、無償の労働になっている。",author:"テラノヴァ",themes:["SNS","スマホ","情報","時間","データ"],mood:["気づいたら使ってた","時間が溶けた","搾取されてる感じ"]},
+  {id:"c147",concept:"議題設定",desc:"メディアは何を考えるかではなく、何について考えるかを決める。",author:"マコームズ",themes:["メディア","ニュース","注目","話題"],mood:["踊らされてる","何が重要か操作されてる"]},
+  {id:"c148",concept:"沈黙の螺旋",desc:"少数派は黙り、多数派の意見がさらに大きく見える。世論は自動的に偏る。",author:"ノエル＝ノイマン",themes:["空気","言えない","同調","SNS","意見"],mood:["言えない","引いてしまう","合わせてしまう"]},
+  {id:"c149",concept:"情報カスケード",desc:"先行する他者の行動を見て同じ行動をとることで、誤った情報が連鎖する。",author:"バナジー",themes:["流行","同調","噂","情報","群衆"],mood:["みんながそう言ってるから","流された","正しいと思い込んでた"]},
+  {id:"c150",concept:"ハイパーリアリティ",desc:"現実よりもリアルに感じられるシミュレーションの中で、本物の感覚が薄れる。",author:"ボードリヤール",themes:["SNS","ゲーム","ネット","現実","フィクション"],mood:["現実感がない","何が本物？","ぼんやりしてる"]},
+  {id:"c151",concept:"プレカリアート",desc:"不安定な雇用と生活を強いられた新しい階級。",author:"スタンディング",themes:["非正規","不安定","仕事","将来","格差"],mood:["先が見えない","不安定","いつ切られるか"]},
+  {id:"c152",concept:"感情労働",desc:"感情を商品として管理・提供することで、自分の感情が見えなくなる。",author:"ホックシールド",themes:["仕事","接客","笑顔","感情","疲れ"],mood:["本当の気持ちがわからない","疲れた","演じてる","空っぽ"]},
+  {id:"c153",concept:"情報の非対称性",desc:"売る側と買う側で持っている情報が違うとき、市場は歪む。",author:"アカロフ",themes:["情報","格差","不公平","信頼","欺く"],mood:["だまされた感じ","情報を隠されてた"]},
+  {id:"c154",concept:"外部不経済",desc:"ある行為のコストが、その行為者以外に押しつけられる。",author:"マーシャル",themes:["環境","社会","コスト","責任","他者への影響"],mood:["誰かのせいになってる","見えないコスト"]},
+  {id:"c155",concept:"公正世界仮説",desc:"努力すれば報われるという信念が、報われない人を自己責任として見えなくする。",author:"レーナー",themes:["努力","自己責任","報われない","不公平","社会"],mood:["頑張ってるのに","報われない","不公平","なぜ私だけ"]},
+  {id:"c156",concept:"ハイパー個人化",desc:"すべてが個人の選択・自己責任とされる社会では、構造の問題が見えなくなる。",author:"ベック",themes:["自己責任","個人","社会","構造","努力"],mood:["自分のせい？","一人で抱える"]},
+  {id:"c157",concept:"加速主義",desc:"変化のスピードが速すぎて、適応する前に次が来る社会の感覚。",author:"ローザ",themes:["スピード","変化","追いつかない","社会","技術"],mood:["追いつかない","置いていかれる","息切れ","ついていけない"]},
+  {id:"c158",concept:"脱成長",desc:"経済成長を目標とするのをやめ、豊かさを別の軸で測り直すこと。",author:"ラトゥーシュ",themes:["経済","成長","豊かさ","価値観","生き方"],mood:["成長だけが豊かさ？","別の生き方がある","競争に疲れた"]},
+  {id:"c159",concept:"消費社会",desc:"モノを買うことで自分を表現する社会では、欲望は終わらない。",author:"ボードリヤール",themes:["お金","買い物","欲しい","満足できない","比較"],mood:["満たされない","買っても虚しい","飽きる","欲しくなる"]},
+  {id:"c160",concept:"再帰的近代化",desc:"近代化の結果として生じたリスクを、自分で管理しなければならなくなる。",author:"ベック",themes:["リスク","将来","不安定","自己責任","社会"],mood:["不安","自分次第","プレッシャー","重い"]},
+  {id:"c161",concept:"隠れたカリキュラム",desc:"学校は教科書だけでなく、服従・秩序・競争を暗黙のうちに教えている。",author:"イリッチ",themes:["学校","規律","服従","競争","暗黙"],mood:["学校で何を学んだ？","知らないうちに教え込まれた"]},
+  {id:"c162",concept:"批判的教育学",desc:"教育は現状維持の道具にも、解放の実践にもなりうる。",author:"フレイレ",themes:["教育","解放","意識化","社会","変革"],mood:["気づかされた","見方が変わった"]},
+  {id:"c163",concept:"沈黙の文化",desc:"被抑圧者が自分たちの経験を語る言語を持てないとき、声は内側で溶けていく。",author:"フレイレ",themes:["沈黙","声","表現","抑圧","言えない"],mood:["言葉がない","表現できない","言っても届かない"]},
+  {id:"c164",concept:"批判的思考",desc:"前提を問い、証拠を評価し、代替案を考える思考の様式。",author:"エニス",themes:["疑う","問う","前提","考える","批判"],mood:["本当にそう？","当たり前を疑う","証拠はある？"]},
+  {id:"c165",concept:"メタ認知",desc:"自分の思考について考える能力。",author:"フラベル",themes:["思考","認知","自分","観察","考える"],mood:["自分の考えを観察してる","思考のパターンに気づく"]},
+  {id:"c166",concept:"体験的知識",desc:"生きることから来る知識は、書物から学ぶ知識とは異なる質を持つ。",author:"ポランニー",themes:["経験","知識","感覚","暗黙知","身体"],mood:["うまく言えないけどわかる","感覚的に知ってる"]},
+  {id:"c167",concept:"暗黙知",desc:"言語化できないが確かに存在する知識。技術・感覚・勘がそれにあたる。",author:"ポランニー",themes:["感覚","知識","言葉にできない","技能"],mood:["感覚でわかってる","言語化が難しい"]},
+  {id:"c168",concept:"認識の社会性",desc:"個人の認識は社会的相互作用によって形成される。",author:"ミード",themes:["社会","認識","相互作用","自分","他者"],mood:["他者が自分を作る","社会の中で考えてる"]},
+  {id:"c169",concept:"足場かけ",desc:"学習者の現在の能力の少し上の課題を、支援によって達成可能にする。",author:"ヴィゴツキー",themes:["成長","学び","支援","挑戦"],mood:["もう少し頑張れそう","一人じゃ難しい"]},
+  {id:"c170",concept:"構成主義",desc:"知識は外から与えられるものではなく、能動的な経験を通して構成される。",author:"ピアジェ",themes:["学び","経験","理解","能動"],mood:["自分で気づいた","経験が大事"]},
+  {id:"c171",concept:"ディープエコロジー",desc:"人間中心主義を超えて、すべての生命に内在的価値がある。",author:"ネス",themes:["環境","自然","生命","価値"],mood:["人間だけが大切じゃない","自然を壊してる","繋がってる"]},
+  {id:"c172",concept:"公共空間",desc:"誰もが利用できる空間は、民主主義の基盤だが、常に争われている。",author:"アーレント",themes:["公共","空間","民主主義","共有","都市"],mood:["居場所がない","排除されてる"]},
+  {id:"c173",concept:"ジェントリフィケーション",desc:"地域の再開発が、元々の住民を追い出してしまう現象。",author:"グラス",themes:["都市","再開発","格差","移動","排除"],mood:["昔の街がなくなった","居場所を奪われた"]},
+  {id:"c174",concept:"非場所",desc:"空港・高速道路・大型店舗など、アイデンティティや歴史のない無名の空間。",author:"オジェ",themes:["場所","空港","ショッピング","無名","均質"],mood:["どこでも同じ","ここはどこ","根がない"]},
+  {id:"c175",concept:"場所の精霊",desc:"特定の場所には、その場所固有の雰囲気・精神・力がある。",author:"ノルベルク＝シュルツ",themes:["場所","雰囲気","居場所","感覚","特別"],mood:["この場所が好き","ここには何かがある","居心地がいい"]},
+  {id:"c176",concept:"感情地政学",desc:"特定の場所・空間が特定の感情を呼び起こす。感情は空間に根付いている。",author:"アーメド",themes:["場所","感情","空間","居心地","雰囲気"],mood:["ここにいると落ち着く","あの場所が嫌い","空間が感情を作る"]},
+  {id:"c177",concept:"居心地の悪さ",desc:"どこにも完全に属せないことが、批判的思考の源になることがある。",author:"フック",themes:["居場所","所属","孤独","なじめない"],mood:["ここじゃない","なじめない","ずっとよそ者","違和感"]},
+  {id:"c178",concept:"身体の社会的構築",desc:"身体は生物学的事実ではなく、文化・権力によって意味を与えられる。",author:"バトラー",themes:["身体","文化","社会","ジェンダー","意味"],mood:["身体への違和感","社会が決めた形"]},
+  {id:"c179",concept:"パフォーマティビティ",desc:"ジェンダーや社会的アイデンティティは行為によって繰り返し作られる。",author:"バトラー",themes:["ジェンダー","役割","行為","繰り返し","社会"],mood:["演じてる","この役割は本当に自分？"]},
+  {id:"c180",concept:"クィア理論",desc:"性やジェンダーを固定したカテゴリとしてではなく、流動的なものとして捉える。",author:"バトラー",themes:["ジェンダー","セクシュアリティ","流動","規範","アイデンティティ"],mood:["カテゴリに当てはまらない","決めたくない","流動でいたい"]},
+  {id:"c181",concept:"アクターネットワーク理論",desc:"人間だけでなく、物・技術・制度もネットワークの能動的なアクターだ。",author:"ラトゥール",themes:["技術","物","ネットワーク","影響","相互作用"],mood:["スマホに振り回されてる","物が行動を変える"]},
+  {id:"c182",concept:"脱領土化",desc:"固定した領域・役割・アイデンティティから逃れ、新しい配置へ向かう運動。",author:"ドゥルーズ",themes:["逃げる","解放","変化","自由","新しい"],mood:["ここから出たい","縛られてる","別の自分になりたい"]},
+  {id:"c183",concept:"潜在性",desc:"現実化されていないが、実在する可能性の次元。",author:"ドゥルーズ",themes:["可能性","未来","実現","変化"],mood:["まだできる","可能性がある","実現してないだけ"]},
+  {id:"c184",concept:"イデオロギー的国家装置",desc:"学校・教会・メディアなどが、支配的な価値観を再生産する。",author:"アルチュセール",themes:["学校","メディア","価値観","再生産","刷り込み"],mood:["学校で教えられたこと","刷り込まれた"]},
+  {id:"c185",concept:"コモンズ",desc:"誰もが共有し管理できる、市場にも国家にも属さない共有資源。",author:"オストロム",themes:["共有","協力","みんな","管理","共同体"],mood:["一緒にやれる","共有できる"]},
+  {id:"c186",concept:"アイデンティティの流動性",desc:"自分が何者かは固定されておらず、文脈の中で常に揺れ動く。",author:"バトラー",themes:["自分","アイデンティティ","役割","ジェンダー","揺れる"],mood:["どれが本当の自分","ふわふわ","定まらない","迷ってる"]},
+  {id:"c187",concept:"ポリフォニー2",desc:"複数の声が対等に存在するとき、支配的な物語が崩れる。",author:"バフチン",themes:["声","複数","対等","多様","物語"],mood:["一つの正解じゃない","いろんな声がある"]},
+  {id:"c188",concept:"リキッドラブ",desc:"流動的な社会では、愛も関係も消費されるように移ろっていく。",author:"バウマン",themes:["恋愛","関係","別れ","孤独","繋がり"],mood:["長続きしない","信じられない","表面的","繋がれない"]},
+  {id:"c189",concept:"感情の植民地化",desc:"療法や自己啓発の言語が、感情を診断・管理するものとして広がっている。",author:"イルーズ",themes:["メンタル","心理","感情","自己啓発","分析"],mood:["分析したくない","ラベルを貼りたくない","ただそう感じる"]},
+  {id:"c190",concept:"レジリエンス",desc:"衝撃から単に回復するだけでなく、より良い状態に変容する能力。",author:"フォルケ",themes:["回復","困難","強さ","変容","立ち直る"],mood:["立ち直れる？","どうやって回復する","強くなれる"]},
+  {id:"c191",concept:"ケアの政治学",desc:"誰かの世話をすることは私的な行為ではなく、社会が見えなくしてきた労働だ。",author:"トロント",themes:["家事","育児","介護","家族","役割"],mood:["当然みたいに思われてる","見えない","疲れた","誰も気づかない"]},
+  {id:"c192",concept:"ケアの責任",desc:"傷つきやすい存在を守ることは、個人の徳ではなく社会の責任だ。",author:"ギリガン",themes:["ケア","責任","弱さ","社会","助ける"],mood:["誰も助けてくれない","自己責任にされる","支えが必要"]},
+  {id:"c193",concept:"他者の顔",desc:"他者の顔は、私に無限の責任を課す倫理的な呼びかけである。",author:"レヴィナス",themes:["人間関係","責任","他者","倫理"],mood:["どうすればよかった","罪悪感","責任を感じる"]},
+  {id:"c194",concept:"健康の社会的決定要因",desc:"健康は個人の行動だけでなく、収入・教育・住環境などの社会的条件によって決まる。",author:"WHO",themes:["健康","格差","環境","社会","条件"],mood:["自己責任にされる","生まれた環境が違う","社会が健康を決める"]},
+  {id:"c195",concept:"社会的処方",desc:"薬ではなく、人との繋がりやコミュニティ活動が健康を支える。",author:"ペンドルトン",themes:["孤独","健康","繋がり","コミュニティ"],mood:["孤立してる","繋がりたい"]},
+  {id:"c196",concept:"傍観者の倫理",desc:"何もしないことも、一つの道徳的選択だ。",author:"アーレント",themes:["傍観","倫理","選択","責任"],mood:["見てるだけでよかったの","何もしなかった","傍観の責任"]},
+  {id:"c197",concept:"修復的正義",desc:"罰するのではなく、関係を修復し、被害を回復することを目指す正義の形。",author:"ゼアー",themes:["修復","正義","関係","回復","対話"],mood:["裁くより修復したい","対話で解決できる"]},
+  {id:"c198",concept:"責任原理",desc:"技術の力が増大するほど、その結果に対する責任も広がる。",author:"ヨナス",themes:["技術","責任","将来","AI","環境"],mood:["誰が責任を取るの","技術が暴走してる","将来への責任"]},
+  {id:"c199",concept:"存在論的安全保障",desc:"一貫したアイデンティティと世界の予測可能性が、精神的安定の基盤になる。",author:"ギデンズ",themes:["安心","予測","アイデンティティ","安定","世界"],mood:["予測できない世界が怖い","基盤が揺らいでる"]},
+  {id:"c200",concept:"共感的苦しみの限界",desc:"他者の苦しみに完全に共感することは不可能で、それを認めることが倫理的関与の始まり。",author:"スーザン・ソンタグ",themes:["共感","限界","他者","苦しみ","距離"],mood:["わかったふりをしてた","本当にわかる？","距離がある"]},
+  {id:"c201",concept:"マイクロアグレッション",desc:"意図せずとも、日常の言動が特定のグループを傷つける小さな攻撃。",author:"ピアース",themes:["差別","無意識","言葉","傷つく","日常"],mood:["悪気はないだろうけど","傷ついた","日常の中の差別"]},
+  {id:"c202",concept:"インターセクショナリティ",desc:"人は複数の属性を同時に持ち、その交差点に固有の抑圧が生まれる。",author:"クレンショー",themes:["差別","ジェンダー","人種","複合","アイデンティティ"],mood:["複数の意味で不利","重なり合ってる","一言では言えない"]},
+  {id:"c203",concept:"感情のルール",desc:"社会はどんな感情をどこで表現すべきかを規定している。",author:"ホックシールド",themes:["感情","規範","表現","職場","コントロール"],mood:["感情を抑えてる","ここでは出せない","感じていいのか"]},
+  {id:"c204",concept:"比較の罠",desc:"他者と比べることは、常に自分の不足を生産する行為だ。",author:"ドウェック",themes:["比較","SNS","嫉妬","劣等感","評価"],mood:["あの人と比べてしまう","負けた気がする","自分が嫌"]},
+  {id:"c205",concept:"ゆらぎとしての主体",desc:"確固たる自己などなく、人は文脈の中で常に揺れ動く存在だ。",author:"バトラー",themes:["自分","ぶれる","迷い","揺れる"],mood:["自分がわからない","ぶれてる","定まらない","流される"]},
+  {id:"c206",concept:"ノイズの倫理学",desc:"雑音や例外は、秩序を問い直すものだ。",author:"アタリ",themes:["違和感","例外","逸脱","規範"],mood:["なんかズレてる","馴染めない","普通じゃない"]},
+  {id:"c207",concept:"境界の溶解",desc:"仕事とプライベート、オンとオフの境目が消え、常に稼働状態になる。",author:"ゴッフマン",themes:["仕事","休み","オフ","スマホ","境界"],mood:["休めない","オフになれない","逃げ場がない"]},
+  {id:"c208",concept:"ステレオタイプ",desc:"集団に対する過度に単純化された固定的なイメージ。",author:"リップマン",themes:["偏見","集団","イメージ","固定","差別"],mood:["ステレオタイプで見られてる","決めつけられてる","一人ひとり違う"]},
+  {id:"c209",concept:"集合知",desc:"多くの人の分散した知識が集まると、専門家を超える判断ができることがある。",author:"スロウィッキー",themes:["集合","知識","多数","判断","協力"],mood:["みんなで考える","多様な視点が必要"]},
+  {id:"c210",concept:"ヴェブレン効果",desc:"高価なものを持つことで自分の地位を示そうとする欲望。",author:"ヴェブレン",themes:["お金","ブランド","見栄","比較","ステータス"],mood:["羨ましい","負けたくない","見られたい"]},
+  {id:"c211",concept:"ドラマトゥルギー",desc:"人間の社会生活は演劇の舞台に似ており、人は常に役を演じている。",author:"ゴッフマン",themes:["演じる","役割","表現","舞台","日常"],mood:["演じてる","本音を出せない","役を割り振られてる"]},
+  {id:"c212",concept:"脱植民地化",desc:"植民地主義の精神的・文化的・制度的遺産を問い直し、解体する実践。",author:"ファノン",themes:["植民地","歴史","文化","解放","変革"],mood:["精神の植民地","価値観が植えつけられた","解放したい"]},
+  {id:"c213",concept:"構造的失業",desc:"個人の能力に関わらず、経済構造の変化によって生じる失業。",author:"ケインズ",themes:["仕事","失業","構造","経済","変化"],mood:["努力だけでは解決しない","社会の問題"]},
+  {id:"c214",concept:"欲動と文明",desc:"文明は本能・欲動の抑圧の上に成り立つ。その不満が文明の不安を生む。",author:"フロイト",themes:["欲求","抑圧","社会","文明","不満"],mood:["社会に合わせて抑えてる","本能を隠してる","不満が溜まってる"]},
+  {id:"c215",concept:"一般意志",desc:"個々の意志の総和ではなく、社会全体の真の利益を目指す意志。",author:"ルソー",themes:["社会","共有","合意","政治"],mood:["みんなのためって誰のため","押しつけられる"]},
+  {id:"c216",concept:"道徳感情論",desc:"共感する能力が、人間の道徳の基礎になっている。",author:"スミス",themes:["共感","感情","道徳","人間関係","他者"],mood:["共感できない","感じられない","冷たくなった"]},
+  {id:"c217",concept:"ゾーン・オブ・プロキシマル・デベロップメント",desc:"今の自力と、支援があればできることの間の領域が成長の場。",author:"ヴィゴツキー",themes:["成長","挑戦","支援","可能性"],mood:["もう少しでできそう","誰かがいれば"]},
+  {id:"c218",concept:"集合行動問題",desc:"個人合理性の追求が、集団全体の不利益を生む。",author:"オルソン",themes:["集団","個人","合理性","不利益","協力"],mood:["個人でやっても意味ない","集団行動の難しさ"]},
+  {id:"c219",concept:"プロセスとしての正義",desc:"正義は結果だけでなく、その過程にも宿る。",author:"ロールズ",themes:["正義","過程","公平","手続き"],mood:["結果だけじゃない","手続きが公平だったか"]},
+  {id:"c220",concept:"エントロピーの増大",desc:"閉じたシステムでは、秩序は自然に失われていく。",author:"ボルツマン",themes:["崩れる","秩序","混乱","変化"],mood:["バラバラになってく","崩れていく","なんとか保ってる"]},
+  {id:"c221",concept:"テリトリー",desc:"動物も人間も、空間を占有することでアイデンティティを形成する。",author:"ドゥルーズ",themes:["空間","占有","アイデンティティ","縄張り","所属"],mood:["ここは自分の場所","居場所を確保したい"]},
+  {id:"c222",concept:"フラニュール",desc:"都市を目的なく歩き、偶然の出会いに身を委ねる存在。",author:"ベンヤミン",themes:["都市","歩く","偶然","観察","一人"],mood:["目的なく歩きたい","偶然に委ねたい"]},
+  {id:"c223",concept:"記憶の場",desc:"記念碑・祝日・建物などが、集合的な記憶を保存・再生産する。",author:"ノラ",themes:["記憶","歴史","場所","継承","文化"],mood:["忘れたくない","残したい","あの場所に意味がある"]},
+  {id:"c224",concept:"トラウマの語り得なさ",desc:"極端な体験は言語化できず、伝達不可能な沈黙として残る。",author:"ラカプラ",themes:["トラウマ","言葉","経験","沈黙"],mood:["言葉にできない","伝わらない","誰にもわからない"]},
+  {id:"c225",concept:"伝統の発明",desc:"伝統と見なされているものの多くは、比較的最近に創られたものだ。",author:"ホブズボーム",themes:["伝統","文化","発明","当たり前","歴史"],mood:["ずっとそうだったわけじゃない","誰かが作った","伝統を疑う"]},
+  {id:"c226",concept:"否定神学",desc:"言えないことが神の本質だ。",author:"偽ディオニシウス",themes:["言葉にできない","限界","神秘","沈黙"],mood:["言葉が届かない","言えないことがある","沈黙が大事"]},
+  {id:"c227",concept:"聖と俗",desc:"世界は日常的な領域と、特別な力が宿る領域に分けられている。",author:"エリアーデ",themes:["神聖","日常","特別","意味","空間"],mood:["ここは特別","日常を超えた感覚"]},
+  {id:"c228",concept:"起源の神話",desc:"民族や国家は、自分たちの始まりを美化・単純化した物語を必要とする。",author:"アンダーソン",themes:["国","アイデンティティ","物語","起源","神話"],mood:["刷り込まれた","自分の物語はどこから"]},
+  {id:"c229",concept:"感謝の実践",desc:"感謝の感情を意識的に培うことが、幸福感を高める。",author:"セリグマン",themes:["感謝","幸福","実践","気づき","豊かさ"],mood:["感謝を忘れてた","当たり前すぎて気づかない"]},
+  {id:"c230",concept:"意味への意志",desc:"苦しみの中でも、意味を見つけようとする意志が人を支える。",author:"フランクル",themes:["意味","苦しみ","意志","支え","生きる"],mood:["苦しくても意味がある","意味を探してる","なんのために"]},
+  {id:"c231",concept:"心理的安全性",desc:"チームや集団の中で、リスクを取って発言できる環境。",author:"エドモンドソン",themes:["安全","発言","リスク","チーム","心理"],mood:["言いにくい","ここでは言えない","安心して言える場がない"]},
+  {id:"c232",concept:"ポスト植民地主義",desc:"植民地主義の終わりの後も続く、支配の文化的・心理的遺産を問い直す。",author:"ファノン",themes:["植民地","文化","心理","支配","遺産"],mood:["精神的な植民地","価値観の支配","独立してない内面"]},
+  {id:"c233",concept:"ネガティブ・ケイパビリティ",desc:"答えのない状況を、急がずに耐え続ける能力。",author:"キーツ",themes:["曖昧","耐える","答え","ゆっくり"],mood:["答えが出なくていい","曖昧に耐える","急がなくていい"]},
+  {id:"c234",concept:"仮面症候群",desc:"実力があるのに、自分は偽物だという感覚が拭えない。",author:"クランス",themes:["詐欺師","偽物","自信","不安","実力"],mood:["ばれるんじゃないかと思う","本当は大したことない"]},
+  {id:"c235",concept:"実存的孤独",desc:"どれだけ繋がっていても、最終的に一人で生きることの根本的な孤独。",author:"ヤーロム",themes:["孤独","実存","一人","繋がり","根本"],mood:["根本的に一人","誰とも完全には分かち合えない"]},
+  {id:"c236",concept:"過度一般化",desc:"一度の失敗から、すべてがそうだという結論を導く認知の歪み。",author:"ベック",themes:["一般化","失敗","すべて","思考","偏り"],mood:["また失敗した→いつもこうだ","一度のことで全部決める"]},
+  {id:"c237",concept:"権威への服従",desc:"権威のある人物の命令に従うことで、普通の人が残酷な行為をする。",author:"ミルグラム",themes:["権威","服従","命令","従う"],mood:["命令だから従った","権威に逆らえなかった"]},
+  {id:"c238",concept:"同調圧力",desc:"集団の意見に合わせることへの社会的圧力。",author:"アッシュ",themes:["同調","圧力","集団","合わせる","少数"],mood:["みんなに合わせた","本当はそう思わなかった","流された"]},
+  {id:"c239",concept:"繁栄の中の貧困",desc:"物質的に豊かな社会で、意味や繋がりの欠如が新たな貧しさになる。",author:"セン",themes:["豊か","虚しい","意味","孤独","不満"],mood:["満たされてるのに虚しい","何が足りないの"]},
+  {id:"c240",concept:"ハームリダクション",desc:"完全な禁止ではなく、害を最小化することを目的とする公衆衛生のアプローチ。",author:"マーラット",themes:["依存","リスク","段階的"],mood:["完璧にやめられない","少しずつでいい","現実的に"]},
+  {id:"c241",concept:"知識の権力",desc:"何が知識として認められるかは、誰が権力を持つかに依存する。",author:"フーコー",themes:["知識","権力","専門家","正しさ"],mood:["誰が正しいを決めるの","疑ってる"]},
+  {id:"c242",concept:"見えざる手",desc:"個人が自分の利益を追求することで、社会全体の利益が実現するという考え。",author:"スミス",themes:["市場","個人","社会","競争","利益"],mood:["自分だけ良ければいい？","個人vs社会"]},
+  {id:"c243",concept:"ラベリング理論2",desc:"問題行動は個人の特性ではなく、社会のラベルが作り出す。",author:"レマート",themes:["レッテル","問題","社会","個人"],mood:["ラベルが自分を縛る","ラベルを貼られた"]},
+  {id:"c244",concept:"欲望の模倣",desc:"人は他者が欲しがるものを欲しがる。欲望は本来的ではなく模倣的だ。",author:"ジラール",themes:["欲望","模倣","他者","欲しい","嫉妬"],mood:["みんなが欲しがってるから欲しい","本当に欲しいもの？"]},
+  {id:"c245",concept:"構造的暴力",desc:"戦争や犯罪だけでなく、貧困・差別・不平等そのものが人を傷つける暴力だ。",author:"ガルトゥング",themes:["格差","差別","不平等","暴力","社会"],mood:["見えない暴力","構造が傷つける","個人の問題じゃない"]},
+  {id:"c246",concept:"社会的孤立",desc:"物理的には人々の中にいても、心理的・社会的に孤立している状態。",author:"カチョポ",themes:["孤独","孤立","繋がり","人間関係"],mood:["人がいても孤独","誰にも理解されない","本当の繋がりがない"]},
+  {id:"c247",concept:"感情の転置",desc:"ある対象への感情が、別の対象へ向けられる。",author:"フロイト",themes:["感情","転置","対象","怒り","投影"],mood:["なぜこの人に感情的になるの","本当の対象は違う"]},
+  {id:"c248",concept:"バーンアウト",desc:"過剰な要求と報酬の不均衡が、エネルギーを完全に消耗させる。",author:"マスラック",themes:["燃え尽き","疲れ","消耗","仕事","感情"],mood:["燃え尽きた","何もできない","感情が枯渇した"]},
+  {id:"c249",concept:"自己一致",desc:"言葉・感情・行動が一致しているとき、人はより本物として感じられる。",author:"ロジャーズ",themes:["自己","一致","言葉","感情","行動"],mood:["言ってることとやってることが違う","本当の気持ちを言いたい"]},
+  {id:"c250",concept:"実存的ギルト",desc:"自分の可能性を十分に生かさなかったことへの罪悪感。",author:"ヤーロム",themes:["可能性","罪悪感","後悔"],mood:["やれることをやってない","後悔してる","もっとできたはず"]},
+  {id:"c251",concept:"感情調節",desc:"感情をコントロールしようとすること自体が、感情を強化することがある。",author:"ウェグナー",themes:["感情","コントロール","強化","抑圧"],mood:["抑えようとするほど強くなる","逆効果になってる"]},
+  {id:"c252",concept:"深い作業",desc:"中断なく集中する時間が、最も価値ある仕事を生む。",author:"ニューポート",themes:["集中","中断","深い","作業","時間"],mood:["集中できる時間がない","深く考えたい"]},
+  {id:"c253",concept:"アクセプタンス",desc:"変えられないことを受け入れることで、エネルギーを変えられることに向けられる。",author:"ヘイズ",themes:["受け入れる","変えられない","エネルギー","適応"],mood:["受け入れたい","変えられないことがある","抵抗するより受け入れる"]},
+  {id:"c254",concept:"感情の顆粒度",desc:"感情を細かく区別できるほど、ウェルビーイングが高まる。",author:"リサ・バレット",themes:["感情","細かい","区別","幸福","言語"],mood:["感情を細かく言えるようになりたい","もやっとを分解する"]},
+  {id:"c255",concept:"思いやりの疲れ",desc:"他者を助け続けることで、共感する能力が枯渇する。",author:"フィゲイ",themes:["思いやり","疲れ","枯渇","他者","感情"],mood:["もう感じられない","人のために尽くしすぎた"]},
+  {id:"c256",concept:"双曲割引",desc:"人は将来の大きな報酬より、今すぐの小さな報酬を過大評価する。",author:"エインズリー",themes:["衝動","我慢","将来","今すぐ","誘惑"],mood:["すぐ諦める","将来より今","長期的に考えられない"]},
+  {id:"c257",concept:"ピーク・エンドの法則",desc:"人は経験全体ではなく、最も強い瞬間と最後の瞬間によって経験を評価する。",author:"カーネマン",themes:["記憶","経験","評価","印象","最後"],mood:["最後が悪かった","あの瞬間だけ覚えてる"]},
+  {id:"c258",concept:"生産性の罠",desc:"生産性を高めようとするほど、休めなくなり疲弊が深まる。",author:"ハン",themes:["生産性","罠","疲れ","休む","効率"],mood:["生産的じゃなきゃいけない","休むと罪悪感"]},
+  {id:"c259",concept:"喪の作業",desc:"喪失と向き合い、それを統合することで生が続いていく。",author:"フロイト",themes:["喪失","悲しみ","統合","回復","向き合う"],mood:["まだ悲しんでいい","向き合う必要がある","喪失を抱えながら生きる"]},
+  {id:"c260",concept:"ライフスパン発達",desc:"人は生涯を通じて変化し続ける。老いることは衰えではなく、変容だ。",author:"バルテス",themes:["成長","変化","年齢","老い","可能性"],mood:["歳をとることへの不安","まだ変われる","遅すぎない"]},
+  {id:"c261",concept:"ナラティブセラピー",desc:"問題は人ではなく、人を縛るストーリーにある。語り直すことで変化が起きる。",author:"ホワイト",themes:["物語","問題","語り直す","変化","解放"],mood:["そのストーリーを変えたい","縛られたストーリー"]},
+  {id:"c262",concept:"ポリヴェーガル理論",desc:"神経系の状態が、安全・闘争・凍結の感情的反応を決める。",author:"ポージェス",themes:["身体","安全","緊張","凍りつく","神経"],mood:["体が固まってる","安全じゃない感じ"]},
+  {id:"c263",concept:"転移2",desc:"患者が治療者に対して過去の感情パターンを投影する現象。特定の相手への強い反応。",author:"フロイト",themes:["感情","投影","関係","過去","強い反応"],mood:["なぜあの人に強く反応するの","過去が影響してる"]},
+  {id:"c264",concept:"過去の重力",desc:"人は過去の経験によって、現在の知覚や判断を知らず縛られている。",author:"ベルクソン",themes:["過去","記憶","繰り返し","変われない"],mood:["また同じ","抜け出せない","パターン"]},
+  {id:"c265",concept:"消費社会2",desc:"欲しいという欲望は満たされるためではなく、永続するために作られている。",author:"ボードリヤール",themes:["消費","欲望","満足","社会"],mood:["いつも何かが足りない","手に入れても次へ"]},
+  {id:"c266",concept:"権力のミクロ政治学",desc:"権力は大きな制度だけでなく、日常の微細なやりとりにも宿る。",author:"フーコー",themes:["権力","日常","微細","やりとり","関係"],mood:["何気ない言葉に力がある","日常に権力が浸透してる"]},
+  {id:"c267",concept:"自由連想",desc:"意識の流れに任せて語ることで、無意識が表れる。",author:"フロイト",themes:["無意識","自由","語る","流れ","深層"],mood:["思いつくままに","無意識が出てくる"]},
+  {id:"c268",concept:"集合的記憶",desc:"個人の記憶は社会によって形成されており、純粋に個人的な記憶は存在しない。",author:"アルバックス",themes:["記憶","過去","家族","世代","歴史"],mood:["これは私の気持ち？","刷り込み","本当にそう感じた？"]},
+  {id:"c269",concept:"エポケー",desc:"あらゆる先入見を括弧に入れ、純粋な経験へと立ち返ること。",author:"フッサール",themes:["先入見","括弧","純粋","経験","判断"],mood:["いったん保留にする","先入見を外す","ゼロから見直す"]},
+  {id:"c270",concept:"ネガティブ思考の反芻",desc:"ネガティブな思考を繰り返すことで、うつや不安が深まる。",author:"ノーレン＝ホエクセマ",themes:["思考","ぐるぐる","繰り返し","うつ","不安"],mood:["同じことを考え続けてる","ぐるぐるが止まらない"]},
+  {id:"c271",concept:"モーニングページ",desc:"毎朝の自由書き（ジャーナリング）が、創造性と自己理解を深める。",author:"キャメロン",themes:["書く","創造","自己理解","朝","習慣"],mood:["書いて整理したい","言語化することで気づく"]},
+  {id:"c272",concept:"心理的柔軟性",desc:"価値観に基づいて行動しながら、内的・外的状況に適応できる能力。",author:"ヘイズ",themes:["柔軟","価値観","行動","適応","能力"],mood:["価値観通りに生きたい","状況に合わせられる"]},
+  {id:"c273",concept:"再演",desc:"過去のトラウマを、無意識に現在の関係で繰り返してしまう。",author:"フロイト",themes:["繰り返し","トラウマ","関係","無意識","過去"],mood:["また同じことをしてる","なぜ繰り返すの"]},
+  {id:"c274",concept:"外傷的絆",desc:"虐待者と被害者の間に生まれる病理的な感情的結びつき。",author:"ハーマン",themes:["虐待","絆","依存","病理","感情"],mood:["なぜ離れられない","傷ついてるのに繋がってる"]},
+  {id:"c275",concept:"代理トラウマ",desc:"他者のトラウマを聞いたり支援したりすることで、支援者自身が傷つく。",author:"フィゲイ",themes:["トラウマ","支援","傷つく","代理","聞く"],mood:["聞いて自分が傷ついた","一緒に傷ついてしまった"]},
+  {id:"c276",concept:"感情的知性",desc:"感情を認識・管理し、他者との関係に活用する能力。",author:"ゴールマン",themes:["感情","知性","管理","関係","能力"],mood:["感情をコントロールしたい","感情を活かしたい"]},
+  {id:"c277",concept:"精神的エネルギーの有限性",desc:"自制心や意思決定は有限のリソースで、使うほど減る。",author:"バウマイスター",themes:["自制心","意思決定","疲弊","有限","リソース"],mood:["決断疲れ","自制心が続かない","エネルギーが切れた"]},
+  {id:"c278",concept:"意識と無意識の分岐",desc:"多くの判断は意識的な思考より先に、無意識で行われている。",author:"リベット",themes:["無意識","判断","意識","先","脳"],mood:["自分で選んでると思ってたけど","脳が先に決めてた"]},
+  {id:"c279",concept:"時間的自己",desc:"過去の自己・現在の自己・未来の自己がどう関係するかが、意思決定に影響する。",author:"現代心理学",themes:["時間","自己","過去","未来","連続"],mood:["未来の自分を想像できない","時間の中の自分"]},
+  {id:"c280",concept:"社会性ニューロサイエンス",desc:"社会的経験は脳を変え、脳の状態が社会的行動を変える。",author:"カチョポ",themes:["脳","社会","経験","変化","相互"],mood:["孤独が脳に影響する","社会的な経験が脳を作る"]},
+  {id:"c281",concept:"認知マップ",desc:"個人が頭の中に作る空間・社会・現実の地図。",author:"トルマン",themes:["地図","認知","空間","頭の中","理解"],mood:["頭の中の地図と現実が違う","自分なりの地図がある"]},
+  {id:"c282",concept:"帰属エラー",desc:"他者の行動を状況ではなく性格に帰属させ、自分には逆の傾向がある。",author:"ロス",themes:["帰属","エラー","性格","状況","判断"],mood:["あの人がそういう人だから","でも自分は状況のせい","ダブルスタンダード"]},
+  {id:"c283",concept:"同調圧力2",desc:"集団の中で少数意見を持つとき、その意見を撤回させる圧力。",author:"アッシュ",themes:["集団","少数","圧力","意見","合わせる"],mood:["みんなと違うと言いにくい","集団に合わせてしまう"]},
+  {id:"c284",concept:"貢献と感謝",desc:"感謝されることは、承認欲求を満たし行動を持続させる。",author:"アドラー",themes:["感謝","承認","貢献","持続","人間関係"],mood:["誰かの役に立ちたい","感謝されると嬉しい"]},
+  {id:"c285",concept:"意味の構成",desc:"意味は発見されるのではなく、積極的に構成されるものだ。",author:"フランクル",themes:["意味","構成","発見","自分","能動"],mood:["意味を見つけたい","自分で意味を作れる"]},
+  {id:"c286",concept:"適応的思考",desc:"不適応な自動思考を、より現実的・適応的な思考に置き換える。",author:"ベック",themes:["思考","適応","置き換え","認知","変化"],mood:["考え方を変えたい","別の考え方ができる"]},
+  {id:"c287",concept:"知的謙虚さ",desc:"自分の知識の限界を認め、他者の知識に開かれていること。",author:"チャーチ",themes:["知識","謙虚","限界","開かれる","学び"],mood:["わからないことが多い","謙虚でありたい","知識の限界を認める"]},
+  {id:"c288",concept:"感情的記憶",desc:"感情と結びついた記憶は、通常の記憶より強く長く残る。",author:"ルドゥー",themes:["記憶","感情","長い","強い","過去"],mood:["あの感情が忘れられない","感情と記憶が結びついてる"]},
+  {id:"c289",concept:"認知負荷",desc:"情報が多すぎると、思考の能力が低下する。",author:"スウェラー",themes:["情報","疲れ","判断","認知","容量"],mood:["考えすぎてパンクしてる","判断できなくなってる"]},
+  {id:"c290",concept:"選択過剰",desc:"選択肢が多いほど、選択後の満足度が下がるパラドックス。",author:"シュワルツ",themes:["選択","迷い","満足","多すぎ","後悔"],mood:["選びすぎて後悔してる","選択肢が多すぎ","もっとよかったかも"]},
+  {id:"c291",concept:"ソシオメーター理論",desc:"自尊心は、社会集団からの受容・排除のシグナルとして機能している。",author:"リアリー",themes:["自尊心","承認","排除","仲間","受け入れられる"],mood:["仲間に入れてもらえない","評価が怖い","自分を大事にできない"]},
+  {id:"c292",concept:"境界性パーソナリティの社会的文脈",desc:"極端な感情変動は、安定した環境がなかった経験の適応だ。",author:"ライン",themes:["感情","不安定","適応","環境","境界"],mood:["感情が激しい理由がある","適応として生まれた"]},
+  {id:"c293",concept:"正義の感覚",desc:"人は不公平に対して直感的に反応し、自分が損をしても不正義を罰する。",author:"カーネマン",themes:["正義","不公平","感覚","罰","直感"],mood:["腹立つ","許せない","不公平への怒り"]},
+  {id:"c294",concept:"孤独の効用",desc:"孤独は苦痛だけでなく、自己との対話や創造性の源になる。",author:"アリエティ",themes:["孤独","効用","創造","自己","対話"],mood:["一人の時間が必要","孤独から生まれるもの","孤独は悪いことじゃない"]},
+  {id:"c295",concept:"感情の伝染",desc:"感情は個人の中に閉じておらず、空間を通じて他者に広がる。",author:"アーメド",themes:["感情","伝染","空気","雰囲気","他者"],mood:["場の雰囲気に影響された","感情がうつる","空気が変わる"]},
+  {id:"c296",concept:"自己開示の階層",desc:"人は少しずつ、信頼に応じて自分を開示していく。",author:"アルトマン",themes:["信頼","開示","段階","自分","関係"],mood:["まだ話せない","少しずつ見せてる","信頼が積み重なってる"]},
+  {id:"c297",concept:"集団浅慮",desc:"集団が同調圧力によって、批判的思考を失い誤った意思決定をする。",author:"ジャニス",themes:["集団","浅慮","思考","同調","誤り"],mood:["みんなそう思ってたから","批判できなかった","集団が間違えた"]},
+  {id:"c298",concept:"反省的均衡",desc:"道徳的判断と原理の間を往復しながら、整合性を追求すること。",author:"ロールズ",themes:["道徳","原理","判断","整合","往復"],mood:["判断と原則が合わない","整合性を求めてる"]},
+  {id:"c299",concept:"他者の承認への依存",desc:"他者の承認なしには自己を肯定できない状態が苦しみを生む。",author:"ヘーゲル",themes:["承認","依存","他者","自己","苦しみ"],mood:["承認されないと不安","他者の目が気になる","評価で自分が変わる"]},
+  {id:"c300",concept:"存在の薄さ",desc:"現代社会では経験が浅く処理されてしまい、深みが失われていく。",author:"ハン",themes:["経験","深さ","浅さ","表面","速さ"],mood:["深く感じられない","体験が薄い","表面をなぞってる"]},
+  {id:"c301",concept:"権威主義的性格",desc:"不確実性への恐れから、強い権威に服従し、弱者を攻撃する傾向。",author:"アドルノ",themes:["権威","服従","攻撃","弱者","恐れ"],mood:["強いものに従う","弱いものを叩く","確実性を求めてる"]},
+  {id:"c302",concept:"文化的決定論",desc:"人の行動や性格は文化によって完全に決定されるという考え。",author:"ルース・ベネディクト",themes:["文化","決定","行動","性格","環境"],mood:["文化が自分を決めてる","環境が自分を作った"]},
+  {id:"c303",concept:"責任の拡散",desc:"集団の中では、個人の責任感が薄れる。",author:"ダーリー",themes:["責任","集団","拡散","薄れる","誰かがやる"],mood:["誰かがやると思ってた","個人の責任"]},
+  {id:"c304",concept:"アイデンティティの危機",desc:"自分が何者かという感覚が崩れる時期。成長や変化に伴って起きる。",author:"エリクソン",themes:["アイデンティティ","崩れる","危機","成長","自分"],mood:["自分がわからなくなった","誰なんだろう"]},
+  {id:"c305",concept:"批判的意識",desc:"自分の状況を社会的・政治的に理解し、変革への動機を持つこと。",author:"フレイレ",themes:["意識","社会","変革","気づく","行動"],mood:["なぜこうなってるか気づいた","変えたい","動きたい"]},
+  {id:"c306",concept:"ナッジ",desc:"強制せずに、選択の設計によって人の行動を望ましい方向に誘導する。",author:"サンスティーン",themes:["選択","誘導","設計","無意識","意思決定"],mood:["気づかないうちに誘導されてた","選ばされてた"]},
+  {id:"c307",concept:"弱い紐帯の強さ",desc:"親しい関係より、薄い知り合いこそが新しい情報や機会をもたらす。",author:"グラノヴェッター",themes:["人脈","繋がり","新しい","広がり"],mood:["狭いつながりしかない","新しい出会いがない"]},
+  {id:"c308",concept:"抑圧の内面化",desc:"抑圧された側が、抑圧者の価値観を自分のものとして取り込んでしまう。",author:"フレイレ",themes:["抑圧","内面化","価値観","取り込む","支配"],mood:["自分でも差別してた","なぜ自分を低く見てたの","刷り込まれた価値観"]},
+  {id:"c309",concept:"ストレス反応の社会的文脈",desc:"ストレスは個人の問題ではなく、社会的条件によって不均等に分配される。",author:"ウィルキンソン",themes:["ストレス","社会","格差","環境","健康"],mood:["ストレスが多い環境","自分だけじゃない","社会が原因"]},
+  {id:"c310",concept:"自己憐憫とセルフコンパッション",desc:"自己憐憫と自己への思いやりは異なる。後者は建設的だ。",author:"ネフ",themes:["自己憐憫","思いやり","自分","建設的"],mood:["可哀想にしすぎてる","自己憐憫から自己ケアへ"]},
+  {id:"c311",concept:"ポジティブ心理学",desc:"幸福・強み・繁栄を科学的に研究し、人生の質を高めようとする分野。",author:"セリグマン",themes:["幸福","強み","繁栄","科学","生き方"],mood:["強みに目を向けたい","いい人生を生きる"]},
+  {id:"c312",concept:"感情の差異化",desc:"感情をより細かく区別できるほど、より適切に対処できる。",author:"リサ・バレット",themes:["感情","細かい","区別","対処","言語化"],mood:["感情をうまく言えない","もやっとを言語化したい"]},
+  {id:"c313",concept:"認知的柔軟性",desc:"状況に応じて思考パターンを切り替えられる能力。",author:"シフリン",themes:["思考","柔軟","切り替え","状況","適応"],mood:["固定した考え方を変えたい","考えを切り替えられない"]},
+  {id:"c314",concept:"共同注意",desc:"二人が同じものを見ながら、互いがそれを見ていることを知っている状態。",author:"トマセロ",themes:["コミュニケーション","共有","繋がり","理解","一緒に"],mood:["同じものを見たい","共鳴したい","分かち合いたい"]},
+  {id:"c315",concept:"場の理論",desc:"社会的な場は、参加者の資本とルールによって構造化されたゲームだ。",author:"ブルデュー",themes:["競争","ルール","資本","場所","社会"],mood:["ゲームのルールがわからない","参加できてない","勝てない"]},
+  {id:"c316",concept:"社会比較理論",desc:"人は自分の意見・能力を他者と比較することで評価する。",author:"フェスティンガー",themes:["比較","他者","評価","自分","SNS"],mood:["比べてしまう","他人と比べると辛い","基準が他者"]},
+  {id:"c317",concept:"ストレンジャーの視点",desc:"日常を外から見る視点が、当たり前を問い直す力を持つ。",author:"ジンメル",themes:["外部","視点","問い直す","異質","見方"],mood:["外から見ると違う","当たり前が違って見える"]},
+  {id:"c318",concept:"文化的遅滞",desc:"技術や経済は急速に変化するが、文化や価値観はゆっくりしか変わらない。",author:"オグバーン",themes:["文化","技術","変化","遅い","ズレ"],mood:["社会がついていけない","価値観が古い"]},
+  {id:"c319",concept:"複合的アイデンティティ",desc:"人は一つではなく複数のアイデンティティを同時に持ち、それが交差する。",author:"ホール",themes:["アイデンティティ","複数","交差","多様","自分"],mood:["いくつもの自分がある","どれが本当の自分"]},
+  {id:"c320",concept:"感情的知性の欠如",desc:"感情を認識・管理できないとき、人は感情に支配される。",author:"ゴールマン",themes:["感情","認識","管理","支配","能力"],mood:["感情に飲み込まれる","コントロールできない","感情が暴走する"]},
+  {id:"c321",concept:"存在論的転換",desc:"人間以外の存在の「存在論」を認め、多様な世界観を認める。",author:"ヴィヴェイロス・デ・カストロ",themes:["存在","文化","多様","世界観"],mood:["人間中心じゃない世界","別の存在論がある"]},
+  {id:"c322",concept:"ケアとしての知",desc:"知ることは、対象への関与と責任を伴うべきだ。",author:"ハーディング",themes:["知識","ケア","責任","関与","倫理"],mood:["知ることへの責任","関わることが大事"]},
+  {id:"c323",concept:"語ることの倫理",desc:"誰かの苦しみを代弁するとき、その代弁自体が権力を帯びる。",author:"スピヴァク",themes:["代弁","権力","語る","他者","倫理"],mood:["代弁してもいい？","他者の声を語る難しさ"]},
+  {id:"c324",concept:"連帯の政治",desc:"個人の経験を社会的な問いとして共有することで、変革の力が生まれる。",author:"ホネット",themes:["連帯","共有","変革","繋がり","社会"],mood:["一人じゃ変えられない","一緒に声を上げたい"]},
+  {id:"c325",concept:"社会的再生産",desc:"社会が次世代に価値観・階層・関係を受け継がせていく仕組み。",author:"ブルデュー",themes:["世代","継承","格差","価値観","再生産"],mood:["親と同じになる","格差が継承される","変えるのが難しい"]},
+  {id:"c326",concept:"制度の惰性",desc:"制度は一度作られると、それ自体を維持しようとする力が生まれる。",author:"ノース",themes:["制度","慣性","変化","維持","抵抗"],mood:["制度が変わらない","変えようとする力が弱い"]},
+  {id:"c327",concept:"コンフリクトの生産性",desc:"対立や摩擦は解消すべきものではなく、創造と変革の源になりうる。",author:"コゼール",themes:["対立","摩擦","創造","変化","葛藤"],mood:["ぶつかってもいい","対立から何かが生まれる"]},
+  {id:"c328",concept:"可視性の政治",desc:"見えること・見えないことが、権力と密接に関わっている。",author:"バーナー",themes:["見える","見えない","権力","存在","認識"],mood:["見えない存在にされてる","見えることが力になる"]},
+  {id:"c329",concept:"多声的自己",desc:"自己は一つの声ではなく、複数の声が対話する場である。",author:"バフチン",themes:["自己","複数","声","対話","内省"],mood:["自分の中に複数の声がある","内なる対話"]},
+  {id:"c330",concept:"間主観性",desc:"意識は孤立したものではなく、他者との相互作用の中で形成される。",author:"フッサール",themes:["意識","他者","相互作用","自己","社会"],mood:["他者があって自分がある","一人では完結しない"]},
+  {id:"c331",concept:"道徳的損傷",desc:"戦場・職場などで、自分の価値観に反することを強いられた後の精神的傷。",author:"シェイ",themes:["道徳","傷","価値観","強制","後悔"],mood:["あのとき正しかった？","価値観を曲げた","道徳的に傷ついた"]},
+  {id:"c332",concept:"アイデンティティ・フュージョン",desc:"自己と集団が融合し、集団のためなら何でもする心理状態。",author:"スウォン",themes:["集団","融合","アイデンティティ","犠牲"],mood:["集団のために自分を犠牲にする","集団と自分が一体"]},
+  {id:"c333",concept:"感情の政治化",desc:"感情は個人的なものではなく、権力・不平等・社会構造と深く結びついている。",author:"アーメド",themes:["感情","政治","権力","社会","不平等"],mood:["この怒りはどこから","感情が政治的","個人的な問題じゃない"]},
+  {id:"c334",concept:"死の否定",desc:"現代社会は死を視野から外すことで、生の意味への問いを回避している。",author:"ベッカー",themes:["死","否定","現代","意味","回避"],mood:["死から目を背けてる","いつかは終わる"]},
+  {id:"c335",concept:"繁栄のパラドックス",desc:"物質的豊かさが精神的豊かさをもたらすとは限らない。",author:"イースタリン",themes:["豊かさ","幸福","物質","精神","逆説"],mood:["豊かなのに幸せじゃない","物があっても空虚"]},
+  {id:"c336",concept:"ノマドランド",desc:"定住しないことが選択ではなく条件になる社会が来ている。",author:"バウマン",themes:["仕事","定住","転職","不安定","漂流"],mood:["根がない","どこにもいられない","漂ってる"]},
+  {id:"c337",concept:"文化的外傷",desc:"ある出来事が集団のアイデンティティを根本から揺るがす衝撃。",author:"アレクサンダー",themes:["文化","集団","外傷","アイデンティティ","変化"],mood:["あの出来事が変えた","集団の傷"]},
+  {id:"c338",concept:"境界の政治学",desc:"誰が内側で誰が外側かを決める境界線は、権力によって引かれる。",author:"ラクラウ",themes:["境界","内外","排除","権力","アイデンティティ"],mood:["なぜ私が外側なの","境界を引かれた"]},
+  {id:"c339",concept:"周縁化",desc:"主流の社会や文化から排除された位置に置かれること。",author:"スピヴァク",themes:["排除","周縁","少数派","主流","外れ"],mood:["はみ出してる","中心に入れない","見えない存在"]},
+  {id:"c340",concept:"スロウネス運動",desc:"速さへの強迫から離れ、ゆっくりとした生の質を回復しようとする試み。",author:"オノレ",themes:["スピード","遅さ","丁寧","ゆっくり","余白"],mood:["ゆっくりしたい","急ぎすぎてる","丁寧に生きたい"]},
+  {id:"c341",concept:"感情のルール2",desc:"組織や場面ごとに、どんな感情を出していいかは暗黙に決まっている。",author:"ホックシールド",themes:["組織","感情","暗黙","場面","出していいもの"],mood:["ここでは感情を見せてはいけない","感情を選んでる"]},
+  {id:"c342",concept:"構造的機能主義",desc:"社会の各部分は全体の均衡を維持するために機能している。",author:"パーソンズ",themes:["社会","機能","均衡","役割","システム"],mood:["社会の歯車","自分の役割がある","システムに組み込まれてる"]},
+  {id:"c343",concept:"ポストモダンの条件",desc:"大きな物語が崩壊した後、人々は小さな物語に頼るしかない。",author:"リオタール",themes:["物語","崩壊","現代","意味"],mood:["大きな物語がない","信じるものがない","小さな意味を探す"]},
+  {id:"c344",concept:"自己監視",desc:"自分自身を監視し、管理するよう内面化された社会的な圧力。",author:"フーコー",themes:["自己管理","監視","規律","内面化","プレッシャー"],mood:["自分を縛ってる","自分が監視者","自分を管理しすぎてる"]},
+  {id:"c345",concept:"過去の現在化",desc:"過去は終わったものではなく、現在に生き続けている。",author:"デリダ",themes:["過去","現在","生きてる","影響","歴史"],mood:["過去が今に影響してる","あのことが今も続いてる"]},
+  {id:"c346",concept:"社会的実践論",desc:"社会は個人の行為の集積ではなく、実践が社会構造を維持し変容させる。",author:"ブルデュー",themes:["実践","社会","構造","行動","変化"],mood:["行動が社会を作る","一つ一つの行為が重要"]},
+  {id:"c347",concept:"再帰的自己",desc:"近代の人間は常に自己を省察し、語り直し続けなければならない。",author:"ギデンズ",themes:["自己","アイデンティティ","語り","自己分析","変化"],mood:["常に自分を問い直してる","疲れる"]},
+  {id:"c348",concept:"リスク社会",desc:"近代化がもたらした新しいリスクは、個人に帰責されるが、実際は社会的に生産されている。",author:"ベック",themes:["リスク","社会","不安","自己責任","未来"],mood:["自分のせいにされる","社会が作ったリスク"]},
+  {id:"c349",concept:"感情の伝染3",desc:"ネガティブな感情は、ポジティブな感情より速く広がる。",author:"フライダ",themes:["感情","ネガティブ","速い","広がる","集団"],mood:["暗い雰囲気が広がる","一人の感情が場を変える"]},
+  {id:"c350",concept:"ハイパーリアリティ2",desc:"消費社会では、モデルが現実を先行する。コピーに本物がない。",author:"ボードリヤール",themes:["現実","コピー","消費","モデル","本物"],mood:["本物がない","コピーしかない","原本がわからない"]},
+  {id:"c351",concept:"ニヒリズム2",desc:"価値が崩壊した後に何が残るかを考えることが、新しい価値の創造の始まりだ。",author:"ニーチェ",themes:["価値","崩壊","創造","新しい","始まり"],mood:["何もないから始められる","ゼロから考える"]},
+  {id:"c352",concept:"存在の意味",desc:"人は意味を求め、意味が得られないとき実存的危機に陥る。",author:"フランクル",themes:["意味","存在","危機","求める","生きる"],mood:["何のために生きてる","意味が見つからない","実存的な問い"]},
+  {id:"c353",concept:"ストレンジャー",desc:"社会の外来者は、近くて遠い独特の位置に立ち、新しい視点をもたらす。",author:"ジンメル",themes:["よそ者","外部","視点","孤独","新しい"],mood:["どこにも属せない","外から見ると違う"]},
+  {id:"c354",concept:"身体の政治学",desc:"身体は政治的闘争の場であり、支配と抵抗が交差する。",author:"バトラー",themes:["身体","政治","支配","抵抗","ジェンダー"],mood:["身体を管理されてる","身体は政治的"]},
+  {id:"c355",concept:"テクノロジーの自律性",desc:"技術は人間の道具ではなく、独自の論理で人間を形成するようになる。",author:"エリュール",themes:["技術","AI","自律","制御","影響"],mood:["技術に合わせてる","機械が人を変える","コントロールできない"]},
+  {id:"c356",concept:"倫理的野蛮",desc:"洗練された文化や思想が、一方で残虐行為を可能にする逆説。",author:"アドルノ",themes:["文明","暴力","逆説","洗練"],mood:["文化人が残虐なことをする","知性と残酷が共存する"]},
+  {id:"c357",concept:"分配的正義",desc:"社会の利益や負担をどう分けるかは、誰が決めるべきか。",author:"ロールズ",themes:["公平","格差","社会","ルール","不公平"],mood:["不公平","なぜ私だけ","分け方がおかしい"]},
+  {id:"c358",concept:"創造的破壊",desc:"古い秩序が壊されることで、新しいものが生まれる。",author:"シュンペーター",themes:["破壊","創造","変化","新しい","古い"],mood:["壊れることで生まれる","古いものが邪魔してる"]},
+  {id:"c359",concept:"生産関係",desc:"経済的な関係が、社会的関係・文化・意識を規定する。",author:"マルクス",themes:["経済","関係","社会","意識","規定"],mood:["お金の関係が人間関係を作る","経済が文化を決める"]},
+  {id:"c360",concept:"非暴力的抵抗",desc:"身体的な暴力を使わずに、不正義に抵抗し変革を促す実践。",author:"ガンジー",themes:["抵抗","平和","変革","不正義","行動"],mood:["戦わずに変えたい","平和的に主張する"]},
+  {id:"c361",concept:"感情資本",desc:"感情や人間関係を経済的に利用できる資源として扱う社会。",author:"イルーズ",themes:["感情","資本","経済","人間関係","利用"],mood:["感情が商品になってる","感情を消費されてる"]},
+  {id:"c362",concept:"差異の政治",desc:"違いを消すのではなく、違いを認めた上で平等を実現しようとする考え方。",author:"ヤング",themes:["違い","平等","多様性","認める"],mood:["同じにならなくていい","違いを尊重して"]},
+  {id:"c363",concept:"恥の文化と罪の文化",desc:"他者にどう見られるかで行動する社会と、内なる基準で判断する社会。",author:"ベネディクト",themes:["恥","見られる","世間体","空気","評価"],mood:["恥ずかしい","見られたくない","世間体","他人の目"]},
+  {id:"c364",concept:"倫理的消費",desc:"消費行動を通じて、社会的・環境的価値観を表現すること。",author:"現代",themes:["消費","倫理","選択","環境","社会"],mood:["何を買うかが意思表示","エシカルに選びたい"]},
+  {id:"c365",concept:"パワー・ダイナミクス",desc:"集団・関係・組織の中で、権力がどのように動いているか。",author:"リウィン",themes:["権力","関係","組織","動き","影響"],mood:["誰が力を持ってるの","権力の動きが見える"]},
+  {id:"c366",concept:"体制的無関心",desc:"組織や社会が、問題を無視・放置することで存続する。",author:"バイスタンダー",themes:["無関心","組織","問題","放置","沈黙"],mood:["知ってて無視してる","組織的な無関心"]},
+  {id:"c367",concept:"個人化の逆説",desc:"個人の自由が増えるほど、人は孤独と不安に晒される。",author:"バウマン",themes:["自由","孤独","個人","不安","孤立"],mood:["自由なのに孤独","一人にされた","自由が重い"]},
+  {id:"c368",concept:"承認と再分配",desc:"正義には、経済的な平等（再分配）だけでなく、文化的な承認も必要だ。",author:"フレイジャー",themes:["正義","承認","平等","文化","尊厳"],mood:["経済だけじゃない","認められることが大事"]},
+  {id:"c369",concept:"ケア倫理の政治化",desc:"ケアを個人の徳ではなく、政治的・社会的原則として再定義する。",author:"フィッシャー",themes:["ケア","政治","社会","原則","倫理"],mood:["ケアが政治問題","個人じゃなく社会の問題"]},
+  {id:"c370",concept:"力への意志",desc:"生命は自己保存だけでなく、より大きな力と表現を求めて拡張しようとする。",author:"ニーチェ",themes:["力","表現","成長","拡張","本能"],mood:["もっと大きくなりたい","力を発揮したい"]},
+  {id:"c371",concept:"政治的想像力",desc:"現状とは異なる社会を想像できる能力が、変革の出発点になる。",author:"ライト",themes:["想像力","政治","変革","未来","別の世界"],mood:["別の世界が想像できる","変えられると思えるか"]},
+  {id:"c372",concept:"経験の共有不可能性",desc:"極端な体験は他者には完全には伝わらない。",author:"ウィットゲンシュタイン",themes:["経験","伝える","限界","共有","言葉"],mood:["どう言っても伝わらない","言葉で届かない"]},
+  {id:"c373",concept:"他者性",desc:"他者は私とは根本的に異なる存在であり、その差異を尊重することが倫理の出発点だ。",author:"レヴィナス",themes:["他者","違い","尊重","倫理","理解"],mood:["理解しきれない他者","違いを受け入れる"]},
+  {id:"c374",concept:"認識的暴力",desc:"他者の経験や知識を、支配的な枠組みで消去・無効化する行為。",author:"スピヴァク",themes:["知識","暴力","消去","支配","経験"],mood:["経験を否定された","知識を無効化された"]},
+  {id:"c375",concept:"ポリヴェーガル理論2",desc:"安全を感じることが、健全な社会的関与を可能にする。",author:"ポージェス",themes:["安全","身体","神経","関与","繋がり"],mood:["安全を感じないと繋がれない","緊張してると関われない"]},
+  {id:"c376",concept:"複数性",desc:"人間の世界の豊かさは、人々が互いに異なることによって成り立つ。",author:"アーレント",themes:["多様性","違い","共存","対話","政治"],mood:["違ってていい","多様性が大事","同じになることを求められる"]},
+  {id:"c377",concept:"ポストコロニアル・メランコリー",desc:"植民地主義の遺産を否定も承認もできずに漂う集合的な憂鬱。",author:"ギルロイ",themes:["植民地","歴史","憂鬱","遺産","未解決"],mood:["過去が清算されてない","歴史が重い","前に進めない"]},
+  {id:"c378",concept:"感情的安全基地",desc:"安全な感情的基地があることで、人は探索と挑戦ができる。",author:"ボウルビィ",themes:["安全","基地","探索","挑戦","信頼"],mood:["安心して挑戦できない","戻れる場所が必要","基地がない"]},
+  {id:"c379",concept:"弱者の武器",desc:"権力を持たない者が日常的に行う、目立たない抵抗の実践。",author:"スコット",themes:["抵抗","弱者","日常","小さな反抗"],mood:["小さく抵抗してる","従ってるふりをして","声を出せないが抵抗してる"]},
+  {id:"c380",concept:"沈黙の共謀",desc:"何かを言わないことで、現状の不正義に加担してしまう。",author:"バーク",themes:["沈黙","加担","言わない","共謀","責任"],mood:["言わなかったことへの罪悪感","黙ってることが加担"]},
+  {id:"c381",concept:"バウンダリー",desc:"個人や組織が持つ境界線。その適切な管理が心理的健康の鍵になる。",author:"現代心理学",themes:["境界","自分","他者","限界","守る"],mood:["境界を引けない","断れない","自分を守れない"]},
+  {id:"c382",concept:"交差的連帯",desc:"異なる背景を持つ人々が、それぞれの立場を尊重しながら共に立つ連帯。",author:"クレンショー",themes:["連帯","多様","共闘","違い","協力"],mood:["違う立場で連帯できる","バラバラのまま繋がる"]},
+  {id:"c383",concept:"繁栄の中の孤独",desc:"物質的に豊かな社会ほど、孤独感が高まるパラドックス。",author:"カチョポ",themes:["豊か","孤独","逆説","繋がり","物質"],mood:["豊かなのに孤独","何かが足りない"]},
+  {id:"c384",concept:"ゾーン・オブ・プロキシマル・デベロップメント2",desc:"社会的サポートによって、一人ではできないことが可能になる。",author:"ヴィゴツキー",themes:["支援","可能","社会","協力"],mood:["誰かがいれば","一人じゃ無理だけどサポートがあれば"]},
+  {id:"c385",concept:"エコサイド",desc:"環境破壊を人道に対する罪として、法的に規制しようとする考え方。",author:"ポーリー",themes:["環境","破壊","法律","責任","将来"],mood:["環境を守る責任","誰が責任を取るの"]},
+  {id:"c386",concept:"ヴァルネラビリティ",desc:"傷つきやすさを認めることは弱さではなく、深い繋がりと誠実さの条件だ。",author:"ブラウン",themes:["弱さ","傷つく","繋がり","本音","誠実"],mood:["弱くなれない","見せたくない","でも繋がりたい"]},
+  {id:"c387",concept:"表象の政治",desc:"誰がどのように表象されるかが、権力関係を形成する。",author:"ホール",themes:["表象","権力","イメージ","表現","見られ方"],mood:["どう見られてるかが問題","誰が描くか","イメージを決められてる"]},
+  {id:"c388",concept:"具現化された認識",desc:"知ることは身体を通じて行われる。抽象的な認識は存在しない。",author:"ジョンソン",themes:["身体","認識","具現化","感覚","知識"],mood:["頭だけじゃ知れない","体で知る","身体的な理解"]},
+  {id:"c389",concept:"ケアレス・ソサエティ",desc:"ケアの価値を認めない社会は、すべての人に不利益をもたらす。",author:"ノディングス",themes:["ケア","社会","価値","不利益","認めない"],mood:["ケアが軽視されてる","誰も守られてない"]},
+  {id:"c390",concept:"共同創造",desc:"知識や意味は一人で作るのではなく、他者との相互作用から生まれる。",author:"ガーゲン",themes:["共同","創造","他者","相互作用","意味"],mood:["一緒に考えると深まる","対話から生まれる"]},
+  {id:"c391",concept:"解釈学的循環",desc:"テキストの理解は部分と全体の循環的な往復によって深まる。",author:"ガダマー",themes:["理解","循環","部分","全体","解釈"],mood:["理解が深まるにつれて変わる","全体を見ながら部分を理解する"]},
+  {id:"c392",concept:"ネガティブ・ダイアレクティクス",desc:"同一性への還元に抵抗し、否定性を保ち続ける思考。",author:"アドルノ",themes:["否定","同一性","抵抗","矛盾","思考"],mood:["まとめてしまうことへの抵抗","違いを消さない","矛盾を保つ"]},
+  {id:"c393",concept:"グローバリゼーションの矛盾",desc:"経済のグローバル化が進む一方で、格差と排除が深まっている。",author:"スタイン",themes:["グローバル","格差","排除","経済","社会"],mood:["世界は繋がってるのに","豊かさが届かない"]},
+  {id:"c394",concept:"原初的蓄積",desc:"資本主義の始まりには、共有地の収奪という暴力的な過程があった。",author:"マルクス",themes:["資本主義","歴史","収奪","起源","不平等"],mood:["最初から不平等だった","資本主義の出発点"]},
+  {id:"c395",concept:"超高度資本主義",desc:"競争・効率化・市場化が極限まで進み、人間的領域が侵食される。",author:"現代",themes:["効率","競争","市場化","人間","侵食"],mood:["何でも商品になってる","人間らしさが消えてる"]},
+  {id:"c396",concept:"脱中心化",desc:"一つの中心・主体・真実があるという考えを解体する思考。",author:"デリダ",themes:["中心","解体","多様","真実"],mood:["中心なんてない","一つの答えじゃない"]},
+  {id:"c397",concept:"対話的理性",desc:"理性は孤独な思考ではなく、他者との対話を通じて機能する。",author:"ハーバーマス",themes:["対話","理性","他者","コミュニケーション","合意"],mood:["一人で考えてた","話し合いで見えてくる"]},
+  {id:"c398",concept:"ソーシャルキャピタル",desc:"地域や人々の間の信頼・互助・ネットワークが、社会の力になる。",author:"パットナム",themes:["信頼","繋がり","地域","互助","コミュニティ"],mood:["信頼できない","繋がりが薄い"]},
+  {id:"c399",concept:"不可視の労働",desc:"家事・育児・ケアなど、経済的に認められない労働が社会を支えている。",author:"ホックシールド",themes:["家事","育児","ケア","労働","見えない"],mood:["見えない労働","評価されない","当然のようにやらされてる"]},
+  {id:"c400",concept:"プラクシス2",desc:"批判的理論は実践と結びつかなければ、単なる理念に留まる。",author:"アリストテレス",themes:["実践","理論","行動","変革","結合"],mood:["考えだけじゃ変わらない","行動が必要","実践から学ぶ"]},
+  {id:"c401",concept:"アンビバレンス",desc:"相反する感情を同時に持つ状態。矛盾した気持ちは正常だ。",author:"フロイト",themes:["矛盾","感情","同時","相反","葛藤"],mood:["好きでもあり嫌いでもある","どちらとも言えない","矛盾した感情"]},
+  {id:"c402",concept:"欲求の階層",desc:"生理的欲求から自己実現欲求まで、欲求には階層がある。",author:"マズロー",themes:["欲求","階層","基本","成長","自己実現"],mood:["基本的なことができてない","もっと上のことを求めたい","生きることで精一杯"]},
+  {id:"c403",concept:"集合的行動",desc:"一人では不可能なことも、人々が協力することで実現できる。",author:"オルソン",themes:["協力","集合","行動","可能","変革"],mood:["一緒にやれば変えられる","力を合わせる","集合的な力"]},
+  {id:"c404",concept:"知識の権力2",desc:"専門家の権威は、知識の分配と管理によって維持される。",author:"ブルデュー",themes:["専門家","権威","知識","管理","分配"],mood:["専門家が全てを決める","一般人には届かない知識"]},
+  {id:"c405",concept:"承認闘争",desc:"自己実現には他者からの承認が必要であり、その承認をめぐる闘争が歴史を動かす。",author:"ホネット",themes:["承認","闘争","自己実現","歴史","認められる"],mood:["認められるために戦ってる","承認が動機になってる"]},
+  {id:"c406",concept:"遊離した社会",desc:"社会の構成員がバラバラになり、共同体の感覚が失われる。",author:"バウマン",themes:["社会","孤立","バラバラ","共同体","繋がり"],mood:["みんなバラバラ","共同体がない","繋がりが薄い"]},
+  {id:"c407",concept:"他者化",desc:"ある集団を「他者」として構築することで、差別や排除が正当化される。",author:"サイード",themes:["他者","構築","差別","排除","正当化"],mood:["他者扱いされてる","集団が悪者にされてる","異質化される"]},
+  {id:"c408",concept:"慢性的ストレス",desc:"長期間の小さなストレスが蓄積して、心身に大きなダメージを与える。",author:"カネル",themes:["ストレス","慢性","蓄積","疲れ","心身"],mood:["じわじわ消耗してる","気づかないうちに溜まってた","慢性的に疲れてる"]},
+  {id:"c409",concept:"自己決定理論",desc:"内発的な動機（自律・有能・関係）が満たされることで、人は豊かに生きられる。",author:"デシ",themes:["自律","有能","関係","動機","内発"],mood:["外から押しつけられた","自分で選びたい","内側から動きたい"]},
+  {id:"c410",concept:"ロールモデルの欠如",desc:"自分が目指せる先例がないとき、人はどこへ向かえばよいかわからない。",author:"バンデューラ",themes:["ロールモデル","先例","目標","模倣","方向"],mood:["目指せる人がいない","どこに向かえばいいの","先がない"]},
+  {id:"c411",concept:"スティグマの内面化",desc:"差別や偏見を受けた人が、そのスティグマを自分のものとして取り込んでしまう。",author:"ゴッフマン",themes:["スティグマ","差別","内面化","自己評価","偏見"],mood:["自分でも自分を低く見てる","差別を内面化してる","そういう人間だと思い込んでる"]},
+  {id:"c412",concept:"共感の非対称性",desc:"共感される側と共感する側には、根本的な非対称が存在する。",author:"スーザン・ソンタグ",themes:["共感","非対称","他者","理解","距離"],mood:["共感してもらったと思ったけど違う","経験の差が埋まらない"]},
+  {id:"c413",concept:"認知の再構成",desc:"問題のある思考パターンを、より現実的な思考に置き換える技法。",author:"ベック",themes:["思考","再構成","認知","問題","置き換え"],mood:["考え方を変えようとしてる","認知を変える","視点を変える"]},
+  {id:"c414",concept:"幻想の崩壊",desc:"信じていたものが壊れたとき、それを経て深い理解に至ることがある。",author:"フロイト",themes:["幻想","崩壊","信じてた","深い理解","経験"],mood:["信じてたものが崩れた","でも見えてきたものがある"]},
+  {id:"c415",concept:"エゴグラム",desc:"心の状態を親・大人・子どもの3つのエゴ状態で分析するモデル。",author:"バーン",themes:["親","大人","子ども","心の状態","パターン"],mood:["子どもみたいに反応してた","大人の対応ができない","どのエゴが出てるか"]},
+  {id:"c416",concept:"感情の調節困難",desc:"感情を適切に調節することが難しく、強い感情に圧倒される状態。",author:"グロス",themes:["感情","調節","困難","強い","圧倒"],mood:["感情に押し流される","コントロールできない","感情が強すぎる"]},
+  {id:"c417",concept:"二項対立の解体",desc:"男/女、主体/客体などの二項対立は、どちらかが優位な権力構造を持つ。",author:"デリダ",themes:["二項","対立","男女","優位","解体"],mood:["どちらかじゃない","二項対立が問題","グレーゾーンがある"]},
+  {id:"c418",concept:"体験の回避",desc:"不快な感情・思考・記憶を避けることで、短期的には楽になるが長期的に問題が深まる。",author:"ヘイズ",themes:["回避","不快","感情","逃げる","問題"],mood:["向き合いたくない","避けてた","回避してると悪化する"]},
+  {id:"c419",concept:"マインドフルな自己観察",desc:"自分の思考や感情を、判断なく観察すること。",author:"カバットジン",themes:["観察","判断なし","思考","感情","自己"],mood:["ただ観察する","評価しないで見てみる","ニュートラルに"]},
+  {id:"c420",concept:"相互作用論",desc:"現実は人々の相互作用によって絶えず作られる。固定した現実はない。",author:"ブルーマー",themes:["現実","相互作用","作られる","固定","変化"],mood:["現実が変わっていく","人との関わりで変わる","現実は流動的"]},
+  {id:"c421",concept:"過去の癒しとしての語り",desc:"語ることが、過去の経験を統合し癒しをもたらす。",author:"ハーマン",themes:["語る","癒し","過去","統合","経験"],mood:["話すことで楽になった","語ることが大事","言葉にする意味"]},
+  {id:"c422",concept:"脱学習",desc:"新しい状況に適応するために、過去に学んだことを手放す必要がある。",author:"レヴィン",themes:["脱学習","過去","手放す","適応","新しい"],mood:["古い学びが邪魔してる","手放すことが必要","リセットが必要"]},
+  {id:"c423",concept:"内省の罠",desc:"自己省察が深まりすぎると、行動が遅れたり自己批判が強まる。",author:"バス",themes:["内省","罠","行動","自己批判","深まりすぎ"],mood:["考えすぎて動けない","自己批判ループ","内省が裏目に出る"]},
+  {id:"c424",concept:"感情的バンドエイド",desc:"感情の問題を表面的に対処するだけで、根本原因に向き合わない。",author:"現代心理学",themes:["表面","対処","根本","感情","バンドエイド"],mood:["対症療法でしかない","根本にある何か","表面を取り繕っている"]},
+  {id:"c425",concept:"自己効力感の循環",desc:"成功経験が自己効力感を高め、それがさらなる挑戦を生む。",author:"バンデューラ",themes:["成功","自己効力感","循環","挑戦","高まる"],mood:["小さな成功が次に繋がる","できたという感覚が大事","サイクルを作る"]},
+  {id:"c426",concept:"過去の重みと手放し",desc:"過去に縛られることは、現在の可能性を奪う。",author:"仏教",themes:["過去","手放す","現在","可能性","縛られる"],mood:["過去を引きずってる","手放したい","今を生きたい"]},
+  {id:"c427",concept:"否定的自動思考",desc:"特定の状況でほぼ自動的に浮かぶ、ネガティブな思考。",author:"ベック",themes:["自動思考","ネガティブ","自動","状況","パターン"],mood:["また同じ考えが浮かんだ","自動的にネガティブになる","止められない"]},
+  {id:"c428",concept:"理想自己と現実自己のギャップ",desc:"理想の自分と実際の自分のズレが、不安や落ち込みを生む。",author:"ロジャーズ",themes:["理想","現実","ギャップ","自己","不安"],mood:["なりたい自分になれてない","理想が高すぎる","ギャップが辛い"]},
+  {id:"c429",concept:"感情の正当性",desc:"どんな感情も、感じること自体は正当だ。",author:"現代心理学",themes:["感情","正当","感じていい","批判","自己批判"],mood:["この感情を感じていいの？","感じることへの罪悪感","感情を批判しなくていい"]},
+  {id:"c430",concept:"システム思考",desc:"現象を個別の要素ではなく、相互に影響し合うシステムとして捉える。",author:"センゲ",themes:["システム","相互作用","全体","要素","視点"],mood:["全体で考える","個別じゃなく繋がりで見る","システムが問題"]},
+  {id:"c431",concept:"感情の二重処理",desc:"感情処理は速い本能的経路と、遅い認知的経路の2つで行われる。",author:"ルドゥー",themes:["感情","処理","速い","認知","経路"],mood:["反応が速すぎた","感情が先に来てた","後から考えると違う"]},
+  {id:"c432",concept:"劣等コンプレックス",desc:"感じた劣等感が、補償行動や支配的行動に転化する。",author:"アドラー",themes:["劣等感","コンプレックス","補償","支配","行動"],mood:["劣等感からくる行動","認められたくてやってる","補償してた"]},
+  {id:"c433",concept:"感情の正直さ",desc:"自分の感情に正直になることが、本当の関係の始まりだ。",author:"ロジャーズ",themes:["感情","正直","本当","関係","始まり"],mood:["本当の気持ちを言いたい","感情を隠してた","正直に話せてない"]},
+  {id:"c434",concept:"意識の閾値",desc:"ある体験が意識に上るためには、一定の強度が必要だ。",author:"フロイト",themes:["意識","閾値","体験","強度","上る"],mood:["気づかなかった","意識の外にあった","気づいたら変わってた"]},
+  {id:"c435",concept:"ナラティブの再著述",desc:"自分の物語を書き直すことで、アイデンティティが変容する。",author:"ホワイト",themes:["物語","書き直す","アイデンティティ","変容","自分"],mood:["物語を変えたい","別の見方で書き直す","主人公を変える"]},
+  {id:"c436",concept:"感情の知性化",desc:"感情を知的に処理することで、感情から距離を置こうとする防衛。",author:"フロイト",themes:["感情","知性化","距離","防衛","分析"],mood:["感情を分析で避けてた","頭で処理してる","感じることを避けてた"]},
+  {id:"c437",concept:"個人と社会の弁証法",desc:"個人は社会を作り、社会は個人を作る。この循環が歴史を動かす。",author:"マルクス",themes:["個人","社会","循環","弁証法","歴史"],mood:["社会が自分を作ってる","自分も社会を作ってる","相互に作り合う"]},
+  {id:"c438",concept:"行動の意図せざる結果",desc:"意図していなかった結果が、意図した結果よりも大きな影響を持つことがある。",author:"マートン",themes:["意図","結果","意図せず","影響","大きい"],mood:["やったことが予想外の結果に","思わぬところで影響が出た"]},
+  {id:"c439",concept:"存在の軽さ",desc:"意味を求めない軽さが、時として重さよりも生を深くすることがある。",author:"クンデラ",themes:["軽さ","重さ","意味","存在","生"],mood:["軽く生きたい","重さから解放されたい","意味を手放す"]},
+  {id:"c440",concept:"コア・ビリーフ",desc:"核心にある信念が、すべての思考と行動に影響している。",author:"ベック",themes:["核心","信念","思考","行動","影響"],mood:["根っこにある信念","深いところにある考え","コアが問題"]},
+  {id:"c441",concept:"制御幻想",desc:"実際には制御できないことを、制御できると思い込む傾向。",author:"ランガー",themes:["制御","幻想","思い込み","コントロール","限界"],mood:["自分でコントロールできると思ってた","幻想だった","限界があった"]},
+  {id:"c442",concept:"相互依存的な自己",desc:"自己は他者との関係の中で定義され、孤立した自己は存在しない。",author:"マーサー",themes:["自己","他者","関係","依存","定義"],mood:["自分は他者と繋がってる","関係の中に自分がある"]},
+  {id:"c443",concept:"慢性的な悲しみ",desc:"周期的に繰り返す喪失感や悲しみ。必ずしも病理ではなく、人生の一部だ。",author:"オルシャンスキー",themes:["悲しみ","慢性","繰り返す","喪失","人生"],mood:["また悲しみが来た","繰り返す喪失","でも生きていける"]},
+  {id:"c444",concept:"感情のフィードバックループ",desc:"感情が行動を生み、行動がさらに感情を強化する循環。",author:"現代心理学",themes:["感情","行動","循環","フィードバック","強化"],mood:["感情が行動を決めてる","悪循環に入ってる","ループを断ち切りたい"]},
+  {id:"c445",concept:"生存者罪悪感",desc:"困難を生き延びたことへの罪悪感。",author:"フランクル",themes:["生存","罪悪感","困難","生き残った","なぜ私が"],mood:["なぜ私だけ生き残ったの","生き残ったことへの罪悪感","サバイバーズギルト"]},
+  {id:"c446",concept:"治療的関係",desc:"変化は技法よりも、治療者と患者の間の関係から生まれる。",author:"ロジャーズ",themes:["関係","変化","治療","人間関係","信頼"],mood:["関係が変化をもたらす","技法より人","繋がりが大事"]},
+  {id:"c447",concept:"象徴的相互作用",desc:"人は物事や他者を、そのシンボルや意味を通じて理解し行動する。",author:"ミード",themes:["象徴","意味","相互作用","理解","行動"],mood:["言葉や行動の意味を読んでる","象徴で理解してる","意味が重要"]},
+  {id:"c448",concept:"自己破壊的行動",desc:"短期的な苦痛から逃れるための行動が、長期的に自分を傷つける。",author:"現代心理学",themes:["自己破壊","逃れる","短期","長期","苦痛"],mood:["やってはいけないとわかってるのに","逃げるために傷つける","短期的には楽になる"]},
+  {id:"c449",concept:"限界の認識",desc:"自分の限界を認識することが、成長の出発点になる。",author:"アドラー",themes:["限界","認識","出発点","成長","知る"],mood:["限界を認めたくなかった","限界を知ることが大事","無理してた"]},
+  {id:"c450",concept:"共感的理解",desc:"相手の視点に立って、感情と意味を理解しようとすること。",author:"ロジャーズ",themes:["共感","理解","視点","感情","意味"],mood:["わかってほしい","わかろうとしてる","相手の立場で考える"]},
+  {id:"c451",concept:"感情の抑圧",desc:"感情を意識から締め出すことで、症状として別の形で現れる。",author:"フロイト",themes:["抑圧","感情","意識","症状","別の形"],mood:["感情を感じないようにしてた","症状として出てきた","抑圧が原因"]},
+  {id:"c452",concept:"インサイトの限界",desc:"自分についての理解が深まっても、行動の変化には別のものが必要だ。",author:"フロイト",themes:["インサイト","限界","行動","変化","理解"],mood:["わかってるのに変えられない","理解と行動は別","わかっても変わらない"]},
+  {id:"c453",concept:"認知的な再評価",desc:"状況の意味を変えることで、感情的な反応を調節する。",author:"グロス",themes:["認知","再評価","意味","感情","調節"],mood:["見方を変えたら楽になった","別の意味を考える","解釈を変える"]},
+  {id:"c454",concept:"精神的苦痛の正常化",desc:"多くの人が精神的な苦痛を抱えており、それは正常だ。",author:"現代心理学",themes:["苦痛","正常","多くの人","抱える","普通"],mood:["自分だけじゃない","こういう感覚は普通","多くの人が感じてる"]},
+  {id:"c455",concept:"自己概念の脅威",desc:"自己イメージが脅かされたとき、人は強く防衛しようとする。",author:"テシュア",themes:["自己","脅威","防衛","イメージ","攻撃"],mood:["自分のイメージが傷ついた","防衛したくなる","自己を守ろうとしてた"]},
+  {id:"c456",concept:"感情的知性の社会性",desc:"感情を読み、活かす能力は、個人の能力ではなく社会的な文脈の中で育まれる。",author:"ゴールマン",themes:["感情","知性","社会","文脈","育まれる"],mood:["感情を読むのが苦手","感情をわかってもらえない"]},
+  {id:"c457",concept:"コア感情",desc:"恐れ・怒り・悲しみ・喜びなど、普遍的な基本感情は文化を超えて存在する。",author:"エクマン",themes:["恐れ","怒り","悲しみ","喜び","基本"],mood:["根本の感情","この感情はなんだろう","基本的な感情"]},
+  {id:"c458",concept:"ソーシャルサポート",desc:"人から支援されることが、ストレスへの対処力を高める。",author:"コーエン",themes:["支援","サポート","ストレス","対処","繋がり"],mood:["一人で抱えてた","誰かがいてくれる","支えが必要"]},
+  {id:"c459",concept:"トラウマの再演とは異なる回復",desc:"回復とは、トラウマをなかったことにすることではなく、統合することだ。",author:"ハーマン",themes:["回復","トラウマ","統合","なかったことにしない","経験"],mood:["なかったことにはできない","統合して生きる","回復の意味"]},
+  {id:"c460",concept:"感情的な真実",desc:"感情は事実に基づかなくても、その人にとってのリアルな真実だ。",author:"現代心理学",themes:["感情","真実","リアル","事実","個人"],mood:["感じてることは本当のこと","事実じゃなくても感じてる","感情はリアル"]},
+  {id:"c461",concept:"内発的動機と外発的動機",desc:"内側から来る動機と外からの報酬・罰では、持続力や質が異なる。",author:"デシ",themes:["動機","内発","外発","報酬","罰"],mood:["やりたくてやってる","強制されてやってる","外からの動機は続かない"]},
+  {id:"c462",concept:"コンフォートゾーンの境界",desc:"成長は不快な領域（ラーニングゾーン）で起きるが、過度の不快（パニックゾーン）では起きない。",author:"現代心理学",themes:["成長","不快","学び","パニック","コンフォート"],mood:["快適な場所から出ないと","不快すぎて学べない","ちょうど良い不快さ"]},
+  {id:"c463",concept:"感情的洗練",desc:"感情を細かく理解・表現できるようになることが、精神的成熟の指標になる。",author:"リサ・バレット",themes:["感情","洗練","理解","表現","成熟"],mood:["感情語彙が増えた","細かく言えるようになりたい","感情の精度を上げる"]},
+  {id:"c464",concept:"失われた時間",desc:"過去の時間は戻らないが、その意味は変えられる。",author:"プルースト",themes:["時間","過去","意味","変えられる","戻らない"],mood:["あの時間は戻らない","でも意味を変えられる","過去の解釈を変える"]},
+  {id:"c465",concept:"感情的孤独",desc:"多くの人の中にいても、感情レベルでの深い繋がりが感じられない状態。",author:"カチョポ",themes:["孤独","感情","繋がり","深い","表面的"],mood:["人はいるのに孤独","感情で繋がれない","表面的な関係だけ"]},
+  {id:"c466",concept:"価値に基づく行動",desc:"感情や状況に関わらず、自分の価値観に沿った行動をとること。",author:"ヘイズ",themes:["価値観","行動","感情","状況","沿う"],mood:["価値観通りに動きたい","感情に左右されず","価値観が行動を決める"]},
+  {id:"c467",concept:"感情の抱擁",desc:"不快な感情を否定せず、そこにあることを認めること。",author:"ハーマン",themes:["感情","抱擁","不快","認める","否定しない"],mood:["感情があっていい","否定しなくていい","ここにあることを認める"]},
+  {id:"c468",concept:"自己受容",desc:"自分のすべて（欠点を含む）を受け入れること。変化の前提になる。",author:"ロジャーズ",themes:["自己受容","欠点","受け入れる","変化","前提"],mood:["ありのままを受け入れたい","完璧じゃなくていい","自分を受け入れる"]},
+  {id:"c469",concept:"感情の言語化",desc:"感情を言葉にすることで、感情的な活性化が下がる。",author:"リサ・バレット",themes:["感情","言語化","言葉","活性化","下がる"],mood:["言葉にすると楽になる","感情を名前で呼ぶ","言語化が助けになる"]},
+  {id:"c470",concept:"複雑さへの耐性",desc:"人生の複雑さや曖昧さを、簡単に解決しようとしないでいられる能力。",author:"ビヨン",themes:["複雑","曖昧","耐える","解決しない","能力"],mood:["複雑なままでいい","答えを急がない","曖昧に留まれる"]},
+  {id:"c471",concept:"社会的アイデンティティ",desc:"人は集団への帰属からアイデンティティの一部を形成する。",author:"タジフェル",themes:["集団","帰属","アイデンティティ","形成","所属"],mood:["この集団に属してる","集団が自分を定義してる","集団のメンバーとしての自分"]},
+  {id:"c472",concept:"文化的謙虚さ",desc:"自文化を特権的なものとして押しつけず、他者の文化から学ぼうとする姿勢。",author:"テレル",themes:["文化","謙虚","自文化","押しつける","学ぶ"],mood:["自分の文化が当然じゃない","他者から学ぶ","文化的な謙虚さ"]},
+  {id:"c473",concept:"公共性の喪失",desc:"私的な生活の価値が公共の場を侵食し、社会的な繋がりが失われる。",author:"アーレント",themes:["公共","私的","侵食","喪失","繋がり"],mood:["公共への関心がない","私的な場に引きこもる","社会的な繋がりが消えてる"]},
+  {id:"c474",concept:"連続スペクトラム",desc:"心理的特性は二分法ではなく、連続したスペクトラムで理解すべきだ。",author:"現代心理学",themes:["スペクトラム","連続","二分法","特性","グラデーション"],mood:["白黒じゃない","グレーゾーンがある","スペクトラムで考える"]},
+  {id:"c475",concept:"感情的癒着",desc:"感情的に強く結びついているために、関係から離れられない状態。",author:"現代心理学",themes:["感情","癒着","結びつき","離れられない","関係"],mood:["なぜ離れられないの","感情が絡まってる","癒着してる"]},
+  {id:"c476",concept:"恐怖管理理論",desc:"人は死の恐怖を管理するために、文化的世界観や自尊心を必要とする。",author:"ベッカー",themes:["死","恐怖","文化","自尊心","管理"],mood:["死が怖いから意味を求める","文化が死の恐怖を和らげる"]},
+  {id:"c477",concept:"情動調整",desc:"感情を認識して、適切な場面で適切な形で表現すること。",author:"グロス",themes:["感情","情動","調整","認識","表現"],mood:["感情を調整したい","どこで表現するか","適切な感情表現"]},
+  {id:"c478",concept:"ケアと自律",desc:"人は依存しながら自律する存在だ。どちらか一方だけでは生きられない。",author:"ノディングス",themes:["ケア","自律","依存","両方","生きる"],mood:["依存しながら自立する","ケアと自律のバランス","両方が必要"]},
+  {id:"c479",concept:"精神的柔軟性",desc:"困難な状況でも、自分の価値観に基づいた行動を維持する能力。",author:"ヘイズ",themes:["精神的","柔軟性","困難","価値観","行動"],mood:["どんな状況でも自分らしく","価値観を維持する","難しい状況でもブレない"]},
+  {id:"c480",concept:"遊戯性と創造性",desc:"遊ぶ能力が創造性と深く結びついている。",author:"ウィニコット",themes:["遊び","創造性","能力","繋がり","可能性"],mood:["遊ぶように創造する","遊び心が大事","真剣に遊ぶ"]},
+  {id:"c481",concept:"自己成就的予言",desc:"期待や信念が、その通りの結果をもたらすことがある。",author:"マートン",themes:["予言","信念","期待","結果","自己成就"],mood:["そう思ったらそうなった","信念が現実を作る","予言が当たる"]},
+  {id:"c482",concept:"慢性的な恥",desc:"恥の感覚が恒常的にある状態。自己価値への根本的な疑いにつながる。",author:"ブラウン",themes:["恥","慢性","自己価値","恒常","疑い"],mood:["いつも恥ずかしい","自分に価値がない感じ","根本的な恥の感覚"]},
+  {id:"c483",concept:"感情の回避と接近",desc:"感情への反応パターンとして、避けるか向き合うかがある。",author:"現代心理学",themes:["感情","回避","接近","パターン","反応"],mood:["感情を避けてた","向き合うことが大事","逃げるか向き合うか"]},
+  {id:"c484",concept:"自己への思いやり",desc:"自分が失敗したり苦しんだりしているとき、他者と同じように自分に優しくできること。",author:"ネフ",themes:["思いやり","自分","失敗","苦しみ","優しさ"],mood:["自分にも優しくしていい","厳しくしすぎてた","他者と同じように"]},
+  {id:"c485",concept:"感情の統合",desc:"バラバラな感情体験を、一つの一貫したものとして統合する。",author:"ジャネ",themes:["統合","感情","一貫","バラバラ","体験"],mood:["バラバラな感情を一つにする","統合されていく","複雑な感情を整理する"]},
+  {id:"c486",concept:"逆説的介入",desc:"変えようとするのをやめることで、変化が起きることがある。",author:"エリクソン",themes:["逆説","変化","やめる","変えようとしない","起きる"],mood:["変えようとしたら変わらなかった","手放したら変わった","逆説的なことが起きた"]},
+  {id:"c487",concept:"感情的な繁栄",desc:"ネガティブな感情がないことではなく、ポジティブな感情が多くあることが繁栄だ。",author:"フレデリクソン",themes:["感情","繁栄","ネガティブ","ポジティブ","比率"],mood:["ネガティブをなくすより","ポジティブを増やす","感情の比率"]},
+  {id:"c488",concept:"親和欲求",desc:"他者と一緒にいたい、受け入れられたいという根本的な欲求。",author:"マレー",themes:["親和","欲求","繋がり","受け入れられる","他者"],mood:["一緒にいたい","受け入れられたい","人との繋がりが必要"]},
+  {id:"c489",concept:"精神的な脆弱性",desc:"精神的に傷つきやすい状態は、弱さではなく深い感受性の表れでもある。",author:"現代心理学",themes:["脆弱","傷つく","感受性","弱さ","深い"],mood:["傷つきやすい","感受性が高い","弱さじゃない"]},
+  {id:"c490",concept:"感情的レジリエンス",desc:"困難な感情体験から回復し、再び立ち上がる能力。",author:"フォナジー",themes:["回復","感情","困難","立ち上がる","能力"],mood:["また立ち上がれる","感情的な回復力","回復できる力がある"]},
+  {id:"c491",concept:"社会化の限界",desc:"社会化によって形成された自己は、社会の限界を超えられないことがある。",author:"ミード",themes:["社会化","限界","自己","超える","形成"],mood:["社会に形成された自己","社会の外に出られない","社会化が制限してる"]},
+  {id:"c492",concept:"存在の肯定",desc:"ただ存在することが、すでに価値を持つ。",author:"ロジャーズ",themes:["存在","肯定","価値","ただある","認める"],mood:["何もしなくても価値がある","存在するだけでいい","いるだけで大丈夫"]},
+  {id:"c493",concept:"感情の教育",desc:"感情を理解し扱う能力は、教育によって育てられる。",author:"ゴールマン",themes:["感情","教育","能力","育てる","学ぶ"],mood:["感情を学べる","感情の扱い方を学ぶ","感情知性は育てられる"]},
+  {id:"c494",concept:"自己破壊パターン",desc:"繰り返し自分を傷つけるような行動パターン。",author:"現代心理学",themes:["自己破壊","パターン","繰り返し","傷つける","行動"],mood:["また同じことをしてしまう","なぜ自分を傷つけるのか","パターンを断ち切りたい"]},
+  {id:"c495",concept:"精神的健康の多面性",desc:"精神的健康は病気の不在ではなく、ウェルビーイング・レジリエンス・意味などの多面的な状態だ。",author:"セリグマン",themes:["精神","健康","多面","ウェルビーイング","意味"],mood:["病気じゃなければいいわけじゃない","多面的に考える","意味も健康の一部"]},
+  {id:"c496",concept:"恐怖への直面",desc:"恐れているものに段階的に向き合うことで、恐怖が和らぐ。",author:"ウォルピ",themes:["恐怖","直面","向き合う","段階的","和らぐ"],mood:["怖いものに近づく","段階的に向き合う","直面することで変わる"]},
+  {id:"c497",concept:"自己効力感と動機",desc:"「できる」という感覚が、やろうとする動機を生む。",author:"バンデューラ",themes:["自己効力感","動機","できる","やる気","感覚"],mood:["できる気がしない","自信があればやれる","自己効力感が動機になる"]},
+  {id:"c498",concept:"感情的に成熟した関係",desc:"互いの感情を尊重し、適切な距離と繋がりを保つ関係。",author:"現代心理学",themes:["関係","感情","尊重","距離","繋がり"],mood:["感情を尊重された","適切な距離感","成熟した関係を求めてる"]},
+  {id:"c499",concept:"感情と行動の循環",desc:"行動が感情を変え、感情が行動を変える。この循環を意識的に使える。",author:"現代心理学",themes:["行動","感情","循環","変える","意識的"],mood:["行動から感情を変える","感情から行動が変わる","循環を使う"]},
+  {id:"c500",concept:"ナラティブ・アイデンティティ",desc:"人は自分の人生を語ることで、アイデンティティを作り出す。",author:"リクール",themes:["物語","語る","アイデンティティ","人生","作る"],mood:["自分の物語を語りたい","語ることで自分がわかる","物語が自分を作る"]},
+];
 
-  // 思想断片マッチング
-  function matchFragments(inputTexts) {
+  const THOUGHT_FRAGMENTS = THOUGHT_FRAGMENTS_ALL;
+
+  function matchFragments(inputTexts, padInfo) {
     const combined = inputTexts.join(' ');
+
+    // グラデーション位置からmoodヒントを生成
+    const moodHints = [];
+    if (padInfo) {
+      if (padInfo.x < 0.4) moodHints.push('うまく言えない', 'ふわふわ', 'なんとなく');
+      if (padInfo.x > 0.6) moodHints.push('はっきりしてる', '明確');
+      if (padInfo.y > 0.6) moodHints.push('深い', 'ずっしり', '根深い');
+      if (padInfo.y < 0.4) moodHints.push('軽い', 'なんとなく');
+    }
+    const moodCombined = [...moodHints, combined].join(' ');
+
     const scored = THOUGHT_FRAGMENTS.map(f => {
-      const score = f.tags.filter(tag => combined.includes(tag)).length;
+      let score = 0;
+      // themesマッチ（重み2）
+      f.themes.forEach(t => { if (combined.includes(t)) score += 2; });
+      // moodマッチ（重み1）
+      f.mood.forEach(m => { if (moodCombined.includes(m)) score += 1; });
       return { ...f, score };
     }).filter(f => f.score > 0);
+
     scored.sort((a, b) => b.score - a.score);
     return scored.slice(0, 3);
   }
@@ -2907,20 +3755,12 @@
 
   // 図書館を描画
   function renderLibrary() {
-    const quote = pickPhilosophyQuote();
-    saveQuote(quote);
-
-    // 哲学者の言葉
-    const textEl   = document.getElementById('library-quote-text');
-    const authorEl = document.getElementById('library-quote-author');
-    if (textEl)   textEl.textContent = quote.text;
-    if (authorEl) authorEl.textContent = '― ' + quote.author;
-
-    // 思想断片：最近の入力テキストでマッチング
+    // 思想断片：入力＋グラデーション位置でマッチング
     const recentTexts = getFragments().slice(-6).map(f => f.text);
     const historyTexts = history.slice(-2).map(e => [e.gutai, e.oboroke]).flat().filter(Boolean);
     const allTexts = [...historyTexts, ...recentTexts];
-    const matched = matchFragments(allTexts);
+    const padInfo = { x: padX, y: padY };
+    const matched = matchFragments(allTexts, padInfo);
     renderFragmentCards(matched);
 
     // 山に「近い」言葉を表示
@@ -2990,33 +3830,55 @@
     const container = document.getElementById('lib-saved-bg');
     if (!container) return;
     const words = getSavedWords();
-    container.innerHTML = words.map((w, i) => {
+    const allFrags = typeof THOUGHT_FRAGMENTS !== 'undefined' ? THOUGHT_FRAGMENTS : [];
+    container.innerHTML = '';
+    words.forEach((w, i) => {
       const top  = 5  + (i * 19) % 85;
       const left = 5  + (i * 31) % 80;
       const rot  = -6 + (i * 7)  % 12;
       const op   = 0.28 + (i % 3) * 0.08;
-      return `<div style="
-        position:absolute;
-        top:${top}%;left:${left}%;
-        font-family:'Inter',sans-serif;
-        font-size:10px;letter-spacing:0.12em;
-        color:rgba(80,60,40,${op});
-        transform:rotate(${rot}deg);
-        white-space:nowrap;
-        pointer-events:none;
-        user-select:none;
-      ">${w}</div>`;
-    }).join('');
+      const m = w.match(/^(.+?)\s*[―—]\s*(.+)$/);
+      const fragMatch = m ? allFrags.find(f => f.concept === m[1].trim()) : allFrags.find(f => f.concept === w.trim());
+      const el = document.createElement('div');
+      el.style.cssText = `position:absolute;top:${top}%;left:${left}%;font-family:'Inter',sans-serif;font-size:13px;letter-spacing:0.1em;color:rgba(80,60,40,${op});transform:rotate(${rot}deg);white-space:nowrap;user-select:none;cursor:${fragMatch ? 'pointer' : 'default'};z-index:1;padding:8px 4px;`;
+      el.textContent = w;
+      if (fragMatch) {
+        const def = { concept: fragMatch.concept, author: fragMatch.author, desc: fragMatch.desc, themes: fragMatch.themes || [], mood: fragMatch.mood || [] };
+        el.addEventListener('click', (e) => { e.stopPropagation(); openConceptDefPopup(def); });
+        el.addEventListener('touchend', (e) => { e.stopPropagation(); e.preventDefault(); openConceptDefPopup(def); }, { passive: false });
+      }
+      container.appendChild(el);
+    });
   }
 
-  // ポップアップ
+  // ポップアップ（近いことばタップ → 定義＋保存/違うボタン）
   let currentMountainWord = '';
   function openMountainPopup(text) {
     currentMountainWord = text;
-    const popup   = document.getElementById('lib-word-popup');
-    const popText = document.getElementById('lib-popup-text');
-    if (popup)   { popup.style.display = 'flex'; }
-    if (popText) popText.textContent = text;
+    // 定義ポップアップと山ポップアップを両立させる
+    // THOUGHT_FRAGMENTSから概念名でマッチ
+    const allFrags = typeof THOUGHT_FRAGMENTS !== 'undefined' ? THOUGHT_FRAGMENTS : [];
+    const m = text.match(/^(.+?)\s*[―—]\s*(.+)$/);
+    const fragMatch = m ? allFrags.find(f => f.concept === m[1].trim()) : allFrags.find(f => f.concept === text.trim());
+    if (fragMatch) {
+      // 定義がある → concept-def-popup を使いつつ下部に保存/違うボタン
+      openConceptDefPopup({ concept: fragMatch.concept, author: fragMatch.author, desc: fragMatch.desc, themes: fragMatch.themes || [], mood: fragMatch.mood || [] });
+      // 定義ポップアップの閉じるボタンの上に保存/違うボタンを差し込む
+      const themesEl = document.getElementById('cdp-themes');
+      if (themesEl) {
+        themesEl.insertAdjacentHTML('afterend', `
+          <div id="cdp-mountain-btns" style="display:flex;gap:10px;margin-top:16px;margin-bottom:4px;">
+            <button onclick="mountainWordAction('save');closeConceptDefPopup();" style="flex:1;padding:12px 8px;border:none;border-radius:8px;background:#222;color:#f8f8f6;font-family:inherit;font-size:10px;letter-spacing:0.16em;cursor:pointer;">保存する</button>
+            <button onclick="mountainWordAction('delete');closeConceptDefPopup();" style="flex:1;padding:12px 8px;border:1px solid #e0e0e0;border-radius:8px;background:none;color:#aaa;font-family:inherit;font-size:10px;letter-spacing:0.16em;cursor:pointer;">違う</button>
+          </div>`);
+      }
+    } else {
+      // 定義なし → 従来の山ポップアップ
+      const popup   = document.getElementById('lib-word-popup');
+      const popText = document.getElementById('lib-popup-text');
+      if (popup)   popup.style.display = 'flex';
+      if (popText) popText.textContent = text;
+    }
   }
   function closeMountainPopup() {
     const popup = document.getElementById('lib-word-popup');
@@ -3037,6 +3899,32 @@
     closeMountainPopup();
   }
 
+  // 山ページの保存済み概念背景
+  function renderMountainSavedBg() {
+    const container = document.getElementById('mountain-saved-bg');
+    if (!container) return;
+    const words = getSavedWords();
+    const allFrags = typeof THOUGHT_FRAGMENTS !== 'undefined' ? THOUGHT_FRAGMENTS : [];
+    container.innerHTML = '';
+    words.forEach((w, i) => {
+      const top  = 5  + (i * 23) % 88;
+      const left = 3  + (i * 37) % 78;
+      const rot  = -8 + (i * 9)  % 16;
+      const op   = 0.20 + (i % 3) * 0.06;
+      const m = w.match(/^(.+?)\s*[―—]\s*(.+)$/);
+      const fragMatch = m ? allFrags.find(f => f.concept === m[1].trim()) : allFrags.find(f => f.concept === w.trim());
+      const el = document.createElement('div');
+      el.style.cssText = `position:absolute;top:${top}%;left:${left}%;font-family:'Inter',sans-serif;font-size:13px;letter-spacing:0.1em;color:rgba(80,60,40,${op});transform:rotate(${rot}deg);white-space:nowrap;user-select:none;cursor:${fragMatch?'pointer':'default'};z-index:1;padding:8px 4px;`;
+      el.textContent = w;
+      if (fragMatch) {
+        const def = { concept: fragMatch.concept, author: fragMatch.author, desc: fragMatch.desc, themes: fragMatch.themes||[], mood: fragMatch.mood||[] };
+        el.addEventListener('click', (e) => { e.stopPropagation(); openConceptDefPopup(def); });
+        el.addEventListener('touchend', (e) => { e.stopPropagation(); e.preventDefault(); openConceptDefPopup(def); }, { passive: false });
+      }
+      container.appendChild(el);
+    });
+  }
+
   function renderFragmentCards(fragments) {
     const container = document.getElementById('lib-fragments');
     if (!container) return;
@@ -3047,38 +3935,48 @@
     }
 
     const saved = getSavedFragments().map(f => f.id);
+    container.innerHTML = '';
 
-    container.innerHTML = fragments.map(f => {
+    fragments.forEach(f => {
       const isSaved = saved.includes(f.id);
-      return `<div id="fragment-card-${f.id}" style="
-        background: rgba(255,255,255,0.82);
-        border: 1px solid rgba(0,0,0,0.06);
-        border-radius: 14px;
-        padding: 16px;
-        margin-bottom: 12px;
-        backdrop-filter: blur(4px);
-      ">
-        <div style="font-family:'Inter',sans-serif;font-weight:500;font-size:13px;letter-spacing:0.08em;line-height:1.9;color:#333;margin-bottom:8px;">${f.text}</div>
-        <div style="font-family:'Inter',sans-serif;font-size:10px;letter-spacing:0.16em;color:#aaa;margin-bottom:12px;">― ${f.author}</div>
-        <div style="display:flex;gap:8px;">
-          <button onclick="reactFragment('${f.id}','close')" style="
-            flex:1;padding:8px 4px;border:1px solid #e0e0e0;border-radius:8px;
-            background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;
-            color:#aaa;cursor:pointer;transition:all 0.2s;
-          ">近い</button>
-          <button onclick="reactFragment('${f.id}','far')" style="
-            flex:1;padding:8px 4px;border:1px solid #e0e0e0;border-radius:8px;
-            background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;
-            color:#aaa;cursor:pointer;transition:all 0.2s;
-          ">違う</button>
-          <button onclick="reactFragment('${f.id}','save')" style="
-            flex:1;padding:8px 4px;border:1px solid ${isSaved ? 'var(--lime)' : '#e0e0e0'};border-radius:8px;
-            background:${isSaved ? 'var(--lime)' : 'none'};font-family:inherit;font-size:10px;letter-spacing:0.14em;
-            color:${isSaved ? 'var(--lime-text)' : '#aaa'};cursor:pointer;transition:all 0.2s;
-          ">${isSaved ? '保存済' : '保存'}</button>
-        </div>
-      </div>`;
-    }).join('');
+      const card = document.createElement('div');
+      card.id = 'fragment-card-' + f.id;
+      card.style.cssText = 'background:rgba(255,255,255,0.82);border:1px solid rgba(0,0,0,0.06);border-radius:14px;padding:16px;margin-bottom:12px;backdrop-filter:blur(4px);';
+
+      // 上部（タップで定義）
+      const top = document.createElement('div');
+      top.style.cssText = 'cursor:pointer;margin-bottom:12px;';
+      top.innerHTML =
+        '<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px;">' +
+          '<div style="font-family:\'Inter\',sans-serif;font-weight:700;font-size:15px;letter-spacing:0.06em;color:#333;">' + f.concept + '</div>' +
+          '<div style="font-family:\'Inter\',sans-serif;font-size:9px;letter-spacing:0.16em;color:#bbb;">― ' + f.author + '</div>' +
+        '</div>' +
+        '<div style="font-family:\'Inter\',sans-serif;font-weight:400;font-size:12px;letter-spacing:0.08em;line-height:1.9;color:#666;">' + f.desc + '</div>';
+      top.addEventListener('click', () => openConceptDefPopup({
+        concept: f.concept, author: f.author, desc: f.desc,
+        themes: f.themes || [], mood: f.mood || []
+      }));
+
+      // ボタン行
+      const btns = document.createElement('div');
+      btns.style.cssText = 'display:flex;gap:8px;';
+
+      const mkBtn = (label, isFilled, onClick) => {
+        const b = document.createElement('button');
+        b.textContent = label;
+        b.style.cssText = 'flex:1;padding:8px 4px;border:1px solid ' + (isFilled ? 'var(--lime)' : '#e0e0e0') + ';border-radius:8px;background:' + (isFilled ? 'var(--lime)' : 'none') + ';font-family:inherit;font-size:10px;letter-spacing:0.14em;color:' + (isFilled ? 'var(--lime-text)' : '#aaa') + ';cursor:pointer;transition:all 0.2s;';
+        b.addEventListener('click', onClick);
+        return b;
+      };
+
+      btns.appendChild(mkBtn('近い', false, () => reactFragment(f.id, 'close')));
+      btns.appendChild(mkBtn('違う', false, () => reactFragment(f.id, 'far')));
+      btns.appendChild(mkBtn(isSaved ? '保存済' : '保存', isSaved, () => reactFragment(f.id, 'save')));
+
+      card.appendChild(top);
+      card.appendChild(btns);
+      container.appendChild(card);
+    });
   }
 
   function reactFragment(id, reaction) {
@@ -3087,7 +3985,7 @@
 
     if (reaction === 'save') {
       saveThoughtFragment(fragment);
-      addSavedWord(fragment.text + '　― ' + fragment.author);
+      addSavedWord(fragment.concept + '　― ' + fragment.author);
       renderSavedBackground();
       const card = document.getElementById('fragment-card-' + id);
       if (card) {
@@ -3100,8 +3998,7 @@
         }
       }
     } else if (reaction === 'close') {
-      // 「近い」→ 山に追加、カードを薄く
-      addCloseWord(fragment.text);
+      addCloseWord(fragment.concept);
       renderMountainWords();
       const card = document.getElementById('fragment-card-' + id);
       if (card) { card.style.opacity = '0.4'; card.style.transition = 'opacity 0.4s'; }
@@ -3130,6 +4027,476 @@
       const raw = localStorage.getItem('marginary_quotes');
       return raw ? JSON.parse(raw) : [];
     } catch(e) { return []; }
+  }
+
+  // ================================================================
+  // ===== 知的な深み編集 (Depth Studio) =====
+  // ================================================================
+
+  const DEPTH_STORAGE_KEY = 'marginary_depth_entries';
+  let currentDepthId = null; // 編集中エントリのID
+
+  // --- ストレージ CRUD ---
+  function getDepthEntries() {
+    try { return JSON.parse(localStorage.getItem(DEPTH_STORAGE_KEY) || '[]'); } catch(e) { return []; }
+  }
+  function saveDepthEntries(entries) {
+    try { localStorage.setItem(DEPTH_STORAGE_KEY, JSON.stringify(entries)); } catch(e) {}
+  }
+  function getDepthEntryById(id) {
+    return getDepthEntries().find(e => e.id === id) || null;
+  }
+  function upsertDepthEntry(entry) {
+    const entries = getDepthEntries();
+    const idx = entries.findIndex(e => e.id === entry.id);
+    if (idx >= 0) { entries[idx] = entry; } else { entries.unshift(entry); }
+    saveDepthEntries(entries);
+  }
+  function deleteDepthEntry(id) {
+    saveDepthEntries(getDepthEntries().filter(e => e.id !== id));
+  }
+
+  // --- 画面: 一覧 ---
+  function renderDepthList() {
+    const container = document.getElementById('depth-list-container');
+    if (!container) return;
+    const entries = getDepthEntries();
+    if (entries.length === 0) {
+      container.innerHTML = `<div style="font-size:12px;letter-spacing:0.1em;color:#bbb;padding:16px 0;line-height:2.2;">まだ問いがない。<br>「新しい問いを作る」から始める。</div>`;
+      return;
+    }
+    container.innerHTML = entries.map(e => {
+      const conceptName = e.originalConceptName
+        ? `<div style="font-size:15px;font-weight:500;letter-spacing:0.06em;color:#222;margin-bottom:6px;">${e.originalConceptName}</div>`
+        : `<div style="font-size:12px;letter-spacing:0.06em;color:#bbb;margin-bottom:6px;">（概念名なし）</div>`;
+      const question = e.questionText
+        ? `<div style="font-size:11px;letter-spacing:0.04em;color:#666;line-height:1.8;margin-bottom:8px;">${e.questionText.slice(0, 60)}${e.questionText.length > 60 ? '…' : ''}</div>`
+        : '';
+      const source = e.sourceText
+        ? `<div style="font-size:9px;letter-spacing:0.18em;color:#bbb;">${e.sourceText.slice(0, 30)}${e.sourceText.length > 30 ? '…' : ''}</div>`
+        : '';
+      const date = new Date(e.updatedAt).toLocaleDateString('ja-JP', { month:'numeric', day:'numeric' });
+      return `<div onclick="openDepthEntry('${e.id}')" style="
+        padding:20px;
+        border-bottom:1px solid #e8e8e4;
+        cursor:pointer;
+        background:#f8f8f6;
+        transition:background 0.15s;
+      " onmouseenter="this.style.background='#f0f0ec'" onmouseleave="this.style.background='#f8f8f6'"
+        ontouchstart="this.style.background='#f0f0ec'" ontouchend="this.style.background='#f8f8f6'">
+        ${conceptName}
+        ${question}
+        ${source}
+        <div style="font-size:9px;letter-spacing:0.16em;color:#ccc;margin-top:8px;">${date}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // --- 画面: 編集を開く ---
+  function startNewDepthEntry() {
+    currentDepthId = 'depth_' + Date.now();
+    renderDepthEdit(null);
+    goTo('screen-depth-edit');
+  }
+
+  function openDepthEntry(id) {
+    currentDepthId = id;
+    const entry = getDepthEntryById(id);
+    renderDepthEdit(entry);
+    goTo('screen-depth-edit');
+  }
+
+  function renderDepthEdit(entry) {
+    // 違和感ソース一覧
+    const initIds = entry
+      ? (Array.isArray(entry.sourceEntryIds) ? entry.sourceEntryIds : (entry.sourceEntryId ? [entry.sourceEntryId] : []))
+      : [];
+    renderDepthSourceList(initIds);
+    // 概念カード
+    renderDepthConceptsList(entry ? entry.selectedConcepts : []);
+    // 思想断片
+    renderDepthFragmentsList(entry ? entry.savedFragments : []);
+    // テキストフィールド
+    document.getElementById('depth-question').value = entry ? (entry.questionText || '') : '';
+    document.getElementById('depth-concept-name').value = entry ? (entry.originalConceptName || '') : '';
+    document.getElementById('depth-memo').value = entry ? (entry.memo || '') : '';
+    // ソースラベル
+    
+    
+    // 削除ボタン
+    const delArea = document.getElementById('depth-delete-area');
+    if (delArea) delArea.style.display = entry ? 'block' : 'none';
+  }
+
+  // 違和感ソース（保存済みフラグメントから）
+  function renderDepthSourceList(selectedIds) {
+    const container = document.getElementById('depth-source-list');
+    if (!container) return;
+    const ids = Array.isArray(selectedIds) ? selectedIds : (selectedIds ? [selectedIds] : []);
+    const fragments = getFragments().slice(-30).reverse();
+    if (fragments.length === 0) {
+      container.innerHTML = `<div style="font-size:11px;color:#bbb;letter-spacing:0.1em;">保存済みの違和感がまだありません。</div>`;
+      return;
+    }
+    container.innerHTML = '';
+    fragments.forEach(f => {
+      const isSelected = ids.includes(f.id);
+      const row = document.createElement('div');
+      row.style.cssText = 'padding:12px 14px;border:1px solid '+(isSelected?'#222':'#e0e0da')+';border-radius:3px;cursor:pointer;background:'+(isSelected?'#222':'transparent')+';transition:all 0.15s;display:flex;align-items:center;gap:10px;';
+      row.innerHTML =
+        '<div style="width:6px;height:6px;border-radius:50%;flex-shrink:0;background:'+(isSelected?'#f8f8f6':'#d0d0cc')+'"></div>'+
+        '<div style="font-size:12px;letter-spacing:0.06em;color:'+(isSelected?'#f8f8f6':'#444')+';line-height:1.7;flex:1;">'+( f.text||'')+'</div>'+
+        (isSelected?'<div style="font-size:10px;color:#f8f8f6;opacity:0.6;">✓</div>':'');
+      row.addEventListener('click', () => toggleDepthSource(f.id, f.text || ''));
+      container.appendChild(row);
+    });
+  }
+
+  let _depthSelectedSourceIds = [];
+  let _depthSelectedSourceText = '';
+  let _depthSelectedConcepts = [];
+  let _depthSelectedFragments = [];
+
+  function toggleDepthSource(id, text) {
+    if (_depthSelectedSourceIds.includes(id)) {
+      _depthSelectedSourceIds = _depthSelectedSourceIds.filter(x => x !== id);
+    } else {
+      _depthSelectedSourceIds = [..._depthSelectedSourceIds, id];
+    }
+    // 選択した違和感テキストを結合してマッチングに使う
+    const allFrags = getFragments();
+    _depthSelectedSourceText = _depthSelectedSourceIds
+      .map(sid => (allFrags.find(f => f.id === sid) || {}).text || '')
+      .join(' ');
+    renderDepthSourceList(_depthSelectedSourceIds);
+    renderDepthConceptsList(_depthSelectedConcepts);
+    renderDepthFragmentsList(_depthSelectedFragments);
+  }
+
+  // --- 概念定義ポップアップ ---
+  function openConceptDefPopup(item) {
+    document.getElementById('cdp-concept').textContent = item.concept || '';
+    document.getElementById('cdp-author').textContent = item.author ? '― ' + item.author : '';
+    document.getElementById('cdp-desc').textContent = item.desc || '';
+    const themesEl = document.getElementById('cdp-themes');
+    const tags = [...(item.themes || []), ...(item.mood || [])].slice(0, 10);
+    themesEl.innerHTML = tags.map(t =>
+      `<span style="font-size:9px;letter-spacing:0.14em;color:#888;background:#eee;padding:3px 8px;border-radius:20px;">${t}</span>`
+    ).join('');
+    document.getElementById('concept-def-popup').style.display = 'flex';
+  }
+  function closeConceptDefPopup() {
+    const el = document.getElementById('concept-def-popup');
+    if (el) el.style.display = 'none';
+    // 山ポップアップ用に差し込んだボタンを除去
+    const mb = document.getElementById('cdp-mountain-btns');
+    if (mb) mb.remove();
+    currentMountainWord = '';
+  }
+
+  // タブ切り替え
+  function switchDepthTab(tab) {
+    const btnC = document.getElementById('tab-btn-concepts');
+    const btnF = document.getElementById('tab-btn-fragments');
+    const panC = document.getElementById('tab-panel-concepts');
+    const panF = document.getElementById('tab-panel-fragments');
+    if (tab === 'concepts') {
+      if (btnC) { btnC.style.color='#222'; btnC.style.borderBottom='2px solid #222'; }
+      if (btnF) { btnF.style.color='#aaa'; btnF.style.borderBottom='2px solid transparent'; }
+      if (panC) panC.style.display = 'block';
+      if (panF) panF.style.display = 'none';
+    } else {
+      if (btnC) { btnC.style.color='#aaa'; btnC.style.borderBottom='2px solid transparent'; }
+      if (btnF) { btnF.style.color='#222'; btnF.style.borderBottom='2px solid #222'; }
+      if (panC) panC.style.display = 'none';
+      if (panF) panF.style.display = 'block';
+    }
+  }
+
+  // ================================================================
+  // ===== 深み編集ステップ管理 =====
+  // ================================================================
+  let _currentDepthStep = 1;
+
+  const STEP_CONFIG = {
+    1: { label: 'STEP 1 / 3', title: '違和感を選ぶ',   back: null,  next: 2 },
+    2: { label: 'STEP 2 / 3', title: '概念を選ぶ',     back: 1,     next: 3 },
+    3: { label: 'STEP 3 / 3', title: 'ことばを紡ぐ',   back: 2,     next: null },
+  };
+
+  function goToDepthStep(step) {
+    _currentDepthStep = step;
+    const cfg = STEP_CONFIG[step];
+
+    // ヘッダー更新
+    const lbl = document.getElementById('step-label');
+    const ttl = document.getElementById('step-title');
+    if (lbl) lbl.textContent = cfg.label;
+    if (ttl) ttl.textContent = cfg.title;
+
+    // ドット更新
+    [1, 2, 3].forEach(n => {
+      const dot = document.getElementById('step-dot-' + n);
+      if (dot) dot.style.background = n <= step ? '#222' : '#d0d0cc';
+    });
+
+    // パネル表示切り替え
+    [1, 2, 3].forEach(n => {
+      const panel = document.getElementById('depth-step-' + n);
+      if (panel) panel.style.display = n === step ? 'block' : 'none';
+    });
+
+    // 保存ボタン（step3のみ表示）
+    const saveBtn = document.getElementById('step-save-btn');
+    if (saveBtn) saveBtn.style.display = step === 3 ? 'inline-block' : 'none';
+
+    // フッターナビ
+    const backArea = document.getElementById('step-back-area');
+    const nextArea = document.getElementById('step-next-area');
+    if (backArea) backArea.textContent = cfg.back ? '← 戻る' : '← 一覧へ';
+    if (nextArea) {
+      nextArea.textContent = cfg.next ? '次へ →' : '';
+      nextArea.style.visibility = cfg.next ? 'visible' : 'hidden';
+    }
+
+    // スクロールトップ
+    const scroll = document.querySelector('#screen-depth-edit > div > div[style*="overflow-y"]');
+    if (scroll) scroll.scrollTop = 0;
+  }
+
+  function depthStepNext() {
+    const cfg = STEP_CONFIG[_currentDepthStep];
+    if (cfg.next) goToDepthStep(cfg.next);
+  }
+
+  function depthStepBack() {
+    const cfg = STEP_CONFIG[_currentDepthStep];
+    if (cfg.back) {
+      goToDepthStep(cfg.back);
+    } else {
+      goTo('screen-depth-list');
+    }
+  }
+
+  function openDepthInfoModal() {
+    const el = document.getElementById('depth-info-modal');
+    if (el) el.style.display = 'flex';
+  }
+  function closeDepthInfoModal() {
+    const el = document.getElementById('depth-info-modal');
+    if (el) el.style.display = 'none';
+  }
+
+  function toggleDepthConcept(id) {
+    if (_depthSelectedConcepts.includes(id)) {
+      _depthSelectedConcepts = _depthSelectedConcepts.filter(c => c !== id);
+    } else {
+      _depthSelectedConcepts = [..._depthSelectedConcepts, id];
+    }
+    renderDepthConceptsList(_depthSelectedConcepts);
+  }
+
+  function toggleDepthFragment(id) {
+    if (_depthSelectedFragments.includes(id)) {
+      _depthSelectedFragments = _depthSelectedFragments.filter(f => f !== id);
+    } else {
+      _depthSelectedFragments = [..._depthSelectedFragments, id];
+    }
+    renderDepthFragmentsList(_depthSelectedFragments);
+  }
+
+  // 保存した概念リスト（タップ→定義、+ボタン→選択）
+  function renderDepthConceptsList(selected) {
+    _depthSelectedConcepts = selected || [];
+    const container = document.getElementById('depth-concepts-list');
+    if (!container) return;
+    const savedFragments = getSavedFragments();
+    const closeWords = getCloseWords();
+    const savedWords = getSavedWords();
+    const allFrags = typeof THOUGHT_FRAGMENTS !== 'undefined' ? THOUGHT_FRAGMENTS : [];
+    const items = [];
+    savedFragments.forEach(f => {
+      const fragObj = allFrags.find(tf => tf.id === f.id) || f;
+      items.push({
+        id: 'frag_' + f.id,
+        label: f.concept,
+        sub: f.author ? '― ' + f.author : '',
+        defItem: { concept: f.concept, author: f.author || '', desc: f.desc || '', themes: fragObj.themes || [], mood: fragObj.mood || [] },
+      });
+    });
+    closeWords.forEach((w, i) => {
+      const m = w.match(/^(.+?)\s*[―—]\s*(.+)$/);
+      const fragMatch = m ? allFrags.find(f => f.concept === m[1].trim()) : null;
+      items.push({
+        id: 'close_' + i, label: w, sub: '近いと感じた',
+        defItem: fragMatch
+          ? { concept: fragMatch.concept, author: fragMatch.author, desc: fragMatch.desc, themes: fragMatch.themes || [], mood: fragMatch.mood || [] }
+          : { concept: w, author: '', desc: '「近い」を選んだことば', themes: [], mood: [] },
+      });
+    });
+    savedWords.forEach((w, i) => {
+      const m = w.match(/^(.+?)\s*[―—]\s*(.+)$/);
+      const fragMatch = m ? allFrags.find(f => f.concept === m[1].trim()) : null;
+      items.push({
+        id: 'saved_' + i, label: w, sub: '保存した',
+        defItem: fragMatch
+          ? { concept: fragMatch.concept, author: fragMatch.author, desc: fragMatch.desc, themes: fragMatch.themes || [], mood: fragMatch.mood || [] }
+          : { concept: w, author: '', desc: '保存した言葉', themes: [], mood: [] },
+      });
+    });
+    if (items.length === 0) {
+      container.innerHTML = '<div style="font-size:11px;color:#bbb;letter-spacing:0.1em;line-height:2;">図書館で「保存」または<br>「近い」を選ぶと現れます。</div>';
+      return;
+    }
+    container.innerHTML = '';
+    items.forEach(item => {
+      const isSel = _depthSelectedConcepts.includes(item.id);
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid '+(isSel?'#444':'#e0e0da')+';border-radius:3px;background:'+(isSel?'#f0f0ec':'transparent')+';transition:all 0.15s;';
+      // 左：タップで定義
+      const info = document.createElement('div');
+      info.style.cssText = 'flex:1;min-width:0;cursor:pointer;';
+      info.innerHTML = '<div style="font-size:12px;font-weight:500;letter-spacing:0.06em;color:#333;">'+item.label+'</div>'+(item.sub?'<div style="font-size:9px;letter-spacing:0.1em;color:#aaa;margin-top:2px;">'+item.sub+'</div>':'');
+      const defData = item.defItem;
+      info.addEventListener('click', function() { openConceptDefPopup(defData); });
+      // 右：+ボタンで選択
+      const btn = document.createElement('button');
+      btn.textContent = isSel ? '✓' : '+';
+      btn.style.cssText = 'flex-shrink:0;width:28px;height:28px;border:1px solid '+(isSel?'#222':'#ccc')+';border-radius:50%;background:'+(isSel?'#222':'transparent')+';color:'+(isSel?'#f8f8f6':'#aaa')+';font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;transition:all 0.15s;';
+      const itemId = item.id;
+      btn.addEventListener('click', function(e) { e.stopPropagation(); toggleDepthConcept(itemId); });
+      row.appendChild(info);
+      row.appendChild(btn);
+      container.appendChild(row);
+    });
+  }
+
+  // 関連する思想断片（タップ→定義、+ボタン→選択）
+  function renderDepthFragmentsList(selected) {
+    _depthSelectedFragments = selected || [];
+    const container = document.getElementById('depth-fragments-list');
+    if (!container) return;
+    const allFrags = typeof THOUGHT_FRAGMENTS !== 'undefined' ? THOUGHT_FRAGMENTS : [];
+    const sourceText = _depthSelectedSourceText || '';
+    const matched = sourceText
+      ? allFrags.filter(f => {
+          const themeHit = (f.themes || []).some(t => sourceText.includes(t));
+          const moodHit  = (f.mood   || []).some(m => sourceText.includes(m));
+          return themeHit || moodHit;
+        }).slice(0, 8)
+      : [];
+    const selectedFragObjs = _depthSelectedFragments.map(id => allFrags.find(f => f.id === id)).filter(Boolean);
+    const displaySet = new Map();
+    [...selectedFragObjs, ...matched].forEach(f => { if (!displaySet.has(f.id)) displaySet.set(f.id, f); });
+    const displayList = [...displaySet.values()];
+    if (displayList.length === 0) {
+      container.innerHTML = '<div style="font-size:11px;color:#bbb;letter-spacing:0.1em;line-height:2;">違和感を選ぶと<br>関連する断片が現れます。</div>';
+      return;
+    }
+    container.innerHTML = '';
+    displayList.forEach(f => {
+      const isSel = _depthSelectedFragments.includes(f.id);
+      const row = document.createElement('div');
+      row.style.cssText = 'padding:14px;border:1px solid '+(isSel?'#444':'#e0e0da')+';border-radius:3px;background:'+(isSel?'#f0f0ec':'transparent')+';transition:all 0.15s;';
+      // 内側レイアウト
+      const inner = document.createElement('div');
+      inner.style.cssText = 'display:flex;align-items:flex-start;gap:10px;';
+      // 左：テキスト（タップで定義）
+      const info = document.createElement('div');
+      info.style.cssText = 'flex:1;min-width:0;cursor:pointer;';
+      info.innerHTML = '<div style="font-size:13px;font-weight:500;letter-spacing:0.06em;color:#333;">'+f.concept+'</div><div style="font-size:9px;letter-spacing:0.1em;color:#aaa;margin-top:2px;">― '+f.author+'</div><div style="font-size:11px;letter-spacing:0.04em;color:#666;margin-top:6px;line-height:1.8;">'+f.desc+'</div>';
+      const defData = { concept: f.concept, author: f.author, desc: f.desc, themes: f.themes || [], mood: f.mood || [] };
+      info.addEventListener('click', function() { openConceptDefPopup(defData); });
+      // 右：+ボタン（選択）
+      const btn = document.createElement('button');
+      btn.textContent = isSel ? '✓' : '+';
+      btn.style.cssText = 'flex-shrink:0;width:28px;height:28px;border:1px solid '+(isSel?'#222':'#ccc')+';border-radius:50%;background:'+(isSel?'#222':'transparent')+';color:'+(isSel?'#f8f8f6':'#aaa')+';font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;transition:all 0.15s;margin-top:2px;';
+      const fId = f.id;
+      btn.addEventListener('click', function(e) { e.stopPropagation(); toggleDepthFragment(fId); });
+      inner.appendChild(info);
+      inner.appendChild(btn);
+      row.appendChild(inner);
+      container.appendChild(row);
+    });
+  }
+
+  // --- 保存 ---
+  function saveDepthEntry() {
+    const now = new Date().toISOString();
+    const existing = currentDepthId ? getDepthEntryById(currentDepthId) : null;
+    const entry = {
+      id:                  currentDepthId || ('depth_' + Date.now()),
+      sourceEntryIds:      _depthSelectedSourceIds.length ? _depthSelectedSourceIds : (existing ? (existing.sourceEntryIds || (existing.sourceEntryId ? [existing.sourceEntryId] : [])) : []),
+      sourceText:          _depthSelectedSourceText || (existing ? existing.sourceText : ''),
+      selectedConcepts:    _depthSelectedConcepts.length ? _depthSelectedConcepts : (existing ? existing.selectedConcepts : []),
+      savedFragments:      _depthSelectedFragments.length ? _depthSelectedFragments : (existing ? existing.savedFragments : []),
+      questionText:        document.getElementById('depth-question')?.value.trim() || '',
+      originalConceptName: document.getElementById('depth-concept-name')?.value.trim() || '',
+      memo:                document.getElementById('depth-memo')?.value.trim() || '',
+      createdAt:           existing ? existing.createdAt : now,
+      updatedAt:           now,
+    };
+    upsertDepthEntry(entry);
+    // 保存フィードバック
+    const btn = document.querySelector('#screen-depth-edit button[onclick="saveDepthEntry()"]');
+    if (btn) {
+      const orig = btn.textContent;
+      btn.textContent = '保存済';
+      btn.style.background = '#555';
+      setTimeout(() => { btn.textContent = orig; btn.style.background = '#222'; }, 1200);
+    }
+  }
+
+  function deleteCurrentDepthEntry() {
+    if (!currentDepthId) return;
+    if (!confirm('このエントリを削除しますか？')) return;
+    deleteDepthEntry(currentDepthId);
+    currentDepthId = null;
+    goTo('screen-depth-list');
+  }
+
+  // goTo フック: depth screens
+  function initDepthScreens(id) {
+    if (id === 'screen-depth-list') {
+      renderDepthList();
+    }
+    if (id === 'screen-depth-edit') {
+      if (currentDepthId) {
+        const entry = getDepthEntryById(currentDepthId);
+        if (entry) {
+          _depthSelectedSourceIds  = Array.isArray(entry.sourceEntryIds) ? entry.sourceEntryIds : (entry.sourceEntryId ? [entry.sourceEntryId] : []);
+          _depthSelectedSourceText = entry.sourceText || '';
+          _depthSelectedConcepts   = entry.selectedConcepts || [];
+          _depthSelectedFragments  = entry.savedFragments || [];
+        } else {
+          _depthSelectedSourceIds  = [];
+          _depthSelectedSourceText = '';
+          _depthSelectedConcepts   = [];
+          _depthSelectedFragments  = [];
+        }
+      }
+      // ステップ1から開始
+      goToDepthStep(1);
+      // 各ステップのコンテンツをレンダリング
+      const initIds = _depthSelectedSourceIds.length ? _depthSelectedSourceIds : [];
+      renderDepthSourceList(initIds);
+      renderDepthConceptsList(_depthSelectedConcepts);
+      renderDepthFragmentsList(_depthSelectedFragments);
+      // 既存エントリのフィールドを復元
+      if (currentDepthId) {
+        const entry = getDepthEntryById(currentDepthId);
+        if (entry) {
+          const q = document.getElementById('depth-question');
+          const n = document.getElementById('depth-concept-name');
+          const m = document.getElementById('depth-memo');
+          if (q) q.value = entry.questionText || '';
+          if (n) n.value = entry.originalConceptName || '';
+          if (m) m.value = entry.memo || '';
+          const delArea = document.getElementById('depth-delete-area');
+          if (delArea) delArea.style.display = 'block';
+        }
+      }
+    }
   }
 
   // ===== 新ラウンド開始 =====
