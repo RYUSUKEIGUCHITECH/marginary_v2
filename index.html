@@ -408,6 +408,8 @@
       </div>
     </div>
   </div>
+    </div>
+  </div>
 
   <!-- ====== SCREEN 2: INTRO ======-->
   <div class="screen" id="screen-intro">
@@ -862,6 +864,24 @@
     </div>
   </div>
 
+  <!-- ====== SCREEN: 育てた木（タイトル後） ====== -->
+  <div class="screen" id="screen-tree-intro">
+    <div style="position:relative;width:100%;height:100%;display:flex;flex-direction:column;background:#fff;overflow:hidden;">
+      <!-- ヘッダー（キャラなし） -->
+      <div style="padding:16px 20px 0;flex-shrink:0;position:relative;z-index:2;">
+        <div id="tree-intro-label" style="font-size:13px;letter-spacing:0.2em;color:#444;font-weight:400;font-family:'Hiragino Mincho ProN','Yu Mincho','Georgia',serif;line-height:1.9;">育 っ て る ね</div>
+      </div>
+      <!-- 木エリア -->
+      <div id="tree-intro-canvas" style="position:relative;flex:1;overflow:hidden;background:#fff;"></div>
+      <!-- 地面の線 -->
+      <div style="height:1px;background:#A0845A;flex-shrink:0;position:relative;z-index:2;"></div>
+      <!-- 地層エリア -->
+      <div id="tree-intro-strata" style="position:relative;height:38%;flex-shrink:0;background:#B8956A;overflow:hidden;"></div>
+      <!-- タップで次へ（モードによって遷移先変わる） -->
+      <div onclick="treeIntroNext()" style="text-align:center;padding:10px;color:#ffffff;font-size:13px;letter-spacing:0.2em;flex-shrink:0;font-weight:700;cursor:pointer;background:#A07848;">タップで次へ</div>
+    </div>
+  </div>
+
   <!-- ====== SCREEN: キャラ選択 ====== -->
   <div class="screen" id="screen-chara-select">
     <div style="width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:32px 24px;">
@@ -978,8 +998,16 @@
         </div>
       </div>
 
-      <!-- 次へ -->
-      <div onclick="goTo('screen-end')" style="position:relative;z-index:1;text-align:center;padding:12px;color:#333;font-size:10px;letter-spacing:0.22em;font-weight:400;cursor:pointer;border-top:1px solid rgba(0,0,0,0.06);flex-shrink:0;background:rgba(255,255,255,0.9);">つ ぎ へ</div>
+      <!-- 次へ + 知的な深みボタン -->
+      <div style="position:relative;z-index:1;flex-shrink:0;background:rgba(255,255,255,0.9);border-top:1px solid rgba(0,0,0,0.06);">
+        <button onclick="goTo('screen-depth-list')" style="
+          display:block;width:calc(100% - 48px);margin:14px 24px 8px;
+          padding:14px;border:1.5px solid #333;border-radius:10px;
+          background:none;font-family:inherit;
+          font-size:11px;letter-spacing:0.22em;color:#333;cursor:pointer;
+        ">知的な深みを育てる →</button>
+        <div onclick="goTo('screen-end')" style="text-align:center;padding:10px 12px 14px;color:#aaa;font-size:10px;letter-spacing:0.22em;cursor:pointer;">つ ぎ へ</div>
+      </div>
 
     </div>
   </div>
@@ -988,16 +1016,8 @@
   <div class="screen" id="screen-end">
     <div class="card" style="position:relative; min-height:360px; text-align:center;">
       <div class="end-text" style="font-weight:700;" data-serif="serif-end">ま た 気 が 向 い た ら<br>来 る と い い よ ー</div>
-      <!-- FIX 4: エンディングのキャラグリッドはマジマジ固定緑 -->
       <div class="chara-grid" id="end-chara-grid"></div>
       <div style="font-size:13px;letter-spacing:0.05em;color:#333;margin-bottom:14px;font-weight:700;">キャラをタップして続ける</div>
-      <button onclick="goTo('screen-depth-list')" style="
-        width:100%;margin-top:12px;padding:16px;
-        border:1.5px solid #333;border-radius:12px;
-        background:none;font-family:inherit;
-        font-size:11px;letter-spacing:0.22em;color:#333;
-        cursor:pointer;
-      ">知的な深み編集 →</button>
     </div>
   </div>
 
@@ -1005,11 +1025,17 @@
   <div class="screen" id="screen-depth-list" style="background:#f8f8f6;">
     <div style="width:100%;height:100%;display:flex;flex-direction:column;">
       <!-- ヘッダー -->
-      <div style="padding:32px 24px 20px;flex-shrink:0;">
-        <div style="font-size:9px;letter-spacing:0.32em;color:#bbb;margin-bottom:10px;">DEPTH STUDIO</div>
-        <div style="font-size:18px;letter-spacing:0.06em;color:#222;font-weight:500;line-height:1.5;">違和感から問いをつくり、<br>知的な深みを育てる</div>
+      <div style="padding:28px 24px 20px;flex-shrink:0;">
+        <!-- キャラ + テキスト -->
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">
+          <span id="depth-list-chara" class="chara-svg" data-w="52" data-h="52" style="flex-shrink:0;"></span>
+          <div>
+            <div style="font-size:9px;letter-spacing:0.32em;color:#bbb;margin-bottom:4px;">DEPTH STUDIO</div>
+            <div style="font-size:15px;letter-spacing:0.06em;color:#222;font-weight:500;line-height:1.5;">違和感から問いをつくり、<br>知的な深みを育てる</div>
+          </div>
+        </div>
         <!-- インフォボタン -->
-        <div onclick="openDepthInfoModal()" style="display:inline-flex;align-items:center;gap:6px;margin-top:12px;cursor:pointer;">
+        <div onclick="openDepthInfoModal()" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;">
           <div style="width:18px;height:18px;border-radius:50%;border:1.5px solid #666;display:flex;align-items:center;justify-content:center;">
             <span style="font-size:10px;color:#666;font-weight:700;line-height:1;">?</span>
           </div>
@@ -1033,7 +1059,7 @@
       <!-- 一覧 -->
       <div id="depth-list-container" style="flex:1;overflow-y:auto;padding:0 24px 32px;"></div>
       <!-- 戻る -->
-      <div onclick="goTo('screen-end')" style="flex-shrink:0;padding:16px 24px;border-top:1px solid #e8e8e4;font-size:10px;letter-spacing:0.2em;color:#aaa;cursor:pointer;">← 戻る</div>
+      <div onclick="depthBackToChara()" style="flex-shrink:0;padding:16px 24px;border-top:1px solid #e8e8e4;font-size:10px;letter-spacing:0.2em;color:#333;cursor:pointer;">← キャラ選択に戻る</div>
     </div>
   </div>
 
@@ -1042,14 +1068,17 @@
     <div style="width:100%;height:100%;display:flex;flex-direction:column;">
 
       <!-- ヘッダー：ステップインジケーター -->
-      <div style="padding:24px 24px 16px;flex-shrink:0;border-bottom:1px solid #e8e8e4;background:#f8f8f6;">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
-          <!-- ステップドット -->
-          <div id="step-dot-1" style="width:6px;height:6px;border-radius:50%;background:#222;transition:all 0.3s;"></div>
-          <div style="flex:1;height:1px;background:#e0e0da;"></div>
-          <div id="step-dot-2" style="width:6px;height:6px;border-radius:50%;background:#d0d0cc;transition:all 0.3s;"></div>
-          <div style="flex:1;height:1px;background:#e0e0da;"></div>
-          <div id="step-dot-3" style="width:6px;height:6px;border-radius:50%;background:#d0d0cc;transition:all 0.3s;"></div>
+      <div style="padding:20px 24px 16px;flex-shrink:0;border-bottom:1px solid #e8e8e4;background:#f8f8f6;">
+        <!-- キャラ + ステップドット -->
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+          <span id="depth-edit-chara" class="chara-svg" data-w="36" data-h="36" style="flex-shrink:0;"></span>
+          <div style="display:flex;align-items:center;gap:8px;flex:1;">
+            <div id="step-dot-1" style="width:6px;height:6px;border-radius:50%;background:#222;transition:all 0.3s;"></div>
+            <div style="flex:1;height:1px;background:#e0e0da;"></div>
+            <div id="step-dot-2" style="width:6px;height:6px;border-radius:50%;background:#d0d0cc;transition:all 0.3s;"></div>
+            <div style="flex:1;height:1px;background:#e0e0da;"></div>
+            <div id="step-dot-3" style="width:6px;height:6px;border-radius:50%;background:#d0d0cc;transition:all 0.3s;"></div>
+          </div>
         </div>
         <div style="display:flex;align-items:baseline;justify-content:space-between;">
           <div>
@@ -1157,6 +1186,19 @@
               font-size:10px;letter-spacing:0.18em;color:#ccc;
               cursor:pointer;
             ">このエントリを削除する</button>
+          </div>
+
+          <!-- ShakeCard エリア -->
+          <div style="margin-top:36px;padding-top:28px;border-top:1px solid #e8e8e4;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+              <div style="font-size:9px;letter-spacing:0.28em;color:#bbb;">SHAKE</div>
+              <button onclick="triggerShakeCard()" style="
+                padding:6px 12px;border:1px solid #d0d0cc;border-radius:20px;
+                background:none;font-family:inherit;font-size:9px;
+                letter-spacing:0.18em;color:#888;cursor:pointer;
+              ">揺さぶる</button>
+            </div>
+            <div id="shake-card-area"></div>
           </div>
         </div>
 
@@ -1276,11 +1318,39 @@
     }).join('');
   }
 
+  // tree-intro 画面の遷移先モード
+  // 'chara'  : タイトル後 → キャラ選択
+  // 'start'  : キャラ選択後 → イントロ（話し始め）
+  let _treeIntroMode = 'chara';
+
+  function treeIntroNext() {
+    if (_treeIntroMode === 'start') {
+      goTo('screen-intro');
+    } else {
+      goTo('screen-chara-select');
+    }
+  }
+
+  // 知的な深みからキャラ選択に戻る（→キャラ選択後に木を表示）
+  let _charaSelectFromDepth = false;
+  function depthBackToChara() {
+    _charaSelectFromDepth = true;
+    goTo('screen-chara-select');
+  }
+
   function selectCharaAndStart(chara) {
     currentChara = chara;
     applyCharaConfig(chara);
     updateAllCharaSVG(chara);
-    goTo('screen-intro');
+    // 深み編集から来た場合のみ木を表示
+    if (_charaSelectFromDepth && getFragments().length > 0) {
+      _charaSelectFromDepth = false;
+      _treeIntroMode = 'start';
+      goTo('screen-tree-intro');
+    } else {
+      _charaSelectFromDepth = false;
+      goTo('screen-intro');
+    }
   }
 
   function renderEndGrid() {
@@ -1806,6 +1876,81 @@
     } catch(e) { return []; }
   }
 
+  // intro画面に小さな木を描画
+  function renderMiniTree(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = '';
+
+    // fragmentsとhistoryから枝データを取得
+    const allTexts = getFragments().map(f => f.text).filter(Boolean).slice(-20);
+    if (allTexts.length === 0) return;
+
+    const TW = 140, TH = 180;
+    const canvas = document.createElement('canvas');
+    canvas.width  = TW * 2; // retina
+    canvas.height = TH * 2;
+    canvas.style.cssText = 'width:100%;height:100%;';
+    container.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    ctx.scale(2, 2);
+
+    const TRUNK_X = TW * 0.52;
+    const TRUNK_BOTTOM = TH;
+    const trunkLen = TH * 0.52;
+
+    // 幹
+    const grad = ctx.createLinearGradient(TRUNK_X, TRUNK_BOTTOM, TRUNK_X, TRUNK_BOTTOM - trunkLen);
+    grad.addColorStop(0, '#4A2E12');
+    grad.addColorStop(1, '#7A5230');
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 3.5;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(TRUNK_X, TRUNK_BOTTOM);
+    ctx.lineTo(TRUNK_X, TRUNK_BOTTOM - trunkLen);
+    ctx.stroke();
+
+    // 枝
+    const BASE_ANGLE = -Math.PI / 2;
+    const angles = [
+      BASE_ANGLE - 0.55, BASE_ANGLE + 0.55,
+      BASE_ANGLE - 0.85, BASE_ANGLE + 0.85,
+      BASE_ANGLE - 0.35, BASE_ANGLE + 0.35,
+    ];
+    const bigLen = trunkLen * 0.48;
+    const count = Math.min(allTexts.length, 6);
+
+    for (let i = 0; i < count; i++) {
+      const ang = angles[i % angles.length];
+      const t   = 0.45 + (i % 3) * 0.17;
+      const sy  = TRUNK_BOTTOM - trunkLen * t;
+      const bl  = bigLen * (0.7 + (i % 3) * 0.1);
+      const ex  = TRUNK_X + Math.cos(ang) * bl;
+      const ey  = sy + Math.sin(ang) * bl;
+
+      ctx.strokeStyle = i < 3 ? '#8C6239' : '#C4A882';
+      ctx.lineWidth   = i < 3 ? 1.8 : 0.9;
+      ctx.beginPath();
+      ctx.moveTo(TRUNK_X, sy);
+      ctx.lineTo(ex, ey);
+      ctx.stroke();
+
+      // 小枝
+      for (let s = 0; s < 2; s++) {
+        const side = s % 2 === 0 ? 1 : -1;
+        const a2 = ang + side * 0.45;
+        const sl = bl * 0.38;
+        ctx.strokeStyle = '#B89060';
+        ctx.lineWidth = 0.6;
+        ctx.beginPath();
+        ctx.moveTo(ex, ey);
+        ctx.lineTo(ex + Math.cos(a2) * sl, ey + Math.sin(a2) * sl);
+        ctx.stroke();
+      }
+    }
+  }
+
   function renderIntroPastWords() {
     const container = document.getElementById('intro-past-words');
     if (!container) return;
@@ -2095,7 +2240,11 @@
       localStorage.setItem('marginary_first_intro', '1');
       goTo('screen-intro-first');
     } else {
-      goTo('screen-chara-select');
+      // 過去の入力がある → 木画面を挟む、なければキャラ選択へ
+      const hasPast = getFragments().length > 0;
+      _treeIntroMode = 'chara';
+      _charaSelectFromDepth = false;
+      goTo(hasPast ? 'screen-tree-intro' : 'screen-chara-select');
     }
   }
 
@@ -2160,7 +2309,6 @@
       if (btn) { btn.style.opacity = '0'; btn.style.pointerEvents = 'none'; }
       if (hint) hint.style.display = 'block';
       if (card) card.style.cursor = 'pointer';
-      // 初回は「話していく？」、2回目以降はキャラのセリフ
       const isFirstIntro = localStorage.getItem('marginary_first_intro') === '1';
       if (isFirstIntro) {
         localStorage.removeItem('marginary_first_intro');
@@ -2168,8 +2316,9 @@
           el.innerHTML = '話 し て い く ？';
         });
       }
-      // 過去の言葉を背景に表示
       renderIntroPastWords();
+    }
+    if (id === 'screen-intro-first') {
     }
     if (id === 'screen-oboroke-input2') {
       // あさめ/ふかめ時はセリフを差し替え
@@ -2184,6 +2333,9 @@
           el.innerHTML = cfg.serif_oboroke_in2 || '';
         }
       }
+    }
+    if (id === 'screen-tree-intro') {
+      setTimeout(() => renderTreeIntro(), 60);
     }
     if (id === 'screen-tamatta') {
       setTimeout(() => renderTamatta(), 80);
@@ -2733,255 +2885,184 @@
   // ===== TAMATTA: 北欧白針葉樹 + 地層 =====
   let treeAnim = null;
 
-  function renderTamatta() {
-    const treeEl   = document.getElementById('tamatta-tree');
-    const strataEl = document.getElementById('tamatta-strata');
+  // DepthEntryの数だけ根を描く（幹の根元から斜め下へ広がる）
+  const _DEPTH_KEY = 'marginary_depth_entries';
+  function _getDepthEntriesSafe() {
+    try { return JSON.parse(localStorage.getItem(_DEPTH_KEY) || '[]'); } catch(e) { return []; }
+  }
+
+  // 地層Canvasに根を描く
+  function drawRootsOnStrata(sCtx, SW, SH, trunkX) {
+    const entries = _getDepthEntriesSafe();
+    if (entries.length === 0) return;
+    const count = Math.min(entries.length, 8);
+    const rootAngles = [
+      Math.PI / 2 + 0.5,
+      Math.PI / 2 - 0.5,
+      Math.PI / 2 + 0.85,
+      Math.PI / 2 - 0.85,
+      Math.PI / 2 + 1.1,
+      Math.PI / 2 - 1.1,
+      Math.PI / 2 + 0.25,
+      Math.PI / 2 - 0.25,
+    ];
+    const rootLen = SH * 0.7;
+    for (let i = 0; i < count; i++) {
+      const ang = rootAngles[i];
+      const len = rootLen * (0.6 + (i % 3) * 0.15);
+      const entry = entries[i];
+      const hasName = entry && entry.originalConceptName;
+      // 地層上端（y=0）の幹位置から下に向かって根を伸ばす
+      const ex  = trunkX + Math.cos(ang) * len;
+      const ey  = Math.sin(ang) * len * 0.7;
+      const cpx = trunkX + Math.cos(ang) * len * 0.4;
+      const cpy = Math.sin(ang) * len * 0.25;
+      sCtx.strokeStyle = hasName ? 'rgba(60,35,12,0.75)' : 'rgba(90,55,22,0.55)';
+      sCtx.lineWidth   = hasName ? 2.8 : 1.8;
+      sCtx.lineCap = 'round';
+      sCtx.beginPath();
+      sCtx.moveTo(trunkX, 0);
+      sCtx.quadraticCurveTo(cpx, cpy, ex, ey);
+      sCtx.stroke();
+      // 概念名ラベル
+      if (hasName) {
+        sCtx.save();
+        sCtx.font = '500 9px Inter,sans-serif';
+        sCtx.fillStyle = 'rgba(255,235,200,0.82)';
+        sCtx.textAlign = Math.cos(ang) >= 0 ? 'left' : 'right';
+        sCtx.textBaseline = 'middle';
+        sCtx.fillText(entry.originalConceptName.slice(0, 8), ex + Math.cos(ang) * 4, ey);
+        sCtx.restore();
+      }
+    }
+  }
+
+  function drawRoots(ctx, trunkX, trunkBottom, trunkLen) {}
+
+  // ============================================================
+  // ===== 共通の木描画エンジン =====
+  // ============================================================
+
+  let treeIntroAnim = null;
+
+  // texts: 表示するテキスト配列, animRef: { anim } でアニメIDを格納
+  function renderTreeOnCanvas(texts, treeElId, strataElId, animRef) {
+    const treeEl   = document.getElementById(treeElId);
+    const strataEl = document.getElementById(strataElId);
     if (!treeEl || !strataEl) return;
     treeEl.innerHTML   = '';
     strataEl.innerHTML = '';
-    if (treeAnim) { cancelAnimationFrame(treeAnim); treeAnim = null; }
+    if (animRef.anim) { cancelAnimationFrame(animRef.anim); animRef.anim = null; }
+    if (texts.length === 0) return;
 
-    // historyから「気になること(gutai)」と「それどんな感じ(detailVal)」のペアを組み立て
-    // 新フロー: history[n] = { gutai: 気になること, depthLabel, xLabel }
-    //          history[n+1] = { gutai: それどんな感じ, depthLabel:'', xLabel:'' }
-    // → ペア: [{ main, detail, depthLabel, xLabel }, ...]
-    const pairs = [];
-    const used = new Set();
-    for (let i = 0; i < history.length; i++) {
-      if (used.has(i)) continue;
-      const e = history[i];
-      if (!e.gutai && !e.oboroke) continue;
-      const mainText = e.gutai || e.oboroke || '';
-      // 次のエントリがラベルなし = detail
-      let detailText = '';
-      if (i + 1 < history.length) {
-        const next = history[i + 1];
-        if (next.gutai && !next.depthLabel && !next.xLabel) {
-          detailText = next.gutai;
-          used.add(i + 1);
-        }
-      }
-      pairs.push({
-        main:       mainText,
-        detail:     detailText,
-        depthLabel: e.depthLabel || '',
-        xLabel:     e.xLabel     || '',
-      });
-      used.add(i);
-    }
-    if (pairs.length === 0) return;
-
-    // 今回の入力テキストセット
-    const treeTexts = new Set(pairs.flatMap(p => [p.main, p.detail]).filter(Boolean));
-
-    // 過去の入力（fragments）から今回以外のものを追加枝葉に
-    const pastFrags = getFragments()
-      .map(f => f.text)
-      .filter(t => !treeTexts.has(t) && t)
-      .slice(-12); // 最大12件
-
-    // 地層はfragmentsのさらに古いものから
-    const strataWords = getFragments()
-      .map(f => f.text)
-      .filter(t => !treeTexts.has(t) && !pastFrags.includes(t))
-      .slice(-12);
-
-    // ===== 木エリア：Canvas =====
+    // Canvas（通常サイズ）
     const TW = treeEl.offsetWidth  || 320;
     const TH = treeEl.offsetHeight || 300;
     const canvas = document.createElement('canvas');
     canvas.width  = TW;
     canvas.height = TH;
-    canvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;';
+    canvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;';
     treeEl.appendChild(canvas);
     const ctx = canvas.getContext('2d');
 
-    const TRUNK_COLOR  = '#6B4423';
-    const BRANCH_COLOR = '#8C6239';
-    const LEAF_COLOR   = '#A07848';
-
-    const branches = [];
-    const TRUNK_X = TW * 0.5;
+    const TRUNK_X      = TW * 0.5;
     const TRUNK_BOTTOM = TH;
-    const trunkLen = TH * 0.48;
+    const trunkLen     = TH * 0.52;
+    const BASE_ANGLE   = -Math.PI / 2;
+    const branches     = [];
 
     // 幹
-    branches.push({ x: TRUNK_X, y: TRUNK_BOTTOM, angle: -Math.PI/2, len: trunkLen, depth: 0, word: null, depthLabel: '', prog: 0 });
+    branches.push({ x: TRUNK_X, y: TRUNK_BOTTOM, angle: BASE_ANGLE, len: trunkLen, depth: 0, word: null, depthLabel: '', prog: 0 });
 
-    const BASE_ANGLE = -Math.PI / 2;
-    const bigBranchAngles = [
+    // 大枝（テキストの先頭6件）
+    const bigAngles = [
       BASE_ANGLE - 0.55, BASE_ANGLE + 0.55,
       BASE_ANGLE - 0.85, BASE_ANGLE + 0.85,
       BASE_ANGLE - 0.35, BASE_ANGLE + 0.35,
     ];
-    const bigLen = trunkLen * 0.52;
-    const bigCount = Math.min(pairs.length, 6);
+    const bigLen   = trunkLen * 0.52;
+    const bigCount = Math.min(texts.length, 6);
 
     for (let i = 0; i < bigCount; i++) {
-      const ang = bigBranchAngles[i % bigBranchAngles.length];
-      const t   = 0.48 + (i % 3) * 0.16;
-      const sx  = TRUNK_X;
+      const ang = bigAngles[i % bigAngles.length];
+      const t   = 0.46 + (i % 3) * 0.16;
       const sy  = TRUNK_BOTTOM - trunkLen * t;
       const bl  = bigLen * (0.72 + (i % 3) * 0.08);
-      const pair = pairs[i];
-      const label = pair.depthLabel + (pair.xLabel ? '·' + pair.xLabel : '');
-
-      const mainBranch = {
-        x: sx, y: sy, angle: ang, len: bl, depth: 1,
-        word: pair.main, depthLabel: label, prog: 0,
-      };
-      branches.push(mainBranch);
-
-      // detail（2本目の答え）= main枝の先から生える小枝
-      if (pair.detail) {
-        const ex = sx + Math.cos(ang) * bl;
-        const ey = sy + Math.sin(ang) * bl;
-        // 少しだけ外向きに分岐
-        const side = (i % 2 === 0) ? 1 : -1;
-        const detailAng = ang + side * 0.45;
-        const detailLen = bl * 0.55;
-        branches.push({
-          x: ex, y: ey,
-          angle: detailAng,
-          len: detailLen,
-          depth: 2,
-          word: pair.detail,
-          depthLabel: '',
-          prog: 0,
-        });
-        // さらに細い飾り小枝 x1
-        const ex2 = ex + Math.cos(detailAng) * detailLen;
-        const ey2 = ey + Math.sin(detailAng) * detailLen;
-        branches.push({
-          x: ex2, y: ey2,
-          angle: detailAng + side * 0.3,
-          len: detailLen * 0.38,
-          depth: 3,
-          word: null, depthLabel: '',
-          prog: 0,
-        });
+      branches.push({ x: TRUNK_X, y: sy, angle: ang, len: bl, depth: 1, word: texts[i * 2] || texts[i] || null, depthLabel: '', prog: 0 });
+      const ex = TRUNK_X + Math.cos(ang) * bl;
+      const ey = sy + Math.sin(ang) * bl;
+      // detail枝
+      const detailText = texts[i * 2 + 1] || null;
+      if (detailText) {
+        const side = i % 2 === 0 ? 1 : -1;
+        const dAng = ang + side * 0.45;
+        const dLen = bl * 0.55;
+        branches.push({ x: ex, y: ey, angle: dAng, len: dLen, depth: 2, word: detailText, depthLabel: '', prog: 0 });
+        const ex2 = ex + Math.cos(dAng) * dLen;
+        const ey2 = ey + Math.sin(dAng) * dLen;
+        branches.push({ x: ex2, y: ey2, angle: dAng + side * 0.3, len: dLen * 0.38, depth: 3, word: null, depthLabel: '', prog: 0 });
       } else {
-        // detail なし → 飾り小枝
-        const ex = sx + Math.cos(ang) * bl;
-        const ey = sy + Math.sin(ang) * bl;
         for (let s = 0; s < 2; s++) {
-          const side = s % 2 === 0 ? 1 : -1;
-          const a2 = ang + side * (0.4 + (i % 2) * 0.15);
+          const a2 = ang + (s % 2 === 0 ? 1 : -1) * (0.4 + (i % 2) * 0.15);
           branches.push({ x: ex, y: ey, angle: a2, len: bl * 0.35, depth: 3, word: null, depthLabel: '', prog: 0 });
         }
       }
     }
 
-    // 過去の入力を細い枝葉として幹上部に追加
+    // 過去の細い枝（7件目以降）
     const pastAngles = [
-      BASE_ANGLE - 0.3, BASE_ANGLE + 0.3,
-      BASE_ANGLE - 0.6, BASE_ANGLE + 0.6,
-      BASE_ANGLE - 0.15, BASE_ANGLE + 0.15,
-      BASE_ANGLE - 0.45, BASE_ANGLE + 0.45,
-      BASE_ANGLE - 0.7, BASE_ANGLE + 0.7,
-      BASE_ANGLE - 0.2, BASE_ANGLE + 0.2,
+      BASE_ANGLE-0.3,BASE_ANGLE+0.3,BASE_ANGLE-0.6,BASE_ANGLE+0.6,
+      BASE_ANGLE-0.15,BASE_ANGLE+0.15,BASE_ANGLE-0.45,BASE_ANGLE+0.45,
+      BASE_ANGLE-0.7,BASE_ANGLE+0.7,BASE_ANGLE-0.2,BASE_ANGLE+0.2,
     ];
-    const pastLen = trunkLen * 0.28;
-    pastFrags.forEach((text, i) => {
+    texts.slice(bigCount * 2).slice(0, 12).forEach((text, i) => {
       const ang = pastAngles[i % pastAngles.length];
-      // 幹の上部寄りに配置（今回の枝より上）
-      const t = 0.72 + (i % 4) * 0.06;
-      const sy = TRUNK_BOTTOM - trunkLen * Math.min(t, 0.94);
-      const bl = pastLen * (0.7 + (i % 3) * 0.12);
-      branches.push({
-        x: TRUNK_X, y: sy,
-        angle: ang, len: bl,
-        depth: 4,
-        word: text,
-        depthLabel: '',
-        prog: 0,
-        isPast: true,
-      });
+      const t   = 0.74 + (i % 4) * 0.06;
+      const sy  = TRUNK_BOTTOM - trunkLen * Math.min(t, 0.95);
+      branches.push({ x: TRUNK_X, y: sy, angle: ang, len: trunkLen * 0.26 * (0.7 + (i % 3) * 0.12), depth: 4, word: text, depthLabel: '', prog: 0 });
     });
 
-    let growIdx = 0, growProg = 0;
-    const GROW_SPD = 0.032;
-
+    // 枝の描画
     function drawBranch(b) {
       if (b.prog <= 0) return;
       const ex = b.x + Math.cos(b.angle) * b.len * b.prog;
       const ey = b.y + Math.sin(b.angle) * b.len * b.prog;
-
       if (b.depth === 0) {
-        const grad = ctx.createLinearGradient(b.x, b.y, ex, ey);
-        grad.addColorStop(0, '#4A2E12');
-        grad.addColorStop(1, '#7A5230');
-        ctx.strokeStyle = grad;
-        ctx.lineWidth = 5;
-      } else if (b.depth === 1) {
-        ctx.strokeStyle = '#8C6239';
-        ctx.lineWidth = 2.4;
-      } else if (b.depth === 2) {
-        ctx.strokeStyle = '#A07848';
-        ctx.lineWidth = 1.6;
-      } else if (b.depth === 3) {
-        ctx.strokeStyle = '#B89060';
-        ctx.lineWidth = 0.9;
-      } else {
-        // depth 4: 過去の入力 — より細く薄い
-        ctx.strokeStyle = '#C4A882';
-        ctx.lineWidth = 0.8;
-      }
-      ctx.beginPath();
-      ctx.moveTo(b.x, b.y);
-      ctx.lineTo(ex, ey);
-      ctx.lineCap = 'round';
-      ctx.stroke();
-
-      // 枝先ラベル
+        const g = ctx.createLinearGradient(b.x, b.y, ex, ey);
+        g.addColorStop(0, '#4A2E12'); g.addColorStop(1, '#7A5230');
+        ctx.strokeStyle = g; ctx.lineWidth = 5.5;
+      } else if (b.depth === 1) { ctx.strokeStyle = '#8C6239'; ctx.lineWidth = 2.6;
+      } else if (b.depth === 2) { ctx.strokeStyle = '#A07848'; ctx.lineWidth = 1.7;
+      } else if (b.depth === 3) { ctx.strokeStyle = '#B89060'; ctx.lineWidth = 1.0;
+      } else                    { ctx.strokeStyle = '#C4A882'; ctx.lineWidth = 0.85; }
+      ctx.beginPath(); ctx.moveTo(b.x, b.y); ctx.lineTo(ex, ey); ctx.lineCap = 'round'; ctx.stroke();
       if (b.word && b.prog >= 1) {
         const lx = ex + Math.cos(b.angle) * 7;
         const ly = ey + Math.sin(b.angle) * 7;
         ctx.save();
         ctx.textAlign = Math.cos(b.angle) >= 0 ? 'left' : 'right';
         ctx.textBaseline = 'middle';
-
         if (b.depth === 1) {
-          // メインの答え：緑、やや大きめ
-          ctx.font = '600 10px Inter, sans-serif';
-          ctx.fillStyle = '#00712B';
-          const wordText  = b.word.length > 8 ? b.word.slice(0, 8) : b.word;
-          const depthText = b.depthLabel || '';
-          if (depthText) {
-            ctx.fillText(wordText, lx, ly - 8);
-            ctx.font = '400 8px Inter, sans-serif';
-            ctx.fillStyle = '#8C9E6A';
-            ctx.fillText(depthText, lx, ly + 6);
-          } else {
-            if (b.word.length <= 8) {
-              ctx.fillText(b.word, lx, ly);
-            } else {
-              ctx.fillText(b.word.slice(0, 8), lx, ly - 7);
-              ctx.fillText(b.word.slice(8),    lx, ly + 7);
-            }
-          }
+          ctx.font = '600 10px Inter,sans-serif'; ctx.fillStyle = '#00712B';
+          const w = b.word.length > 8 ? b.word.slice(0,8) : b.word;
+          ctx.fillText(w, lx, ly);
         } else if (b.depth === 2) {
-          // detailの答え：薄い緑・小さめ
-          ctx.font = '400 9px Inter, sans-serif';
-          ctx.fillStyle = '#5A8A50';
-          const t = b.word.length > 7 ? b.word.slice(0, 7) + '…' : b.word;
-          ctx.fillText(t, lx, ly);
+          ctx.font = '400 9px Inter,sans-serif'; ctx.fillStyle = '#5A8A50';
+          ctx.fillText(b.word.length > 7 ? b.word.slice(0,7)+'…' : b.word, lx, ly);
         } else if (b.depth === 4) {
-          // 過去の入力：薄いグレーブラウン・最小
-          ctx.font = '400 8px Inter, sans-serif';
-          ctx.fillStyle = '#A08060';
-          const t = b.word.length > 6 ? b.word.slice(0, 6) + '…' : b.word;
-          ctx.fillText(t, lx, ly);
+          ctx.font = '400 8px Inter,sans-serif'; ctx.fillStyle = '#A08060';
+          ctx.fillText(b.word.length > 6 ? b.word.slice(0,6)+'…' : b.word, lx, ly);
         }
         ctx.restore();
       }
     }
 
+    let growIdx = 0, growProg = 0;
     function loop() {
-      treeAnim = requestAnimationFrame(loop);
+      animRef.anim = requestAnimationFrame(loop);
       ctx.clearRect(0, 0, TW, TH);
       if (growIdx < branches.length) {
-        growProg += GROW_SPD;
+        growProg += 0.030;
         branches[growIdx].prog = Math.min(growProg, 1);
         if (growProg >= 1) { growIdx++; growProg = 0; }
       }
@@ -2990,102 +3071,119 @@
     }
     loop();
 
-    // ===== 地層エリア：木くず地面 =====
+    // 地層
     const SW = strataEl.offsetWidth  || 320;
     const SH = strataEl.offsetHeight || 120;
-
     const sCanvas = document.createElement('canvas');
-    sCanvas.width  = SW;
-    sCanvas.height = SH;
+    sCanvas.width = SW; sCanvas.height = SH;
     sCanvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;';
     strataEl.appendChild(sCanvas);
     const sCtx = sCanvas.getContext('2d');
-
-    // ベースグラデーション（奥が暗め、手前が明るめ）
     const grd = sCtx.createLinearGradient(0, 0, 0, SH);
-    grd.addColorStop(0,   '#A07848');
-    grd.addColorStop(0.4, '#B8956A');
-    grd.addColorStop(1,   '#C9A87A');
-    sCtx.fillStyle = grd;
-    sCtx.fillRect(0, 0, SW, SH);
-
-    // ムラ（暗い染み）
-    for (let i = 0; i < 18; i++) {
-      const mx = Math.random() * SW;
-      const my = Math.random() * SH;
-      const mr = 20 + Math.random() * 40;
-      const mg = sCtx.createRadialGradient(mx, my, 0, mx, my, mr);
-      mg.addColorStop(0,   'rgba(80,50,20,0.18)');
-      mg.addColorStop(1,   'rgba(80,50,20,0)');
-      sCtx.fillStyle = mg;
-      sCtx.fillRect(mx - mr, my - mr, mr * 2, mr * 2);
+    grd.addColorStop(0, '#A07848'); grd.addColorStop(0.4, '#B8956A'); grd.addColorStop(1, '#C9A87A');
+    sCtx.fillStyle = grd; sCtx.fillRect(0, 0, SW, SH);
+    // ムラ
+    for (let i = 0; i < 14; i++) {
+      const mx = Math.random()*SW, my = Math.random()*SH, mr = 20+Math.random()*40;
+      const mg = sCtx.createRadialGradient(mx,my,0,mx,my,mr);
+      mg.addColorStop(0,'rgba(80,50,20,0.16)'); mg.addColorStop(1,'rgba(80,50,20,0)');
+      sCtx.fillStyle=mg; sCtx.fillRect(mx-mr,my-mr,mr*2,mr*2);
     }
-
-    // 明るいムラ
-    for (let i = 0; i < 12; i++) {
-      const mx = Math.random() * SW;
-      const my = Math.random() * SH;
-      const mr = 15 + Math.random() * 30;
-      const mg = sCtx.createRadialGradient(mx, my, 0, mx, my, mr);
-      mg.addColorStop(0,   'rgba(220,185,130,0.22)');
-      mg.addColorStop(1,   'rgba(220,185,130,0)');
-      sCtx.fillStyle = mg;
-      sCtx.fillRect(mx - mr, my - mr, mr * 2, mr * 2);
-    }
-
-    // 木くず（細い線）
-    for (let i = 0; i < 220; i++) {
-      const cx  = Math.random() * SW;
-      const cy  = Math.random() * SH;
-      const len = 4 + Math.random() * 18;
-      const ang = Math.random() * Math.PI;
-      const r   = Math.random();
-      // 白っぽい木くず〜暗い枯れ葉
-      const col = r < 0.4
-        ? `rgba(220,200,160,${0.5 + Math.random() * 0.4})`  // 明るい木くず
-        : r < 0.7
-        ? `rgba(160,110,60,${0.4 + Math.random() * 0.35})`  // 中間の枯れ葉
-        : `rgba(90,55,25,${0.3 + Math.random() * 0.3})`;    // 暗い枯れ枝
-      const lw = 0.8 + Math.random() * 1.6;
+    // 木くず
+    for (let i = 0; i < 180; i++) {
+      const cx=Math.random()*SW, cy=Math.random()*SH;
+      const len=4+Math.random()*16, ang=Math.random()*Math.PI;
+      const r=Math.random();
+      sCtx.strokeStyle = r<0.4 ? `rgba(220,200,160,${0.5+Math.random()*0.4})`
+        : r<0.7 ? `rgba(160,110,60,${0.4+Math.random()*0.35})`
+        : `rgba(90,55,25,${0.3+Math.random()*0.3})`;
+      sCtx.lineWidth = 0.8+Math.random()*1.6;
+      sCtx.lineCap='round';
       sCtx.beginPath();
-      sCtx.moveTo(cx - Math.cos(ang) * len / 2, cy - Math.sin(ang) * len / 2);
-      sCtx.lineTo(cx + Math.cos(ang) * len / 2, cy + Math.sin(ang) * len / 2);
-      sCtx.strokeStyle = col;
-      sCtx.lineWidth   = lw;
-      sCtx.lineCap     = 'round';
+      sCtx.moveTo(cx-Math.cos(ang)*len/2, cy-Math.sin(ang)*len/2);
+      sCtx.lineTo(cx+Math.cos(ang)*len/2, cy+Math.sin(ang)*len/2);
       sCtx.stroke();
     }
-
-    // 単語を地面に馴染む茶色文字で配置
+    // 地層に根を描く（幹の延長として上から下へ）
+    drawRootsOnStrata(sCtx, SW, SH, TRUNK_X);
+    const allFragTexts = getFragments().map(f => f.text).filter(Boolean);
+    const strataWords  = allFragTexts.slice(-20);
     const placed = [];
     strataWords.forEach((word, i) => {
-      const margin = 18;
       let x, y, tries = 0;
       do {
-        x = margin + Math.random() * (SW - margin * 2 - 80);
-        y = margin + Math.random() * (SH - margin * 2 - 18);
+        x = 10 + Math.random() * (SW - 100);
+        y = 10 + Math.random() * (SH - 24);
         tries++;
-      } while (tries < 30 && placed.some(p => Math.abs(p.x - x) < 72 && Math.abs(p.y - y) < 22));
-      placed.push({ x, y });
-
-      const div = document.createElement('div');
-      div.textContent = word;
-      const opacity = 0.6 + (i % 3) * 0.12;
-      div.style.cssText = `
-        position:absolute;
-        left:${x}px;
-        top:${y}px;
-        font-size:10px;
-        font-weight:500;
-        color:rgba(100,60,20,${opacity});
-        letter-spacing:0.12em;
-        white-space:nowrap;
-        user-select:none;
-        text-shadow:0 1px 2px rgba(220,185,130,0.6);
-      `;
-      strataEl.appendChild(div);
+      } while (tries < 20 && placed.some(p => Math.abs(p.x-x)<70 && Math.abs(p.y-y)<20));
+      placed.push({x, y});
+      sCtx.font = '400 9px Inter,sans-serif';
+      sCtx.fillStyle = `rgba(100,60,20,${0.55 + (i%3)*0.12})`;
+      sCtx.fillText(word.slice(0,10), x, y+12);
     });
   }
+
+  // タイトル後の木画面
+  function renderTreeIntro() {
+    const frags = getFragments();
+    const labelEl = document.getElementById('tree-intro-label');
+    if (labelEl) {
+      if (_treeIntroMode === 'start') {
+        // キャラ選択後（続きから始める）
+        labelEl.textContent = frags.length >= 10
+          ? 'ことばが、重なってきましたね。'
+          : frags.length >= 5
+          ? 'また、ここへ戻ってきたのですね。'
+          : 'ことばが、少し積まれてきました。';
+      } else {
+        // タイトル後（育った木を見せる）
+        labelEl.textContent = frags.length >= 10
+          ? 'ずいぶんと、育ってきましたね。'
+          : frags.length >= 5
+          ? 'すこしずつ、根が張られています。'
+          : 'ことばが、芽吹いてきましたね。';
+      }
+    }
+    const texts = frags.map(f => f.text).filter(Boolean);
+    const ref = { anim: treeIntroAnim };
+    renderTreeOnCanvas(texts, 'tree-intro-canvas', 'tree-intro-strata', ref);
+    treeIntroAnim = ref.anim;
+  }
+
+  // 入力後の木画面（historyのpairsを使う）
+  function renderTamatta() {
+    const pairs = [];
+    const used = new Set();
+    for (let i = 0; i < history.length; i++) {
+      if (used.has(i)) continue;
+      const e = history[i];
+      if (!e.gutai && !e.oboroke) continue;
+      const mainText = e.gutai || e.oboroke || '';
+      let detailText = '';
+      if (i + 1 < history.length) {
+        const next = history[i + 1];
+        if (next.gutai && !next.depthLabel && !next.xLabel) {
+          detailText = next.gutai;
+          used.add(i + 1);
+        }
+      }
+      pairs.push({ main: mainText, detail: detailText });
+      used.add(i);
+    }
+    // pairs を texts 配列に（main, detail の順で交互に）
+    const texts = [];
+    pairs.forEach(p => { texts.push(p.main); if (p.detail) texts.push(p.detail); });
+    // 過去の入力も追加
+    const treeSet = new Set(texts);
+    getFragments().map(f=>f.text).filter(t=>!treeSet.has(t)&&t).slice(-12).forEach(t=>texts.push(t));
+
+    if (texts.length === 0) return;
+    if (treeAnim) { cancelAnimationFrame(treeAnim); treeAnim = null; }
+    const ref = { anim: null };
+    renderTreeOnCanvas(texts, 'tamatta-tree', 'tamatta-strata', ref);
+    treeAnim = ref.anim;
+  }
+
 
   // ================================================================
   // ===== 図書館：哲学者の言葉 =====
@@ -4058,6 +4156,12 @@ const THOUGHT_FRAGMENTS_ALL = [
 
   // --- 画面: 一覧 ---
   function renderDepthList() {
+    // 選択中キャラをヘッダーに反映
+    const charaEl = document.getElementById('depth-list-chara');
+    if (charaEl) {
+      charaEl.dataset.chara = currentChara || 'majimaji';
+      updateAllCharaSVG(currentChara || 'majimaji');
+    }
     const container = document.getElementById('depth-list-container');
     if (!container) return;
     const entries = getDepthEntries();
@@ -4214,7 +4318,160 @@ const THOUGHT_FRAGMENTS_ALL = [
   }
 
   // ================================================================
-  // ===== 深み編集ステップ管理 =====
+  // ===== ShakeCard =====
+  // ================================================================
+
+  const SHAKE_CARDS = [
+    // --- character型（キャラ別） ---
+    { id:'sk-c01', type:'character', characterId:'majimaji', text:'それって、学校が嫌いというより、自分の時間が誰かの時間割に吸い込まれる感じかも。', themes:['学校','教育','時間','制度'], moods:['息苦しい','管理','退屈'], relatedConcepts:['パノプティコン','隠れたカリキュラム','制度的暴力'] },
+    { id:'sk-c02', type:'character', characterId:'majimaji', text:'それって、働きたくないというより、自分の生が別の何かに使われている感じかもしれない。', themes:['仕事','労働','会社','資本主義'], moods:['疲れ','空虚','虚しい'], relatedConcepts:['疎外','液状化する社会','官僚制の鉄の檻'] },
+    { id:'sk-c03', type:'character', characterId:'majimaji', text:'人間関係がしんどいのは、あなたが弱いからじゃなくて、人間が本来的に他者に傷つく存在だからかも。', themes:['人間関係','孤独','疲れ','他者'], moods:['しんどい','疲れた','孤独'], relatedConcepts:['他者のまなざし','ヴァルネラビリティ','承認欲求'] },
+    { id:'sk-c04', type:'character', characterId:'yurayura', text:'「なんとなく嫌」って、実は一番正直な感覚かもしれないよ。', themes:['違和感','なんとなく','気持ち'], moods:['モヤモヤ','なんか変','ふと気づいた'], relatedConcepts:['ノイズとしての感情','象徴的暴力'] },
+    { id:'sk-c05', type:'character', characterId:'kasa', text:'合わせすぎると、自分が何者かわからなくなるムッシュ。', themes:['自分','同調','合わせる','アイデンティティ'], moods:['合わせてしまう','流される','窮屈'], relatedConcepts:['過剰適応','ペルソナ','分人'] },
+    { id:'sk-c06', type:'character', characterId:'namake', text:'……やる気が出ないって、もしかしたら、今の状況への正当な抵抗かもしれない。', themes:['やる気','疲れ','意味','休む'], moods:['やる気ない','だるい','虚しい'], relatedConcepts:['学習性無力感','慢性的疲労','疎外'] },
+    { id:'sk-c07', type:'character', characterId:'concrete', text:'不安って、未来のことを考えすぎてるんじゃなくて、今の不確かさに正直に反応してるんじゃない？', themes:['不安','将来','未来','不確か'], moods:['不安','怖い','ふわふわ'], relatedConcepts:['実存的不安','根拠なき不安','時間性'] },
+    { id:'sk-c08', type:'character', characterId:'sun', text:'「普通」じゃない感じって、普通という幻想から少しはみ出してる、ということかも。', themes:['普通','社会','違う','はみ出す'], moods:['なじめない','違和感','普通じゃない'], relatedConcepts:['正常化バイアス','ラベリング理論','ノイズの倫理学'] },
+    // --- concept_shift型 ---
+    { id:'sk-s01', type:'concept_shift', text:'パノプティコンを「監視」ではなく、「見られている自分を演じる装置」として見るとどうだろう。', themes:['監視','学校','会社','規範'], moods:['息苦しい','窮屈','緊張'], relatedConcepts:['パノプティコン','他者のまなざし','ペルソナ'] },
+    { id:'sk-s02', type:'concept_shift', text:'「疲れた」を個人の問題として見るより、社会が過剰に要求している証拠として見るとどうだろう。', themes:['疲れ','仕事','社会','休む'], moods:['疲れた','しんどい','だるい'], relatedConcepts:['慢性的疲労','時間の植民地化','透明性の強制'] },
+    { id:'sk-s03', type:'concept_shift', text:'「孤独」を欠如として見るのではなく、他者との境界が際立っている状態として見るとどうだろう。', themes:['孤独','繋がり','孤立','一人'], moods:['孤独','寂しい','一人'], relatedConcepts:['実存的孤独','モナド','社会的孤立'] },
+    { id:'sk-s04', type:'concept_shift', text:'「怒り」を感情的な反応として見るのではなく、何かが侵害されたサインとして見るとどうだろう。', themes:['怒り','不公平','理不尽'], moods:['むかつく','腹立つ','怒り','許せない'], relatedConcepts:['怒りの政治学','承認の政治','ルサンチマン'] },
+    { id:'sk-s05', type:'concept_shift', text:'「やる気がない」を欠如として見るより、今の状況への身体的な拒否として見るとどうだろう。', themes:['やる気','意味','仕事','動けない'], moods:['やる気ない','動けない','虚しい'], relatedConcepts:['学習性無力感','疎外','ゾーエーとビオス'] },
+    { id:'sk-s06', type:'concept_shift', text:'「比べてしまう」のを弱さとして見るより、自分の基準がまだ定まっていない証拠として見るとどうだろう。', themes:['比較','SNS','嫉妬','劣等感'], moods:['あの人と比べてしまう','負けた気がする'], relatedConcepts:['相対的剥奪','比較の罠','承認欲求'] },
+    { id:'sk-s07', type:'concept_shift', text:'「伝わらない」を自分の表現の問題として見るより、言語そのものの限界として見るとどうだろう。', themes:['言葉','伝わらない','コミュニケーション'], moods:['もどかしい','うまく言えない','伝わらない'], relatedConcepts:['言語ゲーム','コミュニケーションの不可能性','差延'] },
+    { id:'sk-s08', type:'concept_shift', text:'「変わりたい」と思いながら変われないのは、意志の弱さではなく、環境や構造が変化を妨げているのかもしれない。', themes:['変わりたい','できない','習慣','惰性'], moods:['変えられない','抜け出せない','また同じ'], relatedConcepts:['ハビトゥス','慣習の惰性','学習性無力感'] },
+    { id:'sk-s09', type:'concept_shift', text:'「逃げたい」という衝動を弱さとして見るのではなく、別の生の可能性を感知するアンテナとして見るとどうだろう。', themes:['逃げる','逃げたい','場所','居場所'], moods:['逃げたい','出たい','抜け出したい'], relatedConcepts:['逃走線','ヘテロトピア','脱領土化'] },
+    { id:'sk-s10', type:'concept_shift', text:'「自分がわからない」を混乱として見るより、アイデンティティが更新されている途中として見るとどうだろう。', themes:['自分','アイデンティティ','迷い'], moods:['自分がわからない','ぐるぐる','定まらない'], relatedConcepts:['アイデンティティの危機','分人','ゆらぎとしての主体'] },
+    // --- other_fragment型 ---
+    { id:'sk-f01', type:'other_fragment', text:'「普通」という言葉は、誰かが引いた線だ。その線は、いつ、誰が、なぜ引いたのだろう。', themes:['普通','社会','常識','当たり前'], moods:['なじめない','違和感'], relatedConcepts:['正常化バイアス','ラベリング理論','ヘゲモニー'] },
+    { id:'sk-f02', type:'other_fragment', text:'感情は、理性が失敗した証拠ではなく、もう一つの情報処理の形だ。', themes:['感情','理性','気持ち','モヤモヤ'], moods:['うまく言えない','なんとなく'], relatedConcepts:['ノイズとしての感情','ソマティック・マーカー仮説'] },
+    { id:'sk-f03', type:'other_fragment', text:'記憶は、過去を保存しているのではなく、現在から過去を再構成している。', themes:['記憶','過去','思い出','後悔'], moods:['あのとき','もう戻れない','過去を引きずってる'], relatedConcepts:['集合的記憶','記憶の再構成','過去の重力'] },
+    { id:'sk-f04', type:'other_fragment', text:'場所には、論理よりも先に、感情が染み込んでいる。', themes:['場所','居場所','空間','地元'], moods:['居場所がない','どこかに帰りたい','ここじゃない'], relatedConcepts:['トポフィリア','感情地政学','場所の精霊'] },
+    { id:'sk-f05', type:'other_fragment', text:'依存は弱さではなく、人間の根本的な条件かもしれない。', themes:['依存','頼る','甘える','繋がり'], moods:['頼れない','一人でやらなきゃ','言えない'], relatedConcepts:['ケアの倫理','相互依存','愛着理論'] },
+    // --- noise型（ランダム表示用） ---
+    { id:'sk-n01', type:'noise', text:'石の上って寒いよね。', themes:[], moods:['静か','孤独','冷たい'], relatedConcepts:[] },
+    { id:'sk-n02', type:'noise', text:'霧の中を歩くと、前後がわからなくなる。でも、足元だけは見える。', themes:[], moods:['ふわふわ','不安','漠然と'], relatedConcepts:[] },
+    { id:'sk-n03', type:'noise', text:'ことばにならないものが、ことばになろうとしている。', themes:[], moods:['うまく言えない','もどかしい','言語化できない'], relatedConcepts:[] },
+    { id:'sk-n04', type:'noise', text:'問いは、答えに向かうためではなく、より深い問いに向かうためにある。', themes:[], moods:['ぐるぐる','答えが出ない','迷う'], relatedConcepts:[] },
+    { id:'sk-n05', type:'noise', text:'木は嵐のとき、根を張ることで揺れに耐える。', themes:[], moods:['不安','揺れる','根がない'], relatedConcepts:[] },
+    { id:'sk-n06', type:'noise', text:'地図のない旅でも、歩いた跡は地図になる。', themes:[], moods:['迷ってる','どうしたらいい','先が見えない'], relatedConcepts:[] },
+  ];
+
+  // ===== ShakeCard ロジック =====
+  let _shakeQueue   = []; // マッチングで得たカードのキュー
+  let _shakeIndex   = 0;
+  let _shakeTimer   = null;
+
+  function buildShakeContext() {
+    const q    = document.getElementById('depth-question')?.value || '';
+    const memo = document.getElementById('depth-memo')?.value    || '';
+    const entryText = q + ' ' + memo + ' ' + _depthSelectedSourceText;
+
+    // concreteOboroLevel: padX（グラデーションX軸）から推定 0→1
+    const rawX = typeof padX !== 'undefined' ? padX : 0.5;
+    const rawY = typeof padY !== 'undefined' ? padY : 0.5;
+    const concreteOboroLevel = Math.round(rawX * 4) + 1; // 1-5
+    const depthLevel         = Math.round((1 - rawY) * 4) + 1; // 1-5（上ほど深い）
+
+    const selectedConceptNames = _depthSelectedConcepts.map(id => {
+      // frag_XXX の場合は concept名を解決
+      if (id.startsWith('frag_')) {
+        const fragId = id.replace('frag_', '');
+        const allFrags = typeof THOUGHT_FRAGMENTS !== 'undefined' ? THOUGHT_FRAGMENTS : [];
+        const f = allFrags.find(f => f.id === fragId);
+        return f ? f.concept : '';
+      }
+      return id;
+    }).filter(Boolean);
+
+    return { entryText, selectedConcepts: selectedConceptNames, concreteOboroLevel, depthLevel, characterId: currentChara || 'majimaji' };
+  }
+
+  function getMatchedShakeCards(context) {
+    const scored = SHAKE_CARDS.map(card => {
+      let score = 0;
+      (card.themes || []).forEach(t => { if (context.entryText.includes(t)) score += 3; });
+      (card.relatedConcepts || []).forEach(c => { if (context.selectedConcepts.includes(c)) score += 3; });
+      (card.moods || []).forEach(m => { if (context.entryText.includes(m)) score += 2; });
+      if (card.characterId && card.characterId === context.characterId) score += 1;
+      if (context.depthLevel >= 4 && card.type === 'concept_shift') score += 1;
+      if (context.concreteOboroLevel >= 4 && card.type === 'noise') score += 1;
+      return { card, score };
+    }).filter(x => x.score > 0).sort((a, b) => b.score - a.score).slice(0, 5).map(x => x.card);
+
+    // 一致なし → noise 1件
+    if (scored.length === 0) {
+      const noises = SHAKE_CARDS.filter(c => c.type === 'noise');
+      return [noises[Math.floor(Math.random() * noises.length)]];
+    }
+    return scored;
+  }
+
+  function triggerShakeCard() {
+    const ctx = buildShakeContext();
+    _shakeQueue = getMatchedShakeCards(ctx);
+    _shakeIndex = 0;
+    renderShakeCard();
+  }
+
+  function renderShakeCard() {
+    const area = document.getElementById('shake-card-area');
+    if (!area) return;
+    if (_shakeQueue.length === 0) { area.innerHTML = ''; return; }
+    const card = _shakeQueue[_shakeIndex % _shakeQueue.length];
+
+    const CHARA_NAMES = { majimaji:'マジマジ', yurayura:'ユラユランゴ', kasa:'ムッシュアンブレラ', concrete:'カワラちゃん', sun:'テカリ王子', namake:'ナマケール' };
+    const label = card.type === 'character' && card.characterId
+      ? (CHARA_NAMES[card.characterId] || card.characterId) + '：'
+      : card.type === 'concept_shift' ? '別の見方：'
+      : card.type === 'other_fragment' ? '断片：'
+      : '';
+
+    const isSaved = (typeof currentDepthId !== 'undefined' && currentDepthId)
+      ? (getDepthEntryById(currentDepthId)?.savedShakeCards || []).includes(card.id)
+      : false;
+
+    area.innerHTML = '';
+    const el = document.createElement('div');
+    el.style.cssText = 'border:1px solid #e0e0da;border-radius:4px;padding:20px;background:#fff;';
+    el.innerHTML =
+      (label ? `<div style="font-size:9px;letter-spacing:0.22em;color:#bbb;margin-bottom:8px;">${label}</div>` : '') +
+      `<div style="font-size:13px;letter-spacing:0.06em;line-height:2.0;color:#333;margin-bottom:20px;">${card.text}</div>` +
+      `<div style="display:flex;gap:8px;">
+        <button id="shake-btn-save" style="flex:1;padding:9px 4px;border:1px solid ${isSaved ? '#222' : '#e0e0da'};border-radius:3px;background:${isSaved ? '#222' : 'none'};font-family:inherit;font-size:9px;letter-spacing:0.18em;color:${isSaved ? '#f8f8f6' : '#888'};cursor:pointer;">${isSaved ? '残した' : '残す'}</button>
+        <button style="flex:1;padding:9px 4px;border:1px solid #e0e0da;border-radius:3px;background:none;font-family:inherit;font-size:9px;letter-spacing:0.18em;color:#888;cursor:pointer;" id="shake-btn-next">違う</button>
+        <button style="flex:1;padding:9px 4px;border:1px solid #e0e0da;border-radius:3px;background:none;font-family:inherit;font-size:9px;letter-spacing:0.18em;color:#888;cursor:pointer;" id="shake-btn-more">もう一つ</button>
+      </div>`;
+
+    el.querySelector('#shake-btn-save').addEventListener('click', () => saveShakeCard(card.id));
+    el.querySelector('#shake-btn-next').addEventListener('click', () => { area.innerHTML = ''; _shakeQueue = _shakeQueue.filter(c => c.id !== card.id); renderShakeCard(); });
+    el.querySelector('#shake-btn-more').addEventListener('click', () => { _shakeIndex++; renderShakeCard(); });
+    area.appendChild(el);
+  }
+
+  function saveShakeCard(cardId) {
+    if (!currentDepthId) return;
+    const entries = getDepthEntries();
+    const idx = entries.findIndex(e => e.id === currentDepthId);
+    if (idx < 0) return;
+    const saved = entries[idx].savedShakeCards || [];
+    if (!saved.includes(cardId)) { entries[idx].savedShakeCards = [...saved, cardId]; }
+    entries[idx].updatedAt = new Date().toISOString();
+    saveDepthEntries(entries);
+    renderShakeCard(); // ボタン状態更新
+  }
+
+  // 入力停止30秒でShakeCard表示
+  function resetShakeTimer() {
+    if (_shakeTimer) clearTimeout(_shakeTimer);
+    _shakeTimer = setTimeout(() => {
+      const step3 = document.getElementById('depth-step-3');
+      if (step3 && step3.style.display !== 'none' && _shakeQueue.length === 0) {
+        triggerShakeCard();
+      }
+    }, 30000);
+  }
+
   // ================================================================
   let _currentDepthStep = 1;
 
@@ -4259,8 +4516,22 @@ const THOUGHT_FRAGMENTS_ALL = [
       nextArea.style.visibility = cfg.next ? 'visible' : 'hidden';
     }
 
-    // スクロールトップ
-    const scroll = document.querySelector('#screen-depth-edit > div > div[style*="overflow-y"]');
+    // step3に入ったらShakeCard発動
+    if (step === 3) {
+      _shakeQueue = [];
+      _shakeIndex = 0;
+      setTimeout(triggerShakeCard, 400);
+
+      // 入力停止タイマーをセット
+      const q  = document.getElementById('depth-question');
+      const m  = document.getElementById('depth-memo');
+      [q, m].forEach(el => {
+        if (el && !el._shakeListenerAdded) {
+          el.addEventListener('input', () => resetShakeTimer());
+          el._shakeListenerAdded = true;
+        }
+      });
+    }
     if (scroll) scroll.scrollTop = 0;
   }
 
@@ -4326,7 +4597,8 @@ const THOUGHT_FRAGMENTS_ALL = [
     });
     closeWords.forEach((w, i) => {
       const m = w.match(/^(.+?)\s*[―—]\s*(.+)$/);
-      const fragMatch = m ? allFrags.find(f => f.concept === m[1].trim()) : null;
+      const conceptName = m ? m[1].trim() : w.trim();
+      const fragMatch = allFrags.find(f => f.concept === conceptName);
       items.push({
         id: 'close_' + i, label: w, sub: '近いと感じた',
         defItem: fragMatch
@@ -4336,7 +4608,8 @@ const THOUGHT_FRAGMENTS_ALL = [
     });
     savedWords.forEach((w, i) => {
       const m = w.match(/^(.+?)\s*[―—]\s*(.+)$/);
-      const fragMatch = m ? allFrags.find(f => f.concept === m[1].trim()) : null;
+      const conceptName = m ? m[1].trim() : w.trim();
+      const fragMatch = allFrags.find(f => f.concept === conceptName);
       items.push({
         id: 'saved_' + i, label: w, sub: '保存した',
         defItem: fragMatch
@@ -4437,14 +4710,13 @@ const THOUGHT_FRAGMENTS_ALL = [
       updatedAt:           now,
     };
     upsertDepthEntry(entry);
-    // 保存フィードバック
+    // 保存フィードバック → 一覧に遷移
     const btn = document.querySelector('#screen-depth-edit button[onclick="saveDepthEntry()"]');
     if (btn) {
-      const orig = btn.textContent;
       btn.textContent = '保存済';
       btn.style.background = '#555';
-      setTimeout(() => { btn.textContent = orig; btn.style.background = '#222'; }, 1200);
     }
+    setTimeout(() => { goTo('screen-depth-list'); }, 800);
   }
 
   function deleteCurrentDepthEntry() {
@@ -4461,6 +4733,12 @@ const THOUGHT_FRAGMENTS_ALL = [
       renderDepthList();
     }
     if (id === 'screen-depth-edit') {
+      // キャラを反映
+      const editCharaEl = document.getElementById('depth-edit-chara');
+      if (editCharaEl) {
+        editCharaEl.dataset.chara = currentChara || 'majimaji';
+        updateAllCharaSVG(currentChara || 'majimaji');
+      }
       if (currentDepthId) {
         const entry = getDepthEntryById(currentDepthId);
         if (entry) {
@@ -4516,10 +4794,15 @@ const THOUGHT_FRAGMENTS_ALL = [
     if (document.getElementById('detail-next-btn')) document.getElementById('detail-next-btn').disabled = true;
     padX = 0.5; padY = 0.5;
     mode = '';
-    goTo('screen-intro');
+    // 2回目以降は木を見せてからintro
+    const hasPast = getFragments().length > 0;
+    if (hasPast) {
+      _treeIntroMode = 'start';
+      goTo('screen-tree-intro');
+    } else {
+      goTo('screen-intro');
+    }
   }
-
-  // ===== 完全リセット =====
   function restart() {
     history = [];
     currentChara = 'majimaji';
