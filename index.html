@@ -288,6 +288,18 @@
     opacity: 0.6;
   }
 
+  @keyframes treeSway {
+    0%   { transform: rotate(0deg); }
+    25%  { transform: rotate(0.8deg); }
+    75%  { transform: rotate(-0.8deg); }
+    100% { transform: rotate(0deg); }
+  }
+  @keyframes charaSway {
+    0%   { transform: rotate(0deg) translateY(0px); }
+    30%  { transform: rotate(2.5deg) translateY(-3px); }
+    70%  { transform: rotate(-2deg) translateY(-1px); }
+    100% { transform: rotate(0deg) translateY(0px); }
+  }
 </style>
 </head>
 <body>
@@ -716,9 +728,8 @@
   </div>
 
   <!-- ====== SCREEN: 入力内容＋キャラ反応 ====== -->
-  <div class="screen tap-screen" id="screen-reaction">
-    <div class="card" style="position:relative; min-height:260px;" onclick="afterReaction()">
-      <div class="tap-hint">タップで次へ</div>
+  <div class="screen" id="screen-reaction">
+    <div class="card" style="position:relative; min-height:260px;">
       <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px;">
         <div style="font-size:13px; letter-spacing:3px; color:var(--text); font-weight:700; line-height:2.2; transform:rotate(-8deg); transform-origin:left top; margin-top:16px;">
           <span id="serif-reaction"></span>
@@ -726,6 +737,9 @@
         <span class="chara-svg" data-w="90" data-h="108"></span>
       </div>
       <div id="reaction-badge" class="result-badge-lime" style="font-size:17px;min-height:56px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;"></div>
+      <!-- ShakeCard（ランダム表示） -->
+      <div id="dialogue-shake-area" style="margin-bottom:16px;"></div>
+      <div onclick="afterReaction()" style="text-align:right;padding:8px 0;font-size:11px;letter-spacing:0.18em;color:#aaa;cursor:pointer;">タップで次へ</div>
     </div>
   </div>
 
@@ -867,17 +881,18 @@
   <!-- ====== SCREEN: 育てた木（タイトル後） ====== -->
   <div class="screen" id="screen-tree-intro">
     <div style="position:relative;width:100%;height:100%;display:flex;flex-direction:column;background:#fff;overflow:hidden;">
-      <!-- ヘッダー（キャラなし） -->
       <div style="padding:16px 20px 0;flex-shrink:0;position:relative;z-index:2;">
         <div id="tree-intro-label" style="font-size:13px;letter-spacing:0.2em;color:#444;font-weight:400;font-family:'Hiragino Mincho ProN','Yu Mincho','Georgia',serif;line-height:1.9;">育 っ て る ね</div>
       </div>
       <!-- 木エリア -->
-      <div id="tree-intro-canvas" style="position:relative;flex:1;overflow:hidden;background:#fff;"></div>
+      <div id="tree-intro-canvas" style="position:relative;flex:1;overflow:hidden;background:#fff;transform-origin:bottom center;animation:treeSway 4s ease-in-out infinite;"></div>
+      <!-- キャラ（木の右下に浮かぶ、地面線の上） -->
+      <div id="tree-intro-chara-overlay" style="position:absolute;bottom:calc(38% + 1px + 48px);right:8%;z-index:10;display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none;animation:charaSway 3.2s ease-in-out infinite;"></div>
       <!-- 地面の線 -->
       <div style="height:1px;background:#A0845A;flex-shrink:0;position:relative;z-index:2;"></div>
       <!-- 地層エリア -->
       <div id="tree-intro-strata" style="position:relative;height:38%;flex-shrink:0;background:#B8956A;overflow:hidden;"></div>
-      <!-- タップで次へ（モードによって遷移先変わる） -->
+      <!-- タップで次へ -->
       <div onclick="treeIntroNext()" style="text-align:center;padding:10px;color:#ffffff;font-size:13px;letter-spacing:0.2em;flex-shrink:0;font-weight:700;cursor:pointer;background:#A07848;">タップで次へ</div>
     </div>
   </div>
@@ -1356,17 +1371,22 @@
   function renderEndGrid() {
     const grid = document.getElementById('end-chara-grid');
     if (!grid) return;
+    const CHARA_NAMES = {
+      majimaji: 'マジマジ', yurayura: 'ユラユランゴ', kasa: 'ムッシュアンブレラ',
+      concrete: 'カワラちゃん', sun: 'テカリ王子', namake: 'ナマケール',
+    };
     const order = ALL_CHARAS.filter(c => c !== currentChara).concat([currentChara]);
-    const tapStyle = 'cursor:pointer;transition:transform 0.15s;display:flex;align-items:center;justify-content:center;';
+    const tapStyle = 'cursor:pointer;transition:transform 0.15s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;';
     grid.innerHTML = order.map(chara => {
-      // マジマジは常にマジマジ固定カラー(--green=#00712B)で描画
       const svgHtml = charaInnerSVGFixed(chara, 90, 90);
+      const name = CHARA_NAMES[chara] || chara;
+      const isActive = chara === currentChara;
       return `<div style="${tapStyle}" onclick="startNewRound('${chara}')"
         onmousedown="this.style.transform='scale(0.9)'"
         onmouseup="this.style.transform='scale(1)'"
         ontouchstart="this.style.transform='scale(0.9)'"
         ontouchend="this.style.transform='scale(1)'"
-      >${svgHtml}</div>`;
+      >${svgHtml}<div style="font-size:9px;letter-spacing:0.1em;color:#333;font-weight:500;">${name}</div></div>`;
     }).join('');
   }
 
@@ -2334,6 +2354,15 @@
         }
       }
     }
+    if (id === 'screen-reaction') {
+      // ランダム（50%の確率）でshakeを表示
+      if (Math.random() < 0.5) {
+        setTimeout(() => renderDialogueShake(), 700);
+      } else {
+        const area = document.getElementById('dialogue-shake-area');
+        if (area) area.innerHTML = '';
+      }
+    }
     if (id === 'screen-tree-intro') {
       setTimeout(() => renderTreeIntro(), 60);
     }
@@ -2955,6 +2984,9 @@
     if (animRef.anim) { cancelAnimationFrame(animRef.anim); animRef.anim = null; }
     if (texts.length === 0) return;
 
+    // 重複を完全除去
+    const uniqueTexts = [...new Set(texts.filter(Boolean))];
+
     // Canvas（通常サイズ）
     const TW = treeEl.offsetWidth  || 320;
     const TH = treeEl.offsetHeight || 300;
@@ -2974,25 +3006,26 @@
     // 幹
     branches.push({ x: TRUNK_X, y: TRUNK_BOTTOM, angle: BASE_ANGLE, len: trunkLen, depth: 0, word: null, depthLabel: '', prog: 0 });
 
-    // 大枝（テキストの先頭6件）
+    // 大枝（テキストを順番に割り当て、重複しないよう管理）
     const bigAngles = [
       BASE_ANGLE - 0.55, BASE_ANGLE + 0.55,
       BASE_ANGLE - 0.85, BASE_ANGLE + 0.85,
       BASE_ANGLE - 0.35, BASE_ANGLE + 0.35,
     ];
     const bigLen   = trunkLen * 0.52;
-    const bigCount = Math.min(texts.length, 6);
+    const bigCount = Math.min(uniqueTexts.length, 6);
+    let textIdx = 0;
 
     for (let i = 0; i < bigCount; i++) {
       const ang = bigAngles[i % bigAngles.length];
       const t   = 0.46 + (i % 3) * 0.16;
       const sy  = TRUNK_BOTTOM - trunkLen * t;
       const bl  = bigLen * (0.72 + (i % 3) * 0.08);
-      branches.push({ x: TRUNK_X, y: sy, angle: ang, len: bl, depth: 1, word: texts[i * 2] || texts[i] || null, depthLabel: '', prog: 0 });
+      const mainWord   = textIdx < uniqueTexts.length ? uniqueTexts[textIdx++] : null;
+      branches.push({ x: TRUNK_X, y: sy, angle: ang, len: bl, depth: 1, word: mainWord, depthLabel: '', prog: 0 });
       const ex = TRUNK_X + Math.cos(ang) * bl;
       const ey = sy + Math.sin(ang) * bl;
-      // detail枝
-      const detailText = texts[i * 2 + 1] || null;
+      const detailText = textIdx < uniqueTexts.length ? uniqueTexts[textIdx++] : null;
       if (detailText) {
         const side = i % 2 === 0 ? 1 : -1;
         const dAng = ang + side * 0.45;
@@ -3009,13 +3042,13 @@
       }
     }
 
-    // 過去の細い枝（7件目以降）
+    // 過去の細い枝（大枝で使い切った分以降）
     const pastAngles = [
       BASE_ANGLE-0.3,BASE_ANGLE+0.3,BASE_ANGLE-0.6,BASE_ANGLE+0.6,
       BASE_ANGLE-0.15,BASE_ANGLE+0.15,BASE_ANGLE-0.45,BASE_ANGLE+0.45,
       BASE_ANGLE-0.7,BASE_ANGLE+0.7,BASE_ANGLE-0.2,BASE_ANGLE+0.2,
     ];
-    texts.slice(bigCount * 2).slice(0, 12).forEach((text, i) => {
+    uniqueTexts.slice(textIdx).slice(0, 12).forEach((text, i) => {
       const ang = pastAngles[i % pastAngles.length];
       const t   = 0.74 + (i % 4) * 0.06;
       const sy  = TRUNK_BOTTOM - trunkLen * Math.min(t, 0.95);
@@ -3124,6 +3157,27 @@
   }
 
   // タイトル後の木画面
+  const WEATHER_COMMENTS = [
+    { chara: 'majimaji', text: '今日、なんか雲がいびつだったさ。' },
+    { chara: 'majimaji', text: '雨、降りそうで降らなかったよ。' },
+    { chara: 'majimaji', text: '朝、虹が出てたのに誰も見てなかったさ。' },
+    { chara: 'concrete', text: '今日の雲、積乱雲っぽかったわね。' },
+    { chara: 'concrete', text: '最近、朝露が多い気がするかしら。' },
+    { chara: 'concrete', text: '湿度、ちょっと高すぎたわね。' },
+    { chara: 'kasa',     text: '傘、持ってきたのに晴れたムッシュ。' },
+    { chara: 'kasa',     text: '霧雨ってすごく好きムッシュ。' },
+    { chara: 'kasa',     text: '今日、風が傘をひっくり返しそうだったムッシュ。' },
+    { chara: 'yurayura', text: 'きょうの風、なんかゆっくりだったンゴ。' },
+    { chara: 'yurayura', text: '夕方の空が橙色だったンゴ。なんか好き。' },
+    { chara: 'yurayura', text: '雲がすごいスピードで動いてたンゴ。' },
+    { chara: 'namake',   text: '……雨、音がよかったよん。' },
+    { chara: 'namake',   text: '……曇り、なんかちょうどよかったよん。' },
+    { chara: 'namake',   text: '……風、冷たかったよん。それだけ。' },
+    { chara: 'sun',      text: '日差しがまぶしすぎたぜ！' },
+    { chara: 'sun',      text: '今日は光がきれいだったな！' },
+    { chara: 'sun',      text: '夕焼けが赤すぎてびびったぜ。' },
+  ];
+
   function renderTreeIntro() {
     const frags = getFragments();
     const labelEl = document.getElementById('tree-intro-label');
@@ -3145,9 +3199,20 @@
       }
     }
     const texts = frags.map(f => f.text).filter(Boolean);
+
     const ref = { anim: treeIntroAnim };
     renderTreeOnCanvas(texts, 'tree-intro-canvas', 'tree-intro-strata', ref);
     treeIntroAnim = ref.anim;
+
+    // renderTreeOnCanvas の後にキャラを設置（innerHTML=''で消されないよう）
+    const wc = WEATHER_COMMENTS[Math.floor(Math.random() * WEATHER_COMMENTS.length)];
+    const overlay = document.getElementById('tree-intro-chara-overlay');
+    if (overlay) {
+      const svgHtml = charaInnerSVGFixed(wc.chara, 52, 52);
+      overlay.innerHTML =
+        `<div style="font-size:11px;letter-spacing:0.06em;color:#555;line-height:1.7;max-width:140px;text-align:center;margin-bottom:6px;font-weight:700;">${wc.text}</div>` +
+        svgHtml;
+    }
   }
 
   // 入力後の木画面（historyのpairsを使う）
@@ -3170,12 +3235,17 @@
       pairs.push({ main: mainText, detail: detailText });
       used.add(i);
     }
-    // pairs を texts 配列に（main, detail の順で交互に）
+    // texts を重複なく構築
+    const usedTexts = new Set();
     const texts = [];
-    pairs.forEach(p => { texts.push(p.main); if (p.detail) texts.push(p.detail); });
-    // 過去の入力も追加
-    const treeSet = new Set(texts);
-    getFragments().map(f=>f.text).filter(t=>!treeSet.has(t)&&t).slice(-12).forEach(t=>texts.push(t));
+    pairs.forEach(p => {
+      if (p.main && !usedTexts.has(p.main)) { texts.push(p.main); usedTexts.add(p.main); }
+      if (p.detail && !usedTexts.has(p.detail)) { texts.push(p.detail); usedTexts.add(p.detail); }
+    });
+    // 過去の入力（今回分と重複しないもの）
+    getFragments().map(f => f.text).filter(t => t && !usedTexts.has(t)).slice(-12).forEach(t => {
+      texts.push(t); usedTexts.add(t);
+    });
 
     if (texts.length === 0) return;
     if (treeAnim) { cancelAnimationFrame(treeAnim); treeAnim = null; }
@@ -4322,40 +4392,86 @@ const THOUGHT_FRAGMENTS_ALL = [
   // ================================================================
 
   const SHAKE_CARDS = [
-    // --- character型（キャラ別） ---
-    { id:'sk-c01', type:'character', characterId:'majimaji', text:'それって、学校が嫌いというより、自分の時間が誰かの時間割に吸い込まれる感じかも。', themes:['学校','教育','時間','制度'], moods:['息苦しい','管理','退屈'], relatedConcepts:['パノプティコン','隠れたカリキュラム','制度的暴力'] },
-    { id:'sk-c02', type:'character', characterId:'majimaji', text:'それって、働きたくないというより、自分の生が別の何かに使われている感じかもしれない。', themes:['仕事','労働','会社','資本主義'], moods:['疲れ','空虚','虚しい'], relatedConcepts:['疎外','液状化する社会','官僚制の鉄の檻'] },
-    { id:'sk-c03', type:'character', characterId:'majimaji', text:'人間関係がしんどいのは、あなたが弱いからじゃなくて、人間が本来的に他者に傷つく存在だからかも。', themes:['人間関係','孤独','疲れ','他者'], moods:['しんどい','疲れた','孤独'], relatedConcepts:['他者のまなざし','ヴァルネラビリティ','承認欲求'] },
-    { id:'sk-c04', type:'character', characterId:'yurayura', text:'「なんとなく嫌」って、実は一番正直な感覚かもしれないよ。', themes:['違和感','なんとなく','気持ち'], moods:['モヤモヤ','なんか変','ふと気づいた'], relatedConcepts:['ノイズとしての感情','象徴的暴力'] },
-    { id:'sk-c05', type:'character', characterId:'kasa', text:'合わせすぎると、自分が何者かわからなくなるムッシュ。', themes:['自分','同調','合わせる','アイデンティティ'], moods:['合わせてしまう','流される','窮屈'], relatedConcepts:['過剰適応','ペルソナ','分人'] },
-    { id:'sk-c06', type:'character', characterId:'namake', text:'……やる気が出ないって、もしかしたら、今の状況への正当な抵抗かもしれない。', themes:['やる気','疲れ','意味','休む'], moods:['やる気ない','だるい','虚しい'], relatedConcepts:['学習性無力感','慢性的疲労','疎外'] },
-    { id:'sk-c07', type:'character', characterId:'concrete', text:'不安って、未来のことを考えすぎてるんじゃなくて、今の不確かさに正直に反応してるんじゃない？', themes:['不安','将来','未来','不確か'], moods:['不安','怖い','ふわふわ'], relatedConcepts:['実存的不安','根拠なき不安','時間性'] },
-    { id:'sk-c08', type:'character', characterId:'sun', text:'「普通」じゃない感じって、普通という幻想から少しはみ出してる、ということかも。', themes:['普通','社会','違う','はみ出す'], moods:['なじめない','違和感','普通じゃない'], relatedConcepts:['正常化バイアス','ラベリング理論','ノイズの倫理学'] },
-    // --- concept_shift型 ---
-    { id:'sk-s01', type:'concept_shift', text:'パノプティコンを「監視」ではなく、「見られている自分を演じる装置」として見るとどうだろう。', themes:['監視','学校','会社','規範'], moods:['息苦しい','窮屈','緊張'], relatedConcepts:['パノプティコン','他者のまなざし','ペルソナ'] },
-    { id:'sk-s02', type:'concept_shift', text:'「疲れた」を個人の問題として見るより、社会が過剰に要求している証拠として見るとどうだろう。', themes:['疲れ','仕事','社会','休む'], moods:['疲れた','しんどい','だるい'], relatedConcepts:['慢性的疲労','時間の植民地化','透明性の強制'] },
-    { id:'sk-s03', type:'concept_shift', text:'「孤独」を欠如として見るのではなく、他者との境界が際立っている状態として見るとどうだろう。', themes:['孤独','繋がり','孤立','一人'], moods:['孤独','寂しい','一人'], relatedConcepts:['実存的孤独','モナド','社会的孤立'] },
-    { id:'sk-s04', type:'concept_shift', text:'「怒り」を感情的な反応として見るのではなく、何かが侵害されたサインとして見るとどうだろう。', themes:['怒り','不公平','理不尽'], moods:['むかつく','腹立つ','怒り','許せない'], relatedConcepts:['怒りの政治学','承認の政治','ルサンチマン'] },
-    { id:'sk-s05', type:'concept_shift', text:'「やる気がない」を欠如として見るより、今の状況への身体的な拒否として見るとどうだろう。', themes:['やる気','意味','仕事','動けない'], moods:['やる気ない','動けない','虚しい'], relatedConcepts:['学習性無力感','疎外','ゾーエーとビオス'] },
-    { id:'sk-s06', type:'concept_shift', text:'「比べてしまう」のを弱さとして見るより、自分の基準がまだ定まっていない証拠として見るとどうだろう。', themes:['比較','SNS','嫉妬','劣等感'], moods:['あの人と比べてしまう','負けた気がする'], relatedConcepts:['相対的剥奪','比較の罠','承認欲求'] },
-    { id:'sk-s07', type:'concept_shift', text:'「伝わらない」を自分の表現の問題として見るより、言語そのものの限界として見るとどうだろう。', themes:['言葉','伝わらない','コミュニケーション'], moods:['もどかしい','うまく言えない','伝わらない'], relatedConcepts:['言語ゲーム','コミュニケーションの不可能性','差延'] },
-    { id:'sk-s08', type:'concept_shift', text:'「変わりたい」と思いながら変われないのは、意志の弱さではなく、環境や構造が変化を妨げているのかもしれない。', themes:['変わりたい','できない','習慣','惰性'], moods:['変えられない','抜け出せない','また同じ'], relatedConcepts:['ハビトゥス','慣習の惰性','学習性無力感'] },
-    { id:'sk-s09', type:'concept_shift', text:'「逃げたい」という衝動を弱さとして見るのではなく、別の生の可能性を感知するアンテナとして見るとどうだろう。', themes:['逃げる','逃げたい','場所','居場所'], moods:['逃げたい','出たい','抜け出したい'], relatedConcepts:['逃走線','ヘテロトピア','脱領土化'] },
-    { id:'sk-s10', type:'concept_shift', text:'「自分がわからない」を混乱として見るより、アイデンティティが更新されている途中として見るとどうだろう。', themes:['自分','アイデンティティ','迷い'], moods:['自分がわからない','ぐるぐる','定まらない'], relatedConcepts:['アイデンティティの危機','分人','ゆらぎとしての主体'] },
-    // --- other_fragment型 ---
-    { id:'sk-f01', type:'other_fragment', text:'「普通」という言葉は、誰かが引いた線だ。その線は、いつ、誰が、なぜ引いたのだろう。', themes:['普通','社会','常識','当たり前'], moods:['なじめない','違和感'], relatedConcepts:['正常化バイアス','ラベリング理論','ヘゲモニー'] },
-    { id:'sk-f02', type:'other_fragment', text:'感情は、理性が失敗した証拠ではなく、もう一つの情報処理の形だ。', themes:['感情','理性','気持ち','モヤモヤ'], moods:['うまく言えない','なんとなく'], relatedConcepts:['ノイズとしての感情','ソマティック・マーカー仮説'] },
-    { id:'sk-f03', type:'other_fragment', text:'記憶は、過去を保存しているのではなく、現在から過去を再構成している。', themes:['記憶','過去','思い出','後悔'], moods:['あのとき','もう戻れない','過去を引きずってる'], relatedConcepts:['集合的記憶','記憶の再構成','過去の重力'] },
-    { id:'sk-f04', type:'other_fragment', text:'場所には、論理よりも先に、感情が染み込んでいる。', themes:['場所','居場所','空間','地元'], moods:['居場所がない','どこかに帰りたい','ここじゃない'], relatedConcepts:['トポフィリア','感情地政学','場所の精霊'] },
-    { id:'sk-f05', type:'other_fragment', text:'依存は弱さではなく、人間の根本的な条件かもしれない。', themes:['依存','頼る','甘える','繋がり'], moods:['頼れない','一人でやらなきゃ','言えない'], relatedConcepts:['ケアの倫理','相互依存','愛着理論'] },
-    // --- noise型（ランダム表示用） ---
-    { id:'sk-n01', type:'noise', text:'石の上って寒いよね。', themes:[], moods:['静か','孤独','冷たい'], relatedConcepts:[] },
-    { id:'sk-n02', type:'noise', text:'霧の中を歩くと、前後がわからなくなる。でも、足元だけは見える。', themes:[], moods:['ふわふわ','不安','漠然と'], relatedConcepts:[] },
-    { id:'sk-n03', type:'noise', text:'ことばにならないものが、ことばになろうとしている。', themes:[], moods:['うまく言えない','もどかしい','言語化できない'], relatedConcepts:[] },
-    { id:'sk-n04', type:'noise', text:'問いは、答えに向かうためではなく、より深い問いに向かうためにある。', themes:[], moods:['ぐるぐる','答えが出ない','迷う'], relatedConcepts:[] },
-    { id:'sk-n05', type:'noise', text:'木は嵐のとき、根を張ることで揺れに耐える。', themes:[], moods:['不安','揺れる','根がない'], relatedConcepts:[] },
-    { id:'sk-n06', type:'noise', text:'地図のない旅でも、歩いた跡は地図になる。', themes:[], moods:['迷ってる','どうしたらいい','先が見えない'], relatedConcepts:[] },
-  ];
+    // character型
+    { id:'sk-c01', type:'character', characterId:'majimaji',
+      text:'それって、学校が嫌いというより、自分の時間が誰かの時間割に吸い込まれる感じかもしれないさ。',
+      themes:['学校','教育','時間','制度'], moods:['息苦しい','管理','退屈'], relatedConcepts:['パノプティコン','隠れたカリキュラム','制度的暴力'] },
+    { id:'sk-c02', type:'character', characterId:'majimaji',
+      text:'それって、働きたくないというより、自分の生が別の何かに使われている感じかもしれないよ。',
+      themes:['仕事','労働','会社','資本主義'], moods:['疲れ','空虚','虚しい'], relatedConcepts:['疎外','液状化する社会','官僚制の鉄の檻'] },
+    { id:'sk-c03', type:'character', characterId:'majimaji',
+      text:'人間関係がしんどいのは、あなたが弱いからじゃなくて、人間が本来的に他者に傷つく存在だからかもさ。',
+      themes:['人間関係','孤独','疲れ','他者'], moods:['しんどい','疲れた','孤独'], relatedConcepts:['他者のまなざし','ヴァルネラビリティ','承認欲求'] },
+    { id:'sk-c04', type:'character', characterId:'yurayura',
+      text:'「なんとなく嫌」って、実は一番正直な感覚かもしれないンゴ。',
+      themes:['違和感','なんとなく','気持ち'], moods:['モヤモヤ','なんか変','ふと気づいた'], relatedConcepts:['ノイズとしての感情','象徴的暴力'] },
+    { id:'sk-c05', type:'character', characterId:'kasa',
+      text:'合わせすぎると、自分が何者かわからなくなるムッシュ。',
+      themes:['自分','同調','合わせる','アイデンティティ'], moods:['合わせてしまう','流される','窮屈'], relatedConcepts:['過剰適応','ペルソナ','分人'] },
+    { id:'sk-c06', type:'character', characterId:'namake',
+      text:'……やる気が出ないって、もしかしたら今の状況への正当な抵抗かもしれないよん。',
+      themes:['やる気','疲れ','意味','休む'], moods:['やる気ない','だるい','虚しい'], relatedConcepts:['学習性無力感','慢性的疲労','疎外'] },
+    { id:'sk-c07', type:'character', characterId:'concrete',
+      text:'不安って、未来を考えすぎてるんじゃなくて、今の不確かさに正直に反応してるんじゃないかしら。',
+      themes:['不安','将来','未来','不確か'], moods:['不安','怖い','ふわふわ'], relatedConcepts:['実存的不安','根拠なき不安','時間性'] },
+    { id:'sk-c08', type:'character', characterId:'sun',
+      text:'「普通」じゃない感じって、普通という幻想からはみ出してるってことだぜ。それでいいんじゃないか！',
+      themes:['普通','社会','違う','はみ出す'], moods:['なじめない','違和感','普通じゃない'], relatedConcepts:['正常化バイアス','ラベリング理論','ノイズの倫理学'] },
+    // concept_shift型
+    { id:'sk-s01', type:'concept_shift',
+      text:'パノプティコンを「監視」ではなく、「見られている自分を演じる装置」として見るとどうだろう。',
+      themes:['監視','学校','会社','規範'], moods:['息苦しい','窮屈','緊張'], relatedConcepts:['パノプティコン','他者のまなざし','ペルソナ'] },
+    { id:'sk-s02', type:'concept_shift',
+      text:'「疲れた」を個人の問題として見るより、社会が過剰に要求している証拠として見るとどうだろう。',
+      themes:['疲れ','仕事','社会','休む'], moods:['疲れた','しんどい','だるい'], relatedConcepts:['慢性的疲労','時間の植民地化','透明性の強制'] },
+    { id:'sk-s03', type:'concept_shift',
+      text:'「孤独」を欠如として見るのではなく、他者との境界が際立っている状態として見るとどうだろう。',
+      themes:['孤独','繋がり','孤立','一人'], moods:['孤独','寂しい','一人'], relatedConcepts:['実存的孤独','モナド','社会的孤立'] },
+    { id:'sk-s04', type:'concept_shift',
+      text:'「怒り」を感情的な反応として見るのではなく、何かが侵害されたサインとして見るとどうだろう。',
+      themes:['怒り','不公平','理不尽'], moods:['むかつく','腹立つ','怒り','許せない'], relatedConcepts:['怒りの政治学','承認の政治','ルサンチマン'] },
+    { id:'sk-s05', type:'concept_shift',
+      text:'「やる気がない」を欠如として見るより、今の状況への身体的な拒否として見るとどうだろう。',
+      themes:['やる気','意味','仕事','動けない'], moods:['やる気ない','動けない','虚しい'], relatedConcepts:['学習性無力感','疎外','ゾーエーとビオス'] },
+    { id:'sk-s06', type:'concept_shift',
+      text:'「比べてしまう」のを弱さとして見るより、自分の基準がまだ定まっていない証拠として見るとどうだろう。',
+      themes:['比較','SNS','嫉妬','劣等感'], moods:['あの人と比べてしまう','負けた気がする'], relatedConcepts:['相対的剥奪','比較の罠','承認欲求'] },
+    { id:'sk-s07', type:'concept_shift',
+      text:'「伝わらない」を表現の問題として見るより、言語そのものの限界として見るとどうだろう。',
+      themes:['言葉','伝わらない','コミュニケーション'], moods:['もどかしい','うまく言えない','伝わらない'], relatedConcepts:['言語ゲーム','コミュニケーションの不可能性','差延'] },
+    { id:'sk-s08', type:'concept_shift',
+      text:'「変わりたい」のに変われないのは、意志の弱さではなく、環境や構造が変化を妨げているのかもしれない。',
+      themes:['変わりたい','できない','習慣','惰性'], moods:['変えられない','抜け出せない','また同じ'], relatedConcepts:['ハビトゥス','慣習の惰性','学習性無力感'] },
+    { id:'sk-s09', type:'concept_shift',
+      text:'「逃げたい」という衝動を弱さとして見るのではなく、別の生の可能性を感知するアンテナとして見るとどうだろう。',
+      themes:['逃げる','逃げたい','場所','居場所'], moods:['逃げたい','出たい','抜け出したい'], relatedConcepts:['逃走線','ヘテロトピア','脱領土化'] },
+    { id:'sk-s10', type:'concept_shift',
+      text:'「自分がわからない」を混乱として見るより、アイデンティティが更新されている途中として見るとどうだろう。',
+      themes:['自分','アイデンティティ','迷い'], moods:['自分がわからない','ぐるぐる','定まらない'], relatedConcepts:['アイデンティティの危機','分人','ゆらぎとしての主体'] },
+    // other_fragment型
+    { id:'sk-f01', type:'other_fragment',
+      text:'「普通」という言葉は、誰かが引いた線だ。その線は、いつ、誰が、なぜ引いたのだろう。',
+      themes:['普通','社会','常識','当たり前'], moods:['なじめない','違和感'], relatedConcepts:['正常化バイアス','ラベリング理論','ヘゲモニー'] },
+    { id:'sk-f02', type:'other_fragment',
+      text:'感情は、理性が失敗した証拠ではなく、もう一つの情報処理の形だ。',
+      themes:['感情','理性','気持ち','モヤモヤ'], moods:['うまく言えない','なんとなく'], relatedConcepts:['ノイズとしての感情','ソマティック・マーカー仮説'] },
+    { id:'sk-f03', type:'other_fragment',
+      text:'記憶は、過去を保存しているのではなく、現在から過去を再構成している。',
+      themes:['記憶','過去','思い出','後悔'], moods:['あのとき','もう戻れない','過去を引きずってる'], relatedConcepts:['集合的記憶','記憶の再構成','過去の重力'] },
+    { id:'sk-f04', type:'other_fragment',
+      text:'場所には、論理よりも先に、感情が染み込んでいる。',
+      themes:['場所','居場所','空間','地元'], moods:['居場所がない','どこかに帰りたい','ここじゃない'], relatedConcepts:['トポフィリア','感情地政学','場所の精霊'] },
+    { id:'sk-f05', type:'other_fragment',
+      text:'依存は弱さではなく、人間の根本的な条件かもしれない。',
+      themes:['依存','頼る','甘える','繋がり'], moods:['頼れない','一人でやらなきゃ','言えない'], relatedConcepts:['ケアの倫理','相互依存','愛着理論'] },
+    // noise型
+    { id:'sk-n01', type:'noise', characterId:'majimaji', text:'石の上って寒いよねさ。', themes:[], moods:['静か','孤独','冷たい'], relatedConcepts:[] },
+    { id:'sk-n02', type:'noise', characterId:'yurayura', text:'霧の中を歩くと、前後がわからなくなるンゴ。でも、足元だけは見える。', themes:[], moods:['ふわふわ','不安','漠然と'], relatedConcepts:[] },
+    { id:'sk-n03', type:'noise', characterId:'namake',  text:'……ことばにならないものが、ことばになろうとしてる。', themes:[], moods:['うまく言えない','もどかしい','言語化できない'], relatedConcepts:[] },
+    { id:'sk-n04', type:'noise', characterId:'kasa',    text:'問いは、答えに向かうためじゃなく、より深い問いに向かうためにあるムッシュ。', themes:[], moods:['ぐるぐる','答えが出ない','迷う'], relatedConcepts:[] },
+    { id:'sk-n05', type:'noise', characterId:'sun',     text:'木は嵐のとき、根を張ることで揺れに耐えるぜ。', themes:[], moods:['不安','揺れる','根がない'], relatedConcepts:[] },
+    { id:'sk-n06', type:'noise', characterId:'namake',  text:'……地図のない旅でも、歩いた跡は地図になるよん。', themes:[], moods:['迷ってる','どうしたらいい','先が見えない'], relatedConcepts:[] },
+  ];;
 
   // ===== ShakeCard ロジック =====
   let _shakeQueue   = []; // マッチングで得たカードのキュー
@@ -4409,7 +4525,7 @@ const THOUGHT_FRAGMENTS_ALL = [
 
   function triggerShakeCard() {
     const ctx = buildShakeContext();
-    _shakeQueue = getMatchedShakeCards(ctx);
+    _shakeQueue = buildUnifiedQueue(ctx);
     _shakeIndex = 0;
     renderShakeCard();
   }
@@ -4418,47 +4534,79 @@ const THOUGHT_FRAGMENTS_ALL = [
     const area = document.getElementById('shake-card-area');
     if (!area) return;
     if (_shakeQueue.length === 0) { area.innerHTML = ''; return; }
-    const card = _shakeQueue[_shakeIndex % _shakeQueue.length];
 
+    const item = _shakeQueue[_shakeIndex % _shakeQueue.length];
     const CHARA_NAMES = { majimaji:'マジマジ', yurayura:'ユラユランゴ', kasa:'ムッシュアンブレラ', concrete:'カワラちゃん', sun:'テカリ王子', namake:'ナマケール' };
-    const label = card.type === 'character' && card.characterId
-      ? (CHARA_NAMES[card.characterId] || card.characterId) + '：'
-      : card.type === 'concept_shift' ? '別の見方：'
-      : card.type === 'other_fragment' ? '断片：'
-      : '';
 
-    const isSaved = (typeof currentDepthId !== 'undefined' && currentDepthId)
-      ? (getDepthEntryById(currentDepthId)?.savedShakeCards || []).includes(card.id)
-      : false;
+    let label = '';
+    let text  = '';
+    let cardId = '';
+
+    if (item.kind === 'reframe') {
+      const rf = item.data;
+      const charaName = CHARA_NAMES[rf.characterId] || '';
+      label  = charaName ? charaName + '：' : '';
+      text   = rf.template;
+      cardId = rf.id;
+    } else {
+      const card = item.data;
+      label  = card.type === 'character' && card.characterId
+        ? (CHARA_NAMES[card.characterId] || '') + '：'
+        : card.type === 'concept_shift' ? '別の見方：'
+        : card.type === 'other_fragment' ? '断片：' : '';
+      text   = card.text;
+      cardId = card.id;
+    }
+
+    const savedList = currentDepthId
+      ? ((getDepthEntryById(currentDepthId)?.savedShakeCards || []).concat(
+          getDepthEntryById(currentDepthId)?.savedReframes || []))
+      : [];
+    const isSaved = savedList.includes(cardId);
 
     area.innerHTML = '';
     const el = document.createElement('div');
     el.style.cssText = 'border:1px solid #e0e0da;border-radius:4px;padding:20px;background:#fff;';
     el.innerHTML =
       (label ? `<div style="font-size:9px;letter-spacing:0.22em;color:#bbb;margin-bottom:8px;">${label}</div>` : '') +
-      `<div style="font-size:13px;letter-spacing:0.06em;line-height:2.0;color:#333;margin-bottom:20px;">${card.text}</div>` +
+      `<div style="font-size:13px;letter-spacing:0.06em;line-height:2.0;color:#333;margin-bottom:20px;">${text}</div>` +
       `<div style="display:flex;gap:8px;">
-        <button id="shake-btn-save" style="flex:1;padding:9px 4px;border:1px solid ${isSaved ? '#222' : '#e0e0da'};border-radius:3px;background:${isSaved ? '#222' : 'none'};font-family:inherit;font-size:9px;letter-spacing:0.18em;color:${isSaved ? '#f8f8f6' : '#888'};cursor:pointer;">${isSaved ? '残した' : '残す'}</button>
-        <button style="flex:1;padding:9px 4px;border:1px solid #e0e0da;border-radius:3px;background:none;font-family:inherit;font-size:9px;letter-spacing:0.18em;color:#888;cursor:pointer;" id="shake-btn-next">違う</button>
-        <button style="flex:1;padding:9px 4px;border:1px solid #e0e0da;border-radius:3px;background:none;font-family:inherit;font-size:9px;letter-spacing:0.18em;color:#888;cursor:pointer;" id="shake-btn-more">もう一つ</button>
+        <button id="sk-save" style="flex:1;padding:9px 4px;border:1px solid ${isSaved?'#222':'#e0e0da'};border-radius:3px;background:${isSaved?'#222':'none'};font-family:inherit;font-size:9px;letter-spacing:0.18em;color:${isSaved?'#f8f8f6':'#888'};cursor:pointer;">${isSaved?'残した':'残す'}</button>
+        <button id="sk-no"   style="flex:1;padding:9px 4px;border:1px solid #e0e0da;border-radius:3px;background:none;font-family:inherit;font-size:9px;letter-spacing:0.18em;color:#888;cursor:pointer;">違う</button>
+        <button id="sk-more" style="flex:1;padding:9px 4px;border:1px solid #e0e0da;border-radius:3px;background:none;font-family:inherit;font-size:9px;letter-spacing:0.18em;color:#888;cursor:pointer;">もう一つ</button>
       </div>`;
 
-    el.querySelector('#shake-btn-save').addEventListener('click', () => saveShakeCard(card.id));
-    el.querySelector('#shake-btn-next').addEventListener('click', () => { area.innerHTML = ''; _shakeQueue = _shakeQueue.filter(c => c.id !== card.id); renderShakeCard(); });
-    el.querySelector('#shake-btn-more').addEventListener('click', () => { _shakeIndex++; renderShakeCard(); });
+    el.querySelector('#sk-save').addEventListener('click', () => {
+      if (!currentDepthId) return;
+      const entries = getDepthEntries();
+      const idx = entries.findIndex(e => e.id === currentDepthId);
+      if (idx < 0) return;
+      const key = item.kind === 'reframe' ? 'savedReframes' : 'savedShakeCards';
+      const arr = entries[idx][key] || [];
+      if (!arr.includes(cardId)) entries[idx][key] = [...arr, cardId];
+      entries[idx].updatedAt = new Date().toISOString();
+      saveDepthEntries(entries);
+      renderShakeCard();
+    });
+    el.querySelector('#sk-no').addEventListener('click', () => {
+      _shakeQueue = _shakeQueue.filter((_, i) => i !== _shakeIndex % _shakeQueue.length);
+      renderShakeCard();
+    });
+    el.querySelector('#sk-more').addEventListener('click', () => { _shakeIndex++; renderShakeCard(); });
     area.appendChild(el);
   }
 
-  function saveShakeCard(cardId) {
-    if (!currentDepthId) return;
-    const entries = getDepthEntries();
-    const idx = entries.findIndex(e => e.id === currentDepthId);
-    if (idx < 0) return;
-    const saved = entries[idx].savedShakeCards || [];
-    if (!saved.includes(cardId)) { entries[idx].savedShakeCards = [...saved, cardId]; }
-    entries[idx].updatedAt = new Date().toISOString();
-    saveDepthEntries(entries);
-    renderShakeCard(); // ボタン状態更新
+  function saveShakeCard(cardId) {} // 後方互換のため残す
+
+  // 入力停止30秒でShakeCard表示
+  function resetShakeTimer() {
+    if (_shakeTimer) clearTimeout(_shakeTimer);
+    _shakeTimer = setTimeout(() => {
+      const step3 = document.getElementById('depth-step-3');
+      if (step3 && step3.style.display !== 'none' && _shakeQueue.length === 0) {
+        triggerShakeCard();
+      }
+    }, 30000);
   }
 
   // 入力停止30秒でShakeCard表示
@@ -4472,8 +4620,213 @@ const THOUGHT_FRAGMENTS_ALL = [
     }, 30000);
   }
 
+  // dialogue 画面のShake表示
+  function renderDialogueShake() {
+    const area = document.getElementById('dialogue-shake-area');
+    if (!area) return;
+    area.innerHTML = '';
+
+    // 現在の入力テキストを収集
+    const entryText = [
+      document.getElementById('gutai-text')?.value   || '',
+      document.getElementById('detail-text')?.value  || '',
+      document.getElementById('gutai-text2')?.value  || '',
+    ].join(' ').trim();
+
+    if (!entryText) return;
+
+    const context = {
+      entryText,
+      selectedConcepts: [],
+      concreteOboroLevel: Math.round((typeof padX !== 'undefined' ? padX : 0.5) * 4) + 1,
+      depthLevel: Math.round((1 - (typeof padY !== 'undefined' ? padY : 0.5)) * 4) + 1,
+      characterId: currentChara || 'majimaji',
+    };
+
+    // reframe優先で1件表示
+    const reframes = getMatchedReframes(context);
+    if (reframes.length === 0) return;
+    const rf = reframes[0];
+
+    const CHARA_NAMES = { majimaji:'マジマジ', yurayura:'ユラユランゴ', kasa:'ムッシュアンブレラ', concrete:'カワラちゃん', sun:'テカリ王子', namake:'ナマケール' };
+    const label = rf.characterId ? (CHARA_NAMES[rf.characterId] || '') + '：' : '';
+
+    const el = document.createElement('div');
+    el.style.cssText = 'border:1px solid #e8e8e4;border-radius:8px;padding:14px 16px;background:#fafaf8;';
+    el.innerHTML =
+      (label ? `<div style="font-size:8px;letter-spacing:0.22em;color:#bbb;margin-bottom:6px;">${label}</div>` : '') +
+      `<div style="font-size:12px;letter-spacing:0.06em;line-height:1.9;color:#555;">${rf.template}</div>`;
+    area.appendChild(el);
+  }
+
   // ================================================================
-  let _currentDepthStep = 1;
+
+  const REFRAME_PATTERNS = [
+    // sensory（感覚化）
+    { id:'rf-s01', shiftType:'sensory', characterId:'majimaji',
+      template:'それって、冷たい感じ？それとも重い感じさ？',
+      themes:['息苦しい','管理','制度','窮屈'], moods:['息苦しい','窮屈','疲れた'] },
+    { id:'rf-s02', shiftType:'sensory', characterId:'concrete',
+      template:'空気が固まってる感じかしら。それとも薄い感じ？',
+      themes:['不安','孤独','空虚'], moods:['ふわふわ','不安','虚しい'] },
+    { id:'rf-s03', shiftType:'sensory', characterId:'yurayura',
+      template:'音が消える感じ、するンゴ？',
+      themes:['孤独','沈黙','静か'], moods:['孤独','寂しい','静か'] },
+    { id:'rf-s04', shiftType:'sensory', characterId:'kasa',
+      template:'霧の中にいる感じムッシュ？それとも水の底？',
+      themes:['迷い','曖昧','不確か'], moods:['ふわふわ','定まらない','迷う'] },
+    { id:'rf-s05', shiftType:'sensory', characterId:'namake',
+      template:'……砂の中にいる感じよん？',
+      themes:['疲れ','重い','動けない'], moods:['だるい','動けない','重い'] },
+    { id:'rf-s06', shiftType:'sensory', characterId:'sun',
+      template:'熱い感じか、それとも乾いてる感じだぜ？',
+      themes:['焦り','怒り'], moods:['焦る','むかつく','熱い'] },
+    // body（身体化）
+    { id:'rf-b01', shiftType:'body', characterId:'majimaji',
+      template:'その感じ、喉？胸？胃の奥？どこにあるさ？',
+      themes:['感情','違和感','緊張'], moods:['緊張','息苦しい','モヤモヤ'] },
+    { id:'rf-b02', shiftType:'body', characterId:'concrete',
+      template:'身体が止まりたがってる感じ、あるかしら？',
+      themes:['動けない','疲れ'], moods:['動けない','疲れた','重い'] },
+    { id:'rf-b03', shiftType:'body', characterId:'kasa',
+      template:'肩が上がってる感じムッシュ？それとも下がってる？',
+      themes:['緊張','プレッシャー','仕事'], moods:['緊張','しんどい'] },
+    { id:'rf-b04', shiftType:'body', characterId:'yurayura',
+      template:'お腹の奥になんかあるンゴ？',
+      themes:['感情','直感'], moods:['なんとなく','うまく言えない'] },
+    { id:'rf-b05', shiftType:'body', characterId:'namake',
+      template:'……眠い感じ、するよん？それとも違う？',
+      themes:['疲れ','眠い','休む'], moods:['だるい','眠い','休みたい'] },
+    { id:'rf-b06', shiftType:'body', characterId:'sun',
+      template:'身体が前に行きたがってるか、引いてるか、どっちだぜ？',
+      themes:['決断','行動','葛藤'], moods:['迷う','前に進めない'] },
+    // concept（概念化）
+    { id:'rf-c01', shiftType:'concept', characterId:'majimaji',
+      template:'管理というより、自分の時間が誰かの仕組みに同期される感じかもさ。',
+      themes:['管理','制度','学校','会社'], moods:['管理','息苦しい','窮屈'] },
+    { id:'rf-c02', shiftType:'concept', characterId:'concrete',
+      template:'見られている自分を演じてる感じ、あるかしら。',
+      themes:['評価','SNS','承認'], moods:['緊張','見られる','演じてる'] },
+    { id:'rf-c03', shiftType:'concept', characterId:'kasa',
+      template:'遊びが消えると何が残るか、気になるムッシュ。',
+      themes:['仕事','義務','意味'], moods:['つまらない','やらされてる'] },
+    { id:'rf-c04', shiftType:'concept', characterId:'yurayura',
+      template:'疎外っていうより、自分が透明になってる感じンゴ？',
+      themes:['孤独','疎外','アイデンティティ'], moods:['透明','存在感ない'] },
+    { id:'rf-c05', shiftType:'concept', characterId:'sun',
+      template:'自由すぎて重い、ってやつかもしれないな！',
+      themes:['自由','選択','迷い'], moods:['自由すぎる','迷う','重い'] },
+    { id:'rf-c06', shiftType:'concept', characterId:'namake',
+      template:'……承認って、外にあるから重いんかもよん。',
+      themes:['承認','評価','SNS'], moods:['認められたい','不安'] },
+    // opposite（逆転）
+    { id:'rf-o01', shiftType:'opposite', characterId:'majimaji',
+      template:'逆に、少し安心してた部分もあったりするさ？',
+      themes:['変化','不安'], moods:['不安','怖い','変わりたくない'] },
+    { id:'rf-o02', shiftType:'opposite', characterId:'concrete',
+      template:'もし完全に自由だったら、逆に怖かったかもしれないわね。',
+      themes:['自由','制約','束縛'], moods:['束縛','窮屈','逃げたい'] },
+    { id:'rf-o03', shiftType:'opposite', characterId:'kasa',
+      template:'少し好きだった部分も、あったかもムッシュ？',
+      themes:['嫌い','苦手'], moods:['嫌い','苦手'] },
+    { id:'rf-o04', shiftType:'opposite', characterId:'yurayura',
+      template:'逆に、ずっとそこにいたかった部分もあったンゴ？',
+      themes:['場所','居場所','変化'], moods:['変わりたい','逃げたい'] },
+    { id:'rf-o05', shiftType:'opposite', characterId:'namake',
+      template:'……やりたくないって、ほんとは大事にしてるからかもよん。',
+      themes:['やる気','意味','価値'], moods:['やる気ない','矛盾'] },
+    { id:'rf-o06', shiftType:'opposite', characterId:'sun',
+      template:'嫌いなもの、少し羨ましかったりしてないか？',
+      themes:['嫌い','比較'], moods:['嫌い','でも気になる'] },
+    // object（物化）
+    { id:'rf-obj01', shiftType:'object', characterId:'majimaji',
+      template:'それって、何っぽいさ？石？水？クラゲ？',
+      themes:[], moods:['モヤモヤ','なんとなく','うまく言えない'] },
+    { id:'rf-obj02', shiftType:'object', characterId:'concrete',
+      template:'水槽っぽい感じかしら。外から見てる感じ？',
+      themes:['距離','客観'], moods:['俯瞰','外から見てる'] },
+    { id:'rf-obj03', shiftType:'object', characterId:'kasa',
+      template:'工場っぽいムッシュ？それとも森？',
+      themes:['仕事','会社','制度'], moods:['機械的','管理'] },
+    { id:'rf-obj04', shiftType:'object', characterId:'yurayura',
+      template:'霧っぽいンゴ。それとも砂？',
+      themes:['曖昧','不確か'], moods:['ふわふわ','曖昧'] },
+    { id:'rf-obj05', shiftType:'object', characterId:'namake',
+      template:'……水の底みたいよん。',
+      themes:['重い','沈む'], moods:['重い','沈む','動けない'] },
+    { id:'rf-obj06', shiftType:'object', characterId:'sun',
+      template:'火っぽい？それとも岩？どっちだぜ？',
+      themes:['感情','エネルギー'], moods:['燃えてる','強い'] },
+    // time（時間ズラし）
+    { id:'rf-t01', shiftType:'time', characterId:'majimaji',
+      template:'いつからそこにある感じさ？子供の頃から？',
+      themes:['繰り返し','パターン','ずっと'], moods:['また同じ','ずっと'] },
+    { id:'rf-t02', shiftType:'time', characterId:'concrete',
+      template:'10年後に振り返ったら、どう見えるかしらね。',
+      themes:['将来','未来'], moods:['将来が見えない','焦る'] },
+    { id:'rf-t03', shiftType:'time', characterId:'kasa',
+      template:'これ、いつ始まったムッシュ？最近？ずっと前？',
+      themes:['過去','始まり'], moods:['いつから','きっかけ'] },
+    { id:'rf-t04', shiftType:'time', characterId:'yurayura',
+      template:'子供の頃も同じ感じ、してたンゴ？',
+      themes:['幼少期','繰り返し'], moods:['また同じ','ずっと'] },
+    { id:'rf-t05', shiftType:'time', characterId:'namake',
+      template:'……それ、明日もある感じよん？今だけ？',
+      themes:['今','永続'], moods:['ずっと続く','終わらない'] },
+    { id:'rf-t06', shiftType:'time', characterId:'sun',
+      template:'1年後、そこにまだいるか？それとも違う場所だぜ？',
+      themes:['変化','将来'], moods:['このまま','変わりたい'] },
+    // noise（ノイズ）
+    { id:'rf-n01', shiftType:'noise', characterId:'majimaji',
+      template:'クラゲって時間割なさそうさ。', themes:[], moods:[] },
+    { id:'rf-n02', shiftType:'noise', characterId:'kasa',
+      template:'夜の学校って、変な匂いするムッシュ。', themes:[], moods:[] },
+    { id:'rf-n03', shiftType:'noise', characterId:'yurayura',
+      template:'川の底って、意外と明るいンゴ。', themes:[], moods:[] },
+    { id:'rf-n04', shiftType:'noise', characterId:'namake',
+      template:'……雨の日の図書館、好きよん。', themes:[], moods:[] },
+    { id:'rf-n05', shiftType:'noise', characterId:'sun',
+      template:'夕焼けって、なんかすごいよな。理由なく。', themes:[], moods:[] },
+    { id:'rf-n06', shiftType:'noise', characterId:'concrete',
+      template:'水槽のガラスって、外から見ると歪んで見えるわね。', themes:[], moods:[] },
+  ];
+
+  function getMatchedReframes(context) {
+    const scored = REFRAME_PATTERNS.map(rf => {
+      let score = 0;
+      (rf.themes || []).forEach(t => {
+        if (context.entryText.includes(t)) score += 3;
+        if (context.selectedConcepts.some(c => c.includes(t))) score += 2;
+      });
+      (rf.moods || []).forEach(m => { if (context.entryText.includes(m)) score += 2; });
+      if (rf.characterId && rf.characterId === context.characterId) score += 1;
+      if (context.depthLevel >= 4 && rf.shiftType === 'concept') score += 1;
+      if (context.concreteOboroLevel >= 4 && (rf.shiftType === 'sensory' || rf.shiftType === 'noise')) score += 1;
+      return { rf, score };
+    }).filter(x => x.score > 0).sort((a,b) => b.score - a.score).slice(0, 4).map(x => x.rf);
+
+    if (scored.length === 0) {
+      const noises = REFRAME_PATTERNS.filter(r => r.shiftType === 'noise' && r.characterId === context.characterId);
+      const pool   = noises.length ? noises : REFRAME_PATTERNS.filter(r => r.shiftType === 'noise');
+      return [pool[Math.floor(Math.random() * pool.length)]];
+    }
+    return scored;
+  }
+
+  // ShakeCard と ReframePattern を統合したキュー生成
+  function buildUnifiedQueue(context) {
+    const shakes   = getMatchedShakeCards(context);
+    const reframes = getMatchedReframes(context);
+    const merged   = [];
+    const maxLen   = Math.max(shakes.length, reframes.length);
+    for (let i = 0; i < maxLen; i++) {
+      if (i < reframes.length) merged.push({ kind:'reframe', data: reframes[i] });
+      if (i < shakes.length)   merged.push({ kind:'shake',   data: shakes[i] });
+    }
+    return merged;
+  }
+
+  // ================================================================
 
   const STEP_CONFIG = {
     1: { label: 'STEP 1 / 3', title: '違和感を選ぶ',   back: null,  next: 2 },
