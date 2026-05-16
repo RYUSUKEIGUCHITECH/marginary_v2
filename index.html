@@ -737,8 +737,6 @@
         <span class="chara-svg" data-w="90" data-h="108"></span>
       </div>
       <div id="reaction-badge" class="result-badge-lime" style="font-size:17px;min-height:56px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;"></div>
-      <!-- ShakeCard（ランダム表示） -->
-      <div id="dialogue-shake-area" style="margin-bottom:16px;"></div>
       <div onclick="afterReaction()" style="text-align:right;padding:8px 0;font-size:11px;letter-spacing:0.18em;color:#aaa;cursor:pointer;">タップで次へ</div>
     </div>
   </div>
@@ -882,7 +880,7 @@
   <div class="screen" id="screen-tree-intro">
     <div style="position:relative;width:100%;height:100%;display:flex;flex-direction:column;background:#fff;overflow:hidden;">
       <div style="padding:16px 20px 0;flex-shrink:0;position:relative;z-index:2;">
-        <div id="tree-intro-label" style="font-size:13px;letter-spacing:0.2em;color:#444;font-weight:400;font-family:'Hiragino Mincho ProN','Yu Mincho','Georgia',serif;line-height:1.9;">育 っ て る ね</div>
+        <div id="tree-intro-label" style="font-size:13px;letter-spacing:0.5em;color:#444;font-weight:500;font-family:'Inter',sans-serif;line-height:1.9;">育 っ て る ね</div>
       </div>
       <!-- 木エリア -->
       <div id="tree-intro-canvas" style="position:relative;flex:1;overflow:hidden;background:#fff;transform-origin:bottom center;animation:treeSway 4s ease-in-out infinite;"></div>
@@ -1067,7 +1065,7 @@
           cursor:pointer;text-align:left;
           display:flex;align-items:center;justify-content:space-between;
         ">
-          <span>新しい問いを作る</span>
+          <span>新しい問いと概念を作る</span>
           <span style="font-size:18px;line-height:1;">+</span>
         </button>
       </div>
@@ -2352,15 +2350,6 @@
         } else {
           el.innerHTML = cfg.serif_oboroke_in2 || '';
         }
-      }
-    }
-    if (id === 'screen-reaction') {
-      // ランダム（50%の確率）でshakeを表示
-      if (Math.random() < 0.5) {
-        setTimeout(() => renderDialogueShake(), 700);
-      } else {
-        const area = document.getElementById('dialogue-shake-area');
-        if (area) area.innerHTML = '';
       }
     }
     if (id === 'screen-tree-intro') {
@@ -4831,7 +4820,7 @@ const THOUGHT_FRAGMENTS_ALL = [
   const STEP_CONFIG = {
     1: { label: 'STEP 1 / 3', title: '違和感を選ぶ',   back: null,  next: 2 },
     2: { label: 'STEP 2 / 3', title: '概念を選ぶ',     back: 1,     next: 3 },
-    3: { label: 'STEP 3 / 3', title: 'ことばを紡ぐ',   back: 2,     next: null },
+    3: { label: 'STEP 3 / 3', title: '問いと概念を作る',   back: 2,     next: null },
   };
 
   function goToDepthStep(step) {
