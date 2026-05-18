@@ -872,7 +872,7 @@
       <!-- 地層エリア（木くず地面） -->
       <div id="tamatta-strata" style="position:relative;height:38%;flex-shrink:0;background:#B8956A;overflow:hidden;"></div>
       <!-- タップで次へ -->
-      <div onclick="goTo('screen-library')" style="text-align:center;padding:10px;color:#ffffff;font-size:13px;letter-spacing:0.2em;flex-shrink:0;font-weight:700;cursor:pointer;background:#A07848;">タップで次へ</div>
+      <div onclick="renderCharaTalk('screen-library');goTo('screen-chara-talk');" style="text-align:center;padding:10px;color:#ffffff;font-size:13px;letter-spacing:0.2em;flex-shrink:0;font-weight:700;cursor:pointer;background:#A07848;">タップで次へ</div>
     </div>
   </div>
 
@@ -892,6 +892,18 @@
       <div id="tree-intro-strata" style="position:relative;height:38%;flex-shrink:0;background:#B8956A;overflow:hidden;"></div>
       <!-- タップで次へ -->
       <div onclick="treeIntroNext()" style="text-align:center;padding:10px;color:#ffffff;font-size:13px;letter-spacing:0.2em;flex-shrink:0;font-weight:700;cursor:pointer;background:#A07848;">タップで次へ</div>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN: キャラ同士の会話 ====== -->
+  <div class="screen" id="screen-chara-talk" style="background:#fff;">
+    <div style="width:100%;height:100%;display:flex;flex-direction:column;">
+      <div style="flex:1;overflow-y:auto;padding:40px 20px 20px;" id="chara-talk-lines"></div>
+      <div onclick="charaTalkNext()" style="
+        flex-shrink:0;text-align:center;padding:14px;
+        color:#fff;font-size:13px;letter-spacing:0.2em;
+        font-weight:700;cursor:pointer;background:#A07848;
+      ">タップで次へ</div>
     </div>
   </div>
 
@@ -1036,7 +1048,7 @@
 
   <!-- ====== SCREEN: 深み一覧 ====== -->
   <!-- ====== SCREEN: 深み一覧 ====== -->
-  <div class="screen" id="screen-depth-list" style="background:#f5f4f0;">
+  <div class="screen" id="screen-depth-list" style="background:#f2f2f2;">
     <div style="width:100%;height:100%;display:flex;flex-direction:column;position:relative;">
 
       <!-- ヘッダー -->
@@ -1057,7 +1069,7 @@
       </div>
 
       <!-- 新規作成ボタン -->
-      <div style="padding:12px 20px 8px;flex-shrink:0;border-top:1px solid #e8e8e4;background:#f5f4f0;">
+      <div style="padding:12px 20px 8px;flex-shrink:0;border-top:1px solid #e8e8e4;background:#f2f2f2;">
         <button onclick="startNewDepthEntry()" style="
           width:100%;padding:16px;
           border:1.5px solid #222;border-radius:40px;
@@ -1087,11 +1099,11 @@
   </div>
 
   <!-- ====== SCREEN: 深み編集（ステップ式） ====== -->
-  <div class="screen" id="screen-depth-edit" style="background:#f5f4f0;">
+  <div class="screen" id="screen-depth-edit" style="background:#fff;">
     <div style="width:100%;height:100%;display:flex;flex-direction:column;">
 
       <!-- ヘッダー -->
-      <div style="padding:18px 20px 14px;flex-shrink:0;border-bottom:1px solid #e8e8e4;background:#f5f4f0;">
+      <div style="padding:18px 20px 14px;flex-shrink:0;border-bottom:1px solid #e8e8e4;background:#fff;">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
           <div style="display:flex;align-items:center;gap:6px;flex:1;">
             <div id="step-dot-1" style="width:7px;height:7px;border-radius:50%;background:#222;transition:all 0.3s;"></div>
@@ -1199,7 +1211,7 @@
       </div>
 
       <!-- フッターナビ -->
-      <div style="flex-shrink:0;border-top:1px solid #e8e8e4;background:#f5f4f0;display:flex;align-items:center;position:relative;">
+      <div style="flex-shrink:0;border-top:1px solid #e8e8e4;background:#fff;display:flex;align-items:center;position:relative;">
         <!-- キャラ（左下） -->
         <div style="position:absolute;bottom:100%;left:16px;display:flex;align-items:flex-end;gap:8px;pointer-events:none;">
           <span id="depth-edit-chara" class="chara-svg" data-w="48" data-h="48" style="flex-shrink:0;"></span>
@@ -1297,17 +1309,12 @@
       "></div>
       <!-- ボタン群 -->
       <div style="display:flex;flex-direction:column;gap:10px;">
-        <button onclick="doShare()" style="
+        <button id="share-btn-main" onclick="doShare()" style="
           width:100%;padding:14px;border:none;border-radius:40px;
           background:#222;color:#fff;font-family:inherit;
           font-size:11px;letter-spacing:0.2em;cursor:pointer;
         ">シェアする</button>
-        <button onclick="doCopyUrl()" style="
-          width:100%;padding:14px;border:1px solid #ddd;border-radius:40px;
-          background:none;color:#555;font-family:inherit;
-          font-size:11px;letter-spacing:0.2em;cursor:pointer;
-        ">URLをコピー</button>
-        <button onclick="doCopyText()" style="
+        <button id="share-btn-copy" onclick="doCopyText()" style="
           width:100%;padding:14px;border:1px solid #ddd;border-radius:40px;
           background:none;color:#555;font-family:inherit;
           font-size:11px;letter-spacing:0.2em;cursor:pointer;
@@ -1318,6 +1325,46 @@
           color:#aaa;cursor:pointer;
         ">閉じる</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN: 存在の気配 ====== -->
+  <div class="screen" id="screen-presence">
+    <div class="card" style="min-height:380px;display:flex;flex-direction:column;align-items:center;padding:32px 28px;overflow-y:auto;">
+      <!-- 存在 -->
+      <div id="presence-svg" style="margin-bottom:20px;"></div>
+      <!-- 一文 -->
+      <div id="presence-text" style="
+        font-size:14px;letter-spacing:0.18em;color:#444;
+        text-align:center;line-height:2.2;font-weight:700;
+        max-width:240px;margin-bottom:20px;
+      "></div>
+      <!-- 紐づく概念・問い -->
+      <div id="presence-entry-info" style="width:100%;margin-bottom:20px;display:none;">
+        <div style="height:1px;background:#f0f0ec;margin-bottom:16px;"></div>
+        <div id="presence-concept-name" style="font-size:13px;font-weight:600;letter-spacing:0.06em;color:#333;margin-bottom:6px;"></div>
+        <div id="presence-question" style="font-size:11px;letter-spacing:0.04em;color:#888;line-height:1.9;"></div>
+      </div>
+      <!-- ボタン -->
+      <div style="display:flex;gap:12px;margin-bottom:16px;width:100%;justify-content:center;">
+        <button onclick="presenceAction('keep')" style="
+          padding:10px 20px;border:1px solid #ddd;border-radius:40px;
+          background:none;font-family:inherit;font-size:10px;
+          letter-spacing:0.2em;color:#888;cursor:pointer;
+        ">森に放つ</button>
+        <button onclick="presenceAction('flow')" style="
+          padding:10px 20px;border:none;border-radius:40px;
+          background:none;font-family:inherit;font-size:10px;
+          letter-spacing:0.2em;color:#bbb;cursor:pointer;
+        ">森から出す</button>
+        <button onclick="sharePresence()" style="
+          padding:10px 20px;border:1px solid #ddd;border-radius:40px;
+          background:none;font-family:inherit;font-size:10px;
+          letter-spacing:0.2em;color:#888;cursor:pointer;
+        ">シェア</button>
+      </div>
+      <!-- 一覧に戻る -->
+      <div onclick="goTo('screen-depth-list')" style="font-size:10px;letter-spacing:0.2em;color:#bbb;cursor:pointer;">← 一覧に戻る</div>
     </div>
   </div>
 
@@ -2314,8 +2361,10 @@
   }
 
   function goTo(id) {
+    const target = document.getElementById(id);
+    if (!target) { console.warn('goTo: screen not found:', id); return; }
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
+    target.classList.add('active');
     document.querySelectorAll('.chara-svg').forEach(el => {
       el.style.animation = 'none';
       el.offsetHeight;
@@ -2386,6 +2435,9 @@
           el.innerHTML = cfg.serif_oboroke_in2 || '';
         }
       }
+    }
+    if (id === 'screen-presence') {
+      renderPresence('screen-library');
     }
     if (id === 'screen-tree-intro') {
       setTimeout(() => renderTreeIntro(), 60);
@@ -2806,8 +2858,7 @@
   }
 
   function afterReaction() {
-    // リアクションの後に掛け合いへ
-    goTo('screen-dialogue');
+    afterFirst(dialogueType);
   }
 
   function showFirstResult(type) {
@@ -3163,7 +3214,8 @@
     }
     // 地層に根を描く（幹の延長として上から下へ）
     drawRootsOnStrata(sCtx, SW, SH, TRUNK_X);
-    const allFragTexts = getFragments().map(f => f.text).filter(Boolean);
+    // 重複除去してから地層テキストを描画
+    const allFragTexts = [...new Set(getFragments().map(f => f.text).filter(Boolean))];
     const strataWords  = allFragTexts.slice(-20);
     const placed = [];
     strataWords.forEach((word, i) => {
@@ -3227,6 +3279,11 @@
     const ref = { anim: treeIntroAnim };
     renderTreeOnCanvas(texts, 'tree-intro-canvas', 'tree-intro-strata', ref);
     treeIntroAnim = ref.anim;
+
+    // 存在をランダムに木の上に表示（50%）
+    if (Math.random() < 0.5) {
+      setTimeout(() => renderPresenceOnTree(), 900);
+    }
 
     // renderTreeOnCanvas の後にキャラを設置（innerHTML=''で消されないよう）
     const wc = WEATHER_COMMENTS[Math.floor(Math.random() * WEATHER_COMMENTS.length)];
@@ -4329,7 +4386,7 @@
         ? `<div style="font-size:10px;letter-spacing:0.04em;color:#888;line-height:1.7;">${e.questionText.slice(0,30)}${e.questionText.length>30?'…':''}</div>`
         : '';
       const date = new Date(e.updatedAt).toLocaleDateString('ja-JP',{month:'numeric',day:'numeric'});
-      card.innerHTML = `${name}${q}<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;"><div style="font-size:8px;letter-spacing:0.14em;color:#ccc;">${date}</div><button onclick="event.stopPropagation();openShareModal('${e.id}')" style="font-size:9px;letter-spacing:0.12em;color:#aaa;background:none;border:1px solid #e0e0da;border-radius:20px;padding:3px 10px;cursor:pointer;font-family:inherit;">シェア</button></div>`;
+      card.innerHTML = `${name}${q}<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;"><div style="font-size:8px;letter-spacing:0.14em;color:#ccc;">${date}</div><div style="display:flex;gap:6px;"><button onclick="event.stopPropagation();viewBeingForEntry('${e.id}')" style="font-size:9px;letter-spacing:0.1em;color:#888;background:none;border:1px solid #e0e0da;border-radius:20px;padding:3px 10px;cursor:pointer;font-family:inherit;">存在</button><button onclick="event.stopPropagation();openShareModal('${e.id}')" style="font-size:9px;letter-spacing:0.12em;color:#aaa;background:none;border:1px solid #e0e0da;border-radius:20px;padding:3px 10px;cursor:pointer;font-family:inherit;">シェア</button></div></div>`;
       container.appendChild(card);
     });
   }
@@ -4390,10 +4447,10 @@
     fragments.forEach(f => {
       const isSelected = ids.includes(f.id);
       const row = document.createElement('div');
-      row.style.cssText = 'padding:12px 14px;border:1px solid '+(isSelected?'#222':'#e0e0da')+';border-radius:3px;cursor:pointer;background:'+(isSelected?'#222':'transparent')+';transition:all 0.15s;display:flex;align-items:center;gap:10px;';
+      row.style.cssText = 'padding:12px 14px;border:1px solid '+(isSelected?'var(--lime)':'#e0e0da')+';border-radius:3px;cursor:pointer;background:'+(isSelected?'var(--lime)':'transparent')+';transition:all 0.15s;display:flex;align-items:center;gap:10px;';
       row.innerHTML =
-        '<div style="width:6px;height:6px;border-radius:50%;flex-shrink:0;background:'+(isSelected?'#f8f8f6':'#d0d0cc')+'"></div>'+
-        '<div style="font-size:12px;letter-spacing:0.06em;color:'+(isSelected?'#f8f8f6':'#444')+';line-height:1.7;flex:1;">'+(f.text||'')+'</div>'+
+        '<div style="width:6px;height:6px;border-radius:50%;flex-shrink:0;background:'+(isSelected?'#fff':'#d0d0cc')+'"></div>'+
+        '<div style="font-size:12px;letter-spacing:0.06em;color:'+(isSelected?'#fff':'#444')+';line-height:1.7;flex:1;">'+(f.text||'')+'</div>'+
         (isSelected?'<div style="font-size:10px;color:#f8f8f6;opacity:0.6;">✓</div>':'');
       row.addEventListener('click', () => toggleDepthSource(f.id, f.text || ''));
       container.appendChild(row);
@@ -4683,17 +4740,6 @@
     }, 30000);
   }
 
-  // 入力停止30秒でShakeCard表示
-  function resetShakeTimer() {
-    if (_shakeTimer) clearTimeout(_shakeTimer);
-    _shakeTimer = setTimeout(() => {
-      const step3 = document.getElementById('depth-step-3');
-      if (step3 && step3.style.display !== 'none' && _shakeQueue.length === 0) {
-        triggerShakeCard();
-      }
-    }, 30000);
-  }
-
   // dialogue 画面のShake表示
   function renderDialogueShake() {
     const area = document.getElementById('dialogue-shake-area');
@@ -4904,7 +4950,7 @@
 
   const STEP_CONFIG = {
     1: { label: 'STEP 1 / 3', title: '違和感を選ぶ',   back: null,  next: 2 },
-    2: { label: 'STEP 2 / 3', title: '概念を選ぶ',     back: 1,     next: 3 },
+    2: { label: 'STEP 2 / 3', title: '違和感に関連する概念を選ぶ',     back: 1,     next: 3 },
     3: { label: 'STEP 3 / 3', title: '問いと概念を作る',   back: 2,     next: null },
   };
 
@@ -4968,26 +5014,40 @@
       const conceptsSummaryEl = document.getElementById('step3-concepts-summary');
       const conceptsTagsEl    = document.getElementById('step3-concepts-tags');
       if (conceptsSummaryEl && conceptsTagsEl) {
-        const savedFragments = getSavedFragments();
-        const closeWords     = getCloseWords();
-        const savedWords     = getSavedWords();
-        const allFrags2      = typeof THOUGHT_FRAGMENTS !== 'undefined' ? THOUGHT_FRAGMENTS : [];
-        const labelMap = {};
-        savedFragments.forEach(f => { labelMap['frag_' + f.id] = f.concept; });
-        closeWords.forEach((w, i) => { labelMap['close_' + i] = w; });
-        savedWords.forEach((w, i)  => { labelMap['saved_' + i] = w; });
-        const selectedLabels = _depthSelectedConcepts
-          .map(id => labelMap[id])
-          .filter(Boolean);
+        const allFrags2   = typeof THOUGHT_FRAGMENTS !== 'undefined' ? THOUGHT_FRAGMENTS : [];
+        const sfList      = getSavedFragments();
+        const cwList      = getCloseWords();
+        const swList      = getSavedWords();
+
+        // IDからラベルを引く関数
+        const resolveLabel = (id) => {
+          if (id.startsWith('frag_')) {
+            const fid = id.replace('frag_', '');
+            const f = sfList.find(f => f.id === fid);
+            return f ? f.concept : null;
+          }
+          if (id.startsWith('close_')) {
+            const idx = parseInt(id.replace('close_', ''));
+            return cwList[idx] || null;
+          }
+          if (id.startsWith('saved_')) {
+            const idx = parseInt(id.replace('saved_', ''));
+            return swList[idx] || null;
+          }
+          return null;
+        };
+
+        const selectedLabels = _depthSelectedConcepts.map(resolveLabel).filter(Boolean);
+
         if (selectedLabels.length > 0) {
           conceptsSummaryEl.style.display = 'block';
           conceptsTagsEl.innerHTML = '';
           selectedLabels.forEach(label => {
-            const m = label.match(/^(.+?)\s*[―—]\s*(.+)$/);
-            const conceptName = m ? m[1].trim() : label;
+            const m2 = label.match(/^(.+?)\s*[―—]\s*(.+)$/);
+            const conceptName = m2 ? m2[1].trim() : label;
             const fragMatch   = allFrags2.find(f => f.concept === conceptName);
             const tag = document.createElement('div');
-            tag.style.cssText = 'display:inline-flex;align-items:center;gap:4px;background:#fff;border:1px solid #e0e0da;border-radius:20px;padding:5px 12px;cursor:pointer;';
+            tag.style.cssText = 'display:inline-flex;align-items:center;gap:4px;background:#fff;border:1px solid #e0e0da;border-radius:20px;padding:5px 12px;cursor:pointer;margin:2px;';
             tag.innerHTML =
               '<span style="font-size:10px;letter-spacing:0.06em;color:#444;">' + conceptName + '</span>' +
               (fragMatch ? '<span style="font-size:10px;color:#bbb;">›</span>' : '');
@@ -5118,7 +5178,7 @@
       // 右：+ボタンで選択
       const btn = document.createElement('button');
       btn.textContent = isSel ? '✓' : '+';
-      btn.style.cssText = 'flex-shrink:0;width:28px;height:28px;border:1px solid '+(isSel?'#222':'#ccc')+';border-radius:50%;background:'+(isSel?'#222':'transparent')+';color:'+(isSel?'#f8f8f6':'#aaa')+';font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;transition:all 0.15s;';
+      btn.style.cssText = 'flex-shrink:0;width:28px;height:28px;border:1px solid '+(isSel?'var(--lime)':'#ccc')+';border-radius:50%;background:'+(isSel?'var(--lime)':'transparent')+';color:'+(isSel?'#fff':'#aaa')+';font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;transition:all 0.15s;';
       const itemId = item.id;
       btn.addEventListener('click', function(e) { e.stopPropagation(); toggleDepthConcept(itemId); });
       row.appendChild(info);
@@ -5166,7 +5226,7 @@
       // 右：+ボタン（選択）
       const btn = document.createElement('button');
       btn.textContent = isSel ? '✓' : '+';
-      btn.style.cssText = 'flex-shrink:0;width:28px;height:28px;border:1px solid '+(isSel?'#222':'#ccc')+';border-radius:50%;background:'+(isSel?'#222':'transparent')+';color:'+(isSel?'#f8f8f6':'#aaa')+';font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;transition:all 0.15s;margin-top:2px;';
+      btn.style.cssText = 'flex-shrink:0;width:28px;height:28px;border:1px solid '+(isSel?'var(--lime)':'#ccc')+';border-radius:50%;background:'+(isSel?'var(--lime)':'transparent')+';color:'+(isSel?'#fff':'#aaa')+';font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;transition:all 0.15s;margin-top:2px;';
       const fId = f.id;
       btn.addEventListener('click', function(e) { e.stopPropagation(); toggleDepthFragment(fId); });
       inner.appendChild(info);
@@ -5193,13 +5253,14 @@
       updatedAt:           now,
     };
     upsertDepthEntry(entry);
-    // 保存フィードバック → 一覧に遷移
+    // 保存した存在IDを保持して presence へ
     const btn = document.querySelector('#screen-depth-edit button[onclick="saveDepthEntry()"]');
-    if (btn) {
-      btn.textContent = '保存済';
-      btn.style.background = '#555';
-    }
-    setTimeout(() => { goTo('screen-depth-list'); }, 800);
+    if (btn) { btn.textContent = '保存済'; btn.style.background = '#555'; }
+    setTimeout(() => {
+      _presenceFromEntryId = entry.id;
+      renderPresence('screen-depth-list');
+      goTo('screen-presence');
+    }, 600);
   }
 
   function deleteCurrentDepthEntry() {
@@ -5288,7 +5349,393 @@
     }
   }
   // ================================================================
-  // ===== シェア機能 =====
+  // ===== キャラ同士の会話（木の後） =====
+  // ================================================================
+
+  // キャラ同士の掛け合いデータ
+  // 各エントリ: { from: 'chara1', to: 'chara2', lines: [{chara, text}] }
+  const CHARA_TALKS = [
+    {
+      charas: ['majimaji', 'namake'],
+      lines: [
+        { chara: 'majimaji', text: 'ことば、増えてきたさ。' },
+        { chara: 'namake',   text: '……そうよん。' },
+        { chara: 'majimaji', text: '気になること、ある？' },
+        { chara: 'namake',   text: '……眠いよん。' },
+        { chara: 'majimaji', text: 'それも違和感さ。' },
+      ]
+    },
+    {
+      charas: ['kasa', 'yurayura'],
+      lines: [
+        { chara: 'kasa',     text: 'ずいぶん積み上げたムッシュ。' },
+        { chara: 'yurayura', text: '木みたいンゴ。' },
+        { chara: 'kasa',     text: '根も張ってきたムッシュ。' },
+        { chara: 'yurayura', text: 'なんかいいンゴ。' },
+        { chara: 'kasa',     text: '傘、いらないかもムッシュ。' },
+        { chara: 'yurayura', text: '晴れてるンゴ？' },
+      ]
+    },
+    {
+      charas: ['concrete', 'sun'],
+      lines: [
+        { chara: 'concrete', text: 'これだけ積んできたのね。' },
+        { chara: 'sun',      text: 'すごいじゃないか！' },
+        { chara: 'concrete', text: 'でも、まだ問いが見えないかしら。' },
+        { chara: 'sun',      text: '問いは育てるもんだぜ。' },
+        { chara: 'concrete', text: 'そうね。急がなくていいわ。' },
+        { chara: 'sun',      text: 'そう、焦るなよ！' },
+      ]
+    },
+    {
+      charas: ['majimaji', 'kasa'],
+      lines: [
+        { chara: 'majimaji', text: 'ことばって、不思議さ。' },
+        { chara: 'kasa',     text: 'どうしてムッシュ？' },
+        { chara: 'majimaji', text: '書いたら、少し軽くなるんだよ。' },
+        { chara: 'kasa',     text: 'それはわかるムッシュ。' },
+        { chara: 'majimaji', text: 'また来てさ。' },
+        { chara: 'kasa',     text: '来るムッシュ。' },
+      ]
+    },
+    {
+      charas: ['yurayura', 'namake'],
+      lines: [
+        { chara: 'yurayura', text: '木、育ってるンゴ。' },
+        { chara: 'namake',   text: '……そうよん。' },
+        { chara: 'yurayura', text: 'ねえ、何が気になるンゴ？' },
+        { chara: 'namake',   text: '……全部よん。' },
+        { chara: 'yurayura', text: '全部か……。いいンゴ。' },
+        { chara: 'namake',   text: '……うん、よん。' },
+      ]
+    },
+    {
+      charas: ['concrete', 'majimaji'],
+      lines: [
+        { chara: 'concrete', text: 'また戻ってきたのね。' },
+        { chara: 'majimaji', text: 'うん、また来たさ。' },
+        { chara: 'concrete', text: '前より少し変わった気がするわ。' },
+        { chara: 'majimaji', text: 'そうかな。自分じゃわからないよ。' },
+        { chara: 'concrete', text: 'それがわかると面白いかしら。' },
+        { chara: 'majimaji', text: 'そうかもさ。' },
+      ]
+    },
+  ];
+
+  let _charaTalkDest = 'screen-chara-select';
+
+  function renderCharaTalk(destScreen) {
+    _charaTalkDest = destScreen || 'screen-chara-select';
+    const container = document.getElementById('chara-talk-lines');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const chara = currentChara || 'majimaji';
+    let talkLines = [];
+
+    // DIALOGUES（旧キャラ会話）から取得
+    const dPool = typeof DIALOGUES !== 'undefined' ? (DIALOGUES[chara] || DIALOGUES.majimaji || []) : [];
+    if (dPool.length > 0) {
+      const data = dPool[Math.floor(Math.random() * dPool.length)];
+      const partner = data.partner || 'majimaji';
+      talkLines = data.lines.map(line => ({
+        chara: line.s === 'self' ? chara : partner,
+        text:  line.t,
+      }));
+    } else {
+      // フォールバック：CHARA_TALKS
+      const matched = CHARA_TALKS.filter(t => t.charas.includes(chara));
+      const talk = matched.length > 0
+        ? matched[Math.floor(Math.random() * matched.length)]
+        : CHARA_TALKS[Math.floor(Math.random() * CHARA_TALKS.length)];
+      talkLines = talk.lines;
+    }
+
+    talkLines.forEach((line, i) => {
+      const isRight = line.chara === chara;
+      const svgHtml = charaInnerSVGFixed(line.chara, 44, 44);
+      const row = document.createElement('div');
+      row.style.cssText = `display:flex;align-items:flex-end;gap:10px;margin-bottom:18px;opacity:0;transition:opacity 0.4s;${isRight?'flex-direction:row-reverse;':''}`;
+      row.innerHTML =
+        `<div style="flex-shrink:0;">${svgHtml}</div>` +
+        `<div style="background:${isRight?'#f0f0ec':'#fff'};border:1px solid #e8e8e4;border-radius:${isRight?'16px 4px 16px 16px':'4px 16px 16px 16px'};padding:12px 16px;font-size:13px;letter-spacing:0.06em;color:#333;line-height:1.8;max-width:200px;font-weight:700;">${line.text}</div>`;
+      container.appendChild(row);
+      setTimeout(() => { row.style.opacity = '1'; }, i * 300 + 100);
+    });
+  }
+
+  function charaTalkNext() {
+    goTo(_charaTalkDest);
+  }
+
+  // ================================================================
+
+  // ================================================================
+  // ===== 存在の気配（PresenceSeed） =====
+  // ================================================================
+
+  const PRESENCE_SEEDS = [
+    { text:'静かな場所で増える', mood:['静か','孤独','内省'], relatedConcepts:['孤独','静寂','場所'] },
+    { text:'整列すると近づいてくる', mood:['不安','緊張','秩序'], relatedConcepts:['管理','制度','規律'] },
+    { text:'目が合った気がするだけ', mood:['曖昧','不確か','見られる'], relatedConcepts:['他者のまなざし','存在','認識'] },
+    { text:'根の下でまだ考えている', mood:['深い','ゆっくり','地中'], relatedConcepts:['思考','時間','記憶'] },
+    { text:'ちゃんと並べた？', mood:['秩序','強迫','整理'], relatedConcepts:['管理','制度','パターン'] },
+    { text:'見ようとすると、少しずれる', mood:['曖昧','掴めない','遠い'], relatedConcepts:['認識','不確か','差延'] },
+    { text:'名前をつけると薄くなった', mood:['言語化','喪失','変容'], relatedConcepts:['言語','概念','差延'] },
+    { text:'問いの重さを知っている', mood:['深い','重い','問い'], relatedConcepts:['問い','深み','意味'] },
+    { text:'霧の中でだけ見える', mood:['霧','曖昧','幻'], relatedConcepts:['認識','幻覚','不確か'] },
+    { text:'そこにいたのはずっと前から', mood:['永続','古い','根'], relatedConcepts:['時間','記憶','存在'] },
+    { text:'触ろうとすると冷たかった', mood:['感覚','距離','冷たい'], relatedConcepts:['身体','他者','距離'] },
+    { text:'声はないが音はある', mood:['音','感覚','存在'], relatedConcepts:['言語','感覚','存在'] },
+    { text:'境界のすぐ外で待っている', mood:['境界','外','待つ'], relatedConcepts:['境界','他者','閾値'] },
+    { text:'形はないが影はある', mood:['影','存在','不在'], relatedConcepts:['存在','不在','痕跡'] },
+    { text:'問いの形をしている', mood:['問い','形','意味'], relatedConcepts:['問い','概念','形式'] },
+    { text:'増えているのかもしれない', mood:['増殖','変化','不安'], relatedConcepts:['変化','成長','不安'] },
+    { text:'水が染み込む速さで動く', mood:['ゆっくり','浸透','変化'], relatedConcepts:['時間','変容','浸透'] },
+    { text:'ひとつだったのに分かれた', mood:['分裂','変化','喪失'], relatedConcepts:['同一性','分裂','変容'] },
+    { text:'誰かが置いていったかもしれない', mood:['他者','残留','痕跡'], relatedConcepts:['他者','記憶','痕跡'] },
+    { text:'夜だけ少し大きくなる', mood:['夜','変化','静か'], relatedConcepts:['時間','変容','潜在'] },
+  ];
+
+  let _presenceNext = 'screen-library';
+  let _presenceFromEntryId = null;
+
+  function renderPresence(nextScreen) {
+    _presenceNext = nextScreen || 'screen-library';
+
+    const entries = _getDepthEntriesSafe();
+    const fragments = getFragments().map(f => f.text).join(' ');
+    const recentConcepts = entries.length > 0 ? (entries[0].selectedConcepts || []).join(' ') : '';
+    const context = fragments + ' ' + recentConcepts;
+
+    let best = null, bestScore = -1;
+    PRESENCE_SEEDS.forEach(seed => {
+      let score = 0;
+      seed.mood.forEach(m => { if (context.includes(m)) score += 2; });
+      seed.relatedConcepts.forEach(c => { if (context.includes(c)) score += 3; });
+      if (score > bestScore) { bestScore = score; best = seed; }
+    });
+    const seed = bestScore > 0 ? best : PRESENCE_SEEDS[Math.floor(Math.random() * PRESENCE_SEEDS.length)];
+
+    const textEl = document.getElementById('presence-text');
+    if (textEl) textEl.textContent = seed.text;
+
+    const svgEl = document.getElementById('presence-svg');
+    if (svgEl) renderPresenceSVG(svgEl);
+
+    // 紐づくエントリの概念・問いを表示
+    const infoEl     = document.getElementById('presence-entry-info');
+    const conceptEl  = document.getElementById('presence-concept-name');
+    const questionEl = document.getElementById('presence-question');
+    const entry = _presenceFromEntryId
+      ? (_getDepthEntriesSafe().find(e => e.id === _presenceFromEntryId) || null)
+      : null;
+    if (entry && (entry.originalConceptName || entry.questionText)) {
+      if (infoEl) infoEl.style.display = 'block';
+      if (conceptEl)  conceptEl.textContent  = entry.originalConceptName || '';
+      if (questionEl) questionEl.textContent = entry.questionText        || '';
+    } else {
+      if (infoEl) infoEl.style.display = 'none';
+    }
+  }
+
+  function presenceAction(action) {
+    goTo('screen-depth-list');
+  }
+
+  async function sharePresence() {
+    const seedText = document.getElementById('presence-text')?.textContent || '';
+    const entry = _presenceFromEntryId
+      ? (_getDepthEntriesSafe().find(e => e.id === _presenceFromEntryId) || null)
+      : null;
+    const lines = ['【marginary  存在の気配】', '', seedText, ''];
+    if (entry) {
+      if (entry.originalConceptName) lines.push('▷ ' + entry.originalConceptName, '');
+      if (entry.questionText)        lines.push(entry.questionText, '');
+    }
+    lines.push('— marginary');
+    const text = lines.join('\n');
+    if (navigator.share) {
+      try { await navigator.share({ title: '存在の気配', text }); }
+      catch(e) { if (e.name !== 'AbortError') _fallbackCopy(text); }
+    } else {
+      _fallbackCopy(text);
+    }
+  }
+
+  // キャラっぽい存在（3パターンランダム）
+  const PRESENCE_CREATURE_TYPES = ['round', 'angular', 'drifting'];
+
+  function renderPresenceSVG(container) {
+    const type = PRESENCE_CREATURE_TYPES[Math.floor(Math.random() * PRESENCE_CREATURE_TYPES.length)];
+    const W = 160, H = 160;
+    let svg = '';
+
+    if (type === 'round') {
+      // まるっとした犬・クマっぽい存在
+      svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+        <style>
+          @keyframes presenceSway{0%,100%{transform:rotate(0deg)}40%{transform:rotate(2deg)}70%{transform:rotate(-1.5deg)}}
+          #pc{animation:presenceSway 3s ease-in-out infinite;transform-origin:80px 110px;}
+        </style>
+        <g id="pc">
+          <!-- 耳 -->
+          <ellipse cx="54" cy="50" rx="16" ry="20" fill="#c8b89a" transform="rotate(-15,54,50)"/>
+          <ellipse cx="106" cy="50" rx="16" ry="20" fill="#c8b89a" transform="rotate(15,106,50)"/>
+          <ellipse cx="54" cy="52" rx="9" ry="12" fill="#e8d4c0" transform="rotate(-15,54,52)"/>
+          <ellipse cx="106" cy="52" rx="9" ry="12" fill="#e8d4c0" transform="rotate(15,106,52)"/>
+          <!-- 体 -->
+          <ellipse cx="80" cy="105" rx="38" ry="30" fill="#c8b89a"/>
+          <!-- 頭 -->
+          <circle cx="80" cy="75" r="36" fill="#d4c4a8"/>
+          <!-- 顔 -->
+          <ellipse cx="80" cy="82" rx="22" ry="16" fill="#e8d4c0"/>
+          <!-- 目 -->
+          <circle cx="68" cy="70" r="7" fill="#333"/>
+          <circle cx="92" cy="70" r="7" fill="#333"/>
+          <circle cx="70" cy="68" r="2.5" fill="white"/>
+          <circle cx="94" cy="68" r="2.5" fill="white"/>
+          <!-- 鼻 -->
+          <ellipse cx="80" cy="79" rx="5" ry="3.5" fill="#555"/>
+          <!-- 口 -->
+          <path d="M74 84 Q80 89 86 84" stroke="#555" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <!-- 腕 -->
+          <ellipse cx="46" cy="100" rx="12" ry="18" fill="#c8b89a" transform="rotate(-10,46,100)"/>
+          <ellipse cx="114" cy="100" rx="12" ry="18" fill="#c8b89a" transform="rotate(10,114,100)"/>
+          <!-- 足 -->
+          <ellipse cx="64" cy="128" rx="14" ry="10" fill="#baa890"/>
+          <ellipse cx="96" cy="128" rx="14" ry="10" fill="#baa890"/>
+          <!-- しっぽ -->
+          <path d="M118 108 Q138 90 130 75" stroke="#c8b89a" stroke-width="10" fill="none" stroke-linecap="round"/>
+        </g>
+      </svg>`;
+
+    } else if (type === 'angular') {
+      // とがった鳥・虫っぽい存在
+      svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+        <style>
+          @keyframes presenceFloat{0%,100%{transform:translateY(0px)}50%{transform:translateY(-8px)}}
+          #pc{animation:presenceFloat 2.8s ease-in-out infinite;}
+        </style>
+        <g id="pc">
+          <!-- 翼 -->
+          <ellipse cx="42" cy="82" rx="32" ry="14" fill="#9ab0b8" opacity="0.8" transform="rotate(-20,42,82)"/>
+          <ellipse cx="118" cy="82" rx="32" ry="14" fill="#9ab0b8" opacity="0.8" transform="rotate(20,118,82)"/>
+          <ellipse cx="38" cy="80" rx="20" ry="8" fill="#b8ccd4" opacity="0.7" transform="rotate(-20,38,80)"/>
+          <ellipse cx="122" cy="80" rx="20" ry="8" fill="#b8ccd4" opacity="0.7" transform="rotate(20,122,80)"/>
+          <!-- 体 -->
+          <ellipse cx="80" cy="95" rx="22" ry="28" fill="#7a8c94"/>
+          <!-- 頭 -->
+          <circle cx="80" cy="62" r="24" fill="#8a9da6"/>
+          <!-- くちばし -->
+          <polygon points="80,72 72,80 88,80" fill="#c8a060"/>
+          <!-- 目 -->
+          <circle cx="70" cy="58" r="8" fill="white"/>
+          <circle cx="90" cy="58" r="8" fill="white"/>
+          <circle cx="71" cy="58" r="5" fill="#222"/>
+          <circle cx="91" cy="58" r="5" fill="#222"/>
+          <circle cx="72" cy="56" r="2" fill="white"/>
+          <circle cx="92" cy="56" r="2" fill="white"/>
+          <!-- 足 -->
+          <line x1="70" y1="120" x2="62" y2="138" stroke="#9a7848" stroke-width="3" stroke-linecap="round"/>
+          <line x1="70" y1="120" x2="58" y2="132" stroke="#9a7848" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="90" y1="120" x2="98" y2="138" stroke="#9a7848" stroke-width="3" stroke-linecap="round"/>
+          <line x1="90" y1="120" x2="102" y2="132" stroke="#9a7848" stroke-width="2.5" stroke-linecap="round"/>
+        </g>
+      </svg>`;
+
+    } else {
+      // ふわふわのスライム・ゼリーっぽい存在
+      svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+        <style>
+          @keyframes presencePulse{0%,100%{rx:42;ry:38}50%{rx:38;ry:42}}
+          @keyframes presenceWobble{0%,100%{transform:scaleX(1)}50%{transform:scaleX(1.06)}}
+          #pc{animation:presenceWobble 2.5s ease-in-out infinite;transform-origin:80px 90px;}
+        </style>
+        <g id="pc">
+          <!-- 影 -->
+          <ellipse cx="82" cy="138" rx="32" ry="8" fill="#ccc" opacity="0.4"/>
+          <!-- 体（ぷにぷに） -->
+          <ellipse cx="80" cy="90" rx="42" ry="40" fill="#a8c4d0"/>
+          <ellipse cx="80" cy="88" rx="38" ry="36" fill="#b8d4e0"/>
+          <!-- ツノ？突起 -->
+          <ellipse cx="66" cy="52" rx="8" ry="14" fill="#98b4c0" transform="rotate(-12,66,52)"/>
+          <ellipse cx="94" cy="52" rx="8" ry="14" fill="#98b4c0" transform="rotate(12,94,52)"/>
+          <!-- 目 -->
+          <ellipse cx="67" cy="80" rx="10" ry="11" fill="white"/>
+          <ellipse cx="93" cy="80" rx="10" ry="11" fill="white"/>
+          <circle cx="68" cy="81" r="6" fill="#334"/>
+          <circle cx="94" cy="81" r="6" fill="#334"/>
+          <circle cx="70" cy="79" r="2.5" fill="white"/>
+          <circle cx="96" cy="79" r="2.5" fill="white"/>
+          <!-- 口 -->
+          <path d="M72 96 Q80 103 88 96" stroke="#6a8a94" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <!-- 光沢 -->
+          <ellipse cx="62" cy="70" rx="10" ry="7" fill="white" opacity="0.2" transform="rotate(-20,62,70)"/>
+          <!-- 足（もにょもにょ） -->
+          <ellipse cx="58" cy="126" rx="16" ry="8" fill="#98b4c0"/>
+          <ellipse cx="102" cy="126" rx="16" ry="8" fill="#98b4c0"/>
+        </g>
+      </svg>`;
+    }
+
+    container.innerHTML = svg;
+  }
+
+  // 背景：選択キャラ以外をうっすら配置
+  function renderPresenceCharaBg(container) {
+    const chara = currentChara || 'majimaji';
+    const others = ALL_CHARAS.filter(c => c !== chara);
+    container.innerHTML = '';
+    const positions = [
+      {left:'-5%', top:'10%', size:80, rot:-8},
+      {left:'70%', top:'5%',  size:70, rot:12},
+      {left:'60%', top:'65%', size:90, rot:-5},
+      {left:'-8%', top:'60%', size:75, rot:10},
+      {left:'30%', top:'75%', size:65, rot:-15},
+    ];
+    others.slice(0, 5).forEach((c, i) => {
+      const pos = positions[i];
+      const el = document.createElement('div');
+      el.style.cssText = `position:absolute;left:${pos.left};top:${pos.top};width:${pos.size}px;height:${pos.size}px;opacity:0.08;transform:rotate(${pos.rot}deg);filter:grayscale(1);`;
+      el.innerHTML = charaInnerSVGFixed(c, pos.size, pos.size);
+      container.appendChild(el);
+    });
+  }
+
+  // 木の表示に存在をランダム表示
+  function renderPresenceOnTree() {
+    const treeEl = document.getElementById('tree-intro-canvas');
+    if (!treeEl) return;
+    const existing = document.getElementById('tree-presence-being');
+    if (existing) existing.remove();
+
+    const type = PRESENCE_CREATURE_TYPES[Math.floor(Math.random() * PRESENCE_CREATURE_TYPES.length)];
+    const wrap = document.createElement('div');
+    wrap.id = 'tree-presence-being';
+    wrap.style.cssText = 'position:absolute;top:5%;left:5%;width:70px;height:70px;opacity:0.55;z-index:5;';
+    const tmp = document.createElement('div');
+    renderPresenceSVG(tmp);
+    // SVGを小さくスケール
+    const svgEl = tmp.querySelector('svg');
+    if (svgEl) {
+      svgEl.setAttribute('width', '70');
+      svgEl.setAttribute('height', '70');
+      wrap.appendChild(svgEl);
+    }
+    treeEl.appendChild(wrap);
+  }
+
+  function viewBeingForEntry(entryId) {
+    _presenceFromEntryId = entryId;
+    renderPresence('screen-depth-list');
+    goTo('screen-presence');
+  }
+
+  function closeBeingModal() {} // 後方互換
+
+  async function summonBeing() {} // 後方互換
+
   // ================================================================
 
   let _shareEntryId = null;
@@ -5328,45 +5775,22 @@
     return lines.join('\n');
   }
 
-  function buildShareUrl(entry) {
-    if (!entry) return window.location.href;
-    const params = new URLSearchParams();
-    if (entry.originalConceptName) params.set('concept', entry.originalConceptName);
-    if (entry.questionText)        params.set('q', entry.questionText.slice(0, 200));
-    if (entry.memo)                params.set('memo', entry.memo.slice(0, 100));
-    const base = window.location.href.split('?')[0];
-    return base + '?' + params.toString();
-  }
-
   async function doShare() {
     const entry = getDepthEntryById(_shareEntryId);
     if (!entry) return;
     const text = buildShareText(entry);
-    const url  = buildShareUrl(entry);
+    const btn  = document.getElementById('share-btn-main');
     if (navigator.share) {
       try {
-        await navigator.share({ title: entry.originalConceptName || '深みの記録', text, url });
+        await navigator.share({ title: entry.originalConceptName || '深みの記録', text });
         closeShareModal();
       } catch(e) {
-        if (e.name !== 'AbortError') doCopyText();
+        if (e.name !== 'AbortError') {
+          doCopyText();
+        }
       }
     } else {
       doCopyText();
-    }
-  }
-
-  function doCopyUrl() {
-    const entry = getDepthEntryById(_shareEntryId);
-    if (!entry) return;
-    const url = buildShareUrl(entry);
-    const btn = document.querySelector('#share-modal button[onclick="doCopyUrl()"]');
-    const done = () => { if (btn) { btn.textContent = 'コピーしました！'; setTimeout(() => { btn.textContent = 'URLをコピー'; }, 2000); } };
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(url).then(done);
-    } else {
-      const ta = document.createElement('textarea');
-      ta.value = url; document.body.appendChild(ta); ta.select();
-      document.execCommand('copy'); document.body.removeChild(ta); done();
     }
   }
 
@@ -5374,15 +5798,31 @@
     const entry = getDepthEntryById(_shareEntryId);
     if (!entry) return;
     const text = buildShareText(entry);
-    const btn = document.querySelector('#share-modal button[onclick="doCopyText()"]');
-    const done = () => { if (btn) { btn.textContent = 'コピーしました！'; setTimeout(() => { btn.textContent = 'テキストをコピー'; }, 2000); } };
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(text).then(done);
+    const btn  = document.getElementById('share-btn-copy');
+    const done = () => {
+      if (btn) {
+        const orig = btn.textContent;
+        btn.textContent = 'コピーしました！';
+        setTimeout(() => { btn.textContent = orig; }, 2000);
+      }
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(() => {
+        _fallbackCopy(text); done();
+      });
     } else {
-      const ta = document.createElement('textarea');
-      ta.value = text; document.body.appendChild(ta); ta.select();
-      document.execCommand('copy'); document.body.removeChild(ta); done();
+      _fallbackCopy(text); done();
     }
+  }
+
+  function _fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;top:-999px;left:-999px;';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    document.body.removeChild(ta);
   }
 
   // ================================================================
