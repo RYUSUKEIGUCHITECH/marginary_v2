@@ -5544,22 +5544,118 @@
   }
 
   async function sharePresence() {
-    const seedText = document.getElementById('presence-text')?.textContent || '';
-    const entry = _presenceFromEntryId
+    const seedText    = document.getElementById('presence-text')?.textContent || '';
+    const entry       = _presenceFromEntryId
       ? (_getDepthEntriesSafe().find(e => e.id === _presenceFromEntryId) || null)
       : null;
-    const lines = ['【marginary  存在の気配】', '', seedText, ''];
-    if (entry) {
-      if (entry.originalConceptName) lines.push('▷ ' + entry.originalConceptName, '');
-      if (entry.questionText)        lines.push(entry.questionText, '');
+    const conceptName = entry?.originalConceptName || '';
+    const questionText= entry?.questionText        || '';
+
+    // SVGを取得
+    const svgEl = document.querySelector('#presence-svg svg');
+
+    // Canvas に合成
+    const W = 600, H = 800;
+    const canvas = document.createElement('canvas');
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext('2d');
+
+    // 背景
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, W, H);
+
+    // 上部ラベル
+    ctx.fillStyle = '#bbb';
+    ctx.font = '400 20px Inter, sans-serif';
+    ctx.letterSpacing = '4px';
+    ctx.textAlign = 'center';
+    ctx.fillText('MARGINARY', W/2, 60);
+
+    // SVGをimgに変換して描画
+    await new Promise(resolve => {
+      if (!svgEl) { resolve(); return; }
+      const svgStr = new XMLSerializer().serializeToString(svgEl);
+      const blob   = new Blob([svgStr], { type: 'image/svg+xml' });
+      const url    = URL.createObjectURL(blob);
+      const img    = new Image();
+      img.onload = () => {
+        const size = 280;
+        ctx.drawImage(img, (W - size) / 2, 110, size, size);
+        URL.revokeObjectURL(url);
+        resolve();
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); resolve(); };
+      img.src = url;
+    });
+
+    // 気配のテキスト
+    ctx.fillStyle = '#333';
+    ctx.font = 'bold 28px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(seedText, W/2, 440);
+
+    // 区切り線
+    if (conceptName || questionText) {
+      ctx.strokeStyle = '#eee';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(60, 480); ctx.lineTo(W - 60, 480);
+      ctx.stroke();
+
+      // 概念名
+      if (conceptName) {
+        ctx.fillStyle = '#222';
+        ctx.font = 'bold 24px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('▷ ' + conceptName, W/2, 530);
+      }
+
+      // 問い（折り返し）
+      if (questionText) {
+        ctx.fillStyle = '#888';
+        ctx.font = '400 20px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        const words = questionText;
+        const maxW  = W - 120;
+        let y = conceptName ? 580 : 530;
+        let line = '';
+        for (const char of words) {
+          const test = line + char;
+          if (ctx.measureText(test).width > maxW && line !== '') {
+            ctx.fillText(line, W/2, y);
+            y += 32; line = char;
+          } else { line = test; }
+        }
+        if (line) ctx.fillText(line, W/2, y);
+      }
     }
-    lines.push('— marginary');
-    const text = lines.join('\n');
-    if (navigator.share) {
-      try { await navigator.share({ title: '存在の気配', text }); }
-      catch(e) { if (e.name !== 'AbortError') _fallbackCopy(text); }
-    } else {
-      _fallbackCopy(text);
+
+    // フッター
+    ctx.fillStyle = '#ccc';
+    ctx.font = '400 18px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('— marginary', W/2, H - 50);
+
+    // 画像としてシェア
+    try {
+      canvas.toBlob(async blob => {
+        const file = new File([blob], 'marginary-presence.png', { type: 'image/png' });
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file], title: '存在の気配' });
+        } else if (navigator.share) {
+          // ファイル非対応はテキストで
+          const text = ['【marginary  存在の気配】', '', seedText, conceptName ? '▷ ' + conceptName : '', questionText, '— marginary'].filter(Boolean).join('\n');
+          await navigator.share({ title: '存在の気配', text });
+        } else {
+          // ダウンロード
+          const a = document.createElement('a');
+          a.href = canvas.toDataURL('image/png');
+          a.download = 'marginary-presence.png';
+          a.click();
+        }
+      }, 'image/png');
+    } catch(e) {
+      if (e.name !== 'AbortError') console.warn('share failed', e);
     }
   }
 
