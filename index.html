@@ -6020,6 +6020,23 @@
   // ================================================================
 
   let _audioCtx = null;
+  // iOS Safari対応：最初のタップでAudioContextを初期化
+  function initAudioOnFirstTouch() {
+    if (_audioCtx) return;
+    try {
+      _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      // 無音を再生してunlock
+      const buf = _audioCtx.createBuffer(1, 1, 22050);
+      const src = _audioCtx.createBufferSource();
+      src.buffer = buf;
+      src.connect(_audioCtx.destination);
+      src.start(0);
+    } catch(e) {}
+  }
+
+  document.addEventListener('touchstart', initAudioOnFirstTouch, { once: true, passive: true });
+  document.addEventListener('click',      initAudioOnFirstTouch, { once: true });
+
   function getAudioCtx() {
     if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (_audioCtx.state === 'suspended') _audioCtx.resume();
