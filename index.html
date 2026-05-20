@@ -2368,8 +2368,8 @@
     if (!target) { console.warn('goTo: screen not found:', id); return; }
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     target.classList.add('active');
-    // 音を鳴らす
-    playSoundForScreen(id);
+    // 音を鳴らす（モバイル対応で少し遅らせる）
+    setTimeout(() => playSoundForScreen(id), 50);
     document.querySelectorAll('.chara-svg').forEach(el => {
       el.style.animation = 'none';
       el.offsetHeight;
@@ -6020,12 +6020,21 @@
   // ================================================================
 
   let _audioCtx = null;
-  // iOS Safari対応：最初のタップでAudioContextを初期化
-  function initAudioOnFirstTouch() {
-    if (_audioCtx) return;
+  // iOS/Android Safari対応：最初のタッチでAudioContextを確実にunlock
+  let _audioUnlocked = false;
+
+  function unlockAudio() {
+    if (_audioUnlocked) return;
     try {
-      _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      // 無音を再生してunlock
+      if (!_audioCtx) {
+        _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (_audioCtx.state === 'suspended') {
+        _audioCtx.resume().then(() => { _audioUnlocked = true; });
+      } else {
+        _audioUnlocked = true;
+      }
+      // 無音バッファで強制unlock
       const buf = _audioCtx.createBuffer(1, 1, 22050);
       const src = _audioCtx.createBufferSource();
       src.buffer = buf;
@@ -6034,8 +6043,11 @@
     } catch(e) {}
   }
 
-  document.addEventListener('touchstart', initAudioOnFirstTouch, { once: true, passive: true });
-  document.addEventListener('click',      initAudioOnFirstTouch, { once: true });
+  // touchend（指を離した瞬間）でunlock — touchstartより確実
+  document.addEventListener('touchend', unlockAudio, { passive: true });
+  document.addEventListener('click', unlockAudio);
+
+  function initAudioOnFirstTouch() { unlockAudio(); }
 
   function getAudioCtx() {
     if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
