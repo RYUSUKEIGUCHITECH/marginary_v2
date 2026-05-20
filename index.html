@@ -288,6 +288,9 @@
     opacity: 0.6;
   }
 
+  @keyframes blink {
+    0%,100% { opacity:1; } 50% { opacity:0.3; }
+  }
   @keyframes treeSway {
     0%   { transform: rotate(0deg); }
     25%  { transform: rotate(0.8deg); }
@@ -2365,6 +2368,8 @@
     if (!target) { console.warn('goTo: screen not found:', id); return; }
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     target.classList.add('active');
+    // 音を鳴らす
+    playSoundForScreen(id);
     document.querySelectorAll('.chara-svg').forEach(el => {
       el.style.animation = 'none';
       el.offsetHeight;
@@ -5253,6 +5258,7 @@
       updatedAt:           now,
     };
     upsertDepthEntry(entry);
+    soundSave();
     // 保存した存在IDを保持して presence へ
     const btn = document.querySelector('#screen-depth-edit button[onclick="saveDepthEntry()"]');
     if (btn) { btn.textContent = '保存済'; btn.style.background = '#555'; }
@@ -5500,9 +5506,10 @@
   let _presenceNext = 'screen-library';
   let _presenceFromEntryId = null;
 
-  function renderPresence(nextScreen) {
+  async function renderPresence(nextScreen) {
     _presenceNext = nextScreen || 'screen-library';
 
+    // 気配テキストのマッチング
     const entries = _getDepthEntriesSafe();
     const fragments = getFragments().map(f => f.text).join(' ');
     const recentConcepts = entries.length > 0 ? (entries[0].selectedConcepts || []).join(' ') : '';
@@ -5520,10 +5527,7 @@
     const textEl = document.getElementById('presence-text');
     if (textEl) textEl.textContent = seed.text;
 
-    const svgEl = document.getElementById('presence-svg');
-    if (svgEl) renderPresenceSVG(svgEl);
-
-    // 紐づくエントリの概念・問いを表示
+    // 紐づくエントリ
     const infoEl     = document.getElementById('presence-entry-info');
     const conceptEl  = document.getElementById('presence-concept-name');
     const questionEl = document.getElementById('presence-question');
@@ -5536,6 +5540,94 @@
       if (questionEl) questionEl.textContent = entry.questionText        || '';
     } else {
       if (infoEl) infoEl.style.display = 'none';
+    }
+
+    // SVG生成
+    const svgEl = document.getElementById('presence-svg');
+    if (!svgEl) return;
+
+    // ローディング表示
+    svgEl.innerHTML = `<div style="width:160px;height:160px;display:flex;align-items:center;justify-content:center;">
+      <div style="font-size:9px;letter-spacing:0.2em;color:#bbb;animation:blink 1.2s ease-in-out infinite;">生成中...</div>
+    </div>`;
+
+    if (entry) {
+      // Claude APIでSVG生成
+      await generateBeingSVGFromAPI(entry, svgEl, seed);
+    } else {
+      renderPresenceSVG(svgEl);
+    }
+  }
+
+  async function generateBeingSVGFromAPI(entry, container, seed) {
+    const prompt = `あなたはSVGアーティストです。以下の「知的な深み」エントリから、抽象的な生き物・存在をSVGで描いてください。
+
+概念名: ${entry.originalConceptName || ''}
+問い: ${entry.questionText || ''}
+メモ: ${entry.memo || ''}
+気配: ${seed.text || ''}
+
+要件:
+- viewBox="0 0 160 160" のSVGを1つ生成
+- 背景なし（透明）
+- 生き物っぽい有機的な形（目・体・アクセント要素を含む）
+- 不気味だけど少し可愛い、説明しきれない存在感
+- アニメーション（@keyframesとanimation属性）を1つ入れる
+- 色は3〜4色まで、落ち着いたトーン
+- <svg>タグから</svg>タグまでのみ出力（説明不要、コードブロックなし）`;
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 2000,
+          messages: [{ role: 'user', content: prompt }],
+        }),
+      });
+
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error('HTTP ' + res.status + ': ' + errText.slice(0, 200));
+      }
+      const data = await res.json();
+      console.log('API response:', JSON.stringify(data).slice(0, 200));
+
+      // content配列からテキストを取得
+      let text = '';
+      if (Array.isArray(data.content)) {
+        text = data.content
+          .filter(c => c.type === 'text')
+          .map(c => c.text)
+          .join('');
+      } else if (typeof data.content === 'string') {
+        text = data.content;
+      }
+
+      // SVGを抽出（コードブロック除去）
+      text = text.replace(/```(?:svg|xml)?/g, '').replace(/```/g, '').trim();
+      const svgMatch = text.match(/<svg[\s\S]*?<\/svg>/i);
+      if (svgMatch) {
+        container.innerHTML = svgMatch[0];
+        const svgNode = container.querySelector('svg');
+        if (svgNode) {
+          svgNode.setAttribute('width', '160');
+          svgNode.setAttribute('height', '160');
+          if (!svgNode.getAttribute('viewBox')) {
+            svgNode.setAttribute('viewBox', '0 0 160 160');
+          }
+        }
+        return;
+      }
+      throw new Error('No SVG found in response');
+    } catch(e) {
+      console.warn('API generation failed:', e);
+      renderPresenceSVG(container);
     }
   }
 
@@ -5923,6 +6015,71 @@
 
   // ================================================================
   // ===== 完全リセット =====
+  // ================================================================
+  // ===== 森の音システム（Web Audio API）=====
+  // ================================================================
+
+  let _audioCtx = null;
+  function getAudioCtx() {
+    if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (_audioCtx.state === 'suspended') _audioCtx.resume();
+    return _audioCtx;
+  }
+
+  function playTone(freq, type='sine', dur=0.3, vol=0.18, delay=0) {
+    try {
+      const ctx = getAudioCtx();
+      const osc = ctx.createOscillator(), gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = type; osc.frequency.value = freq;
+      const t = ctx.currentTime + delay;
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(vol, t + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      osc.start(t); osc.stop(t + dur + 0.05);
+    } catch(e) {}
+  }
+
+  function playNoise(dur=0.4, vol=0.08, lowpass=800, delay=0) {
+    try {
+      const ctx = getAudioCtx();
+      const buf = ctx.createBuffer(1, ctx.sampleRate * dur, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random()*2-1;
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      const filt = ctx.createBiquadFilter();
+      filt.type = 'lowpass'; filt.frequency.value = lowpass;
+      const gain = ctx.createGain();
+      src.connect(filt); filt.connect(gain); gain.connect(ctx.destination);
+      const t = ctx.currentTime + delay;
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(vol, t + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      src.start(t); src.stop(t + dur + 0.05);
+    } catch(e) {}
+  }
+
+  // 画面別サウンド
+  function soundTap()      { playTone(880,'sine',0.2,0.12); playTone(1320,'sine',0.15,0.06,0.04); }
+  function soundSave()     { playTone(523,'sine',0.4,0.15); playTone(659,'sine',0.4,0.12,0.1); playTone(784,'sine',0.5,0.1,0.2); }
+  function soundTreeGrow() { playNoise(1.2,0.06,400); playTone(130,'sine',1.0,0.08); playTone(196,'triangle',0.8,0.05,0.3); }
+  function soundCharaPop() { playTone(440,'triangle',0.25,0.14); playTone(550,'sine',0.2,0.08,0.06); playNoise(0.1,0.04,2000); }
+  function soundPresence() { [1,1.5,2,2.5].forEach((r,i)=>playTone(110*r,'sine',1.5,0.06-i*0.01,i*0.15)); playNoise(2.0,0.04,300,0.2); }
+  function soundLibrary()  { playTone(659,'sine',0.6,0.1); playTone(988,'sine',0.5,0.06,0.08); }
+  function soundDialogue() { playNoise(0.3,0.05,600); playTone(330,'triangle',0.3,0.08,0.05); }
+  function soundNext()     { playNoise(0.5,0.07,1200); playTone(660,'sine',0.2,0.07,0.05); }
+
+  function playSoundForScreen(id) {
+    if (id==='screen-tamatta'||id==='screen-tree-intro') soundTreeGrow();
+    else if (id==='screen-presence')  soundPresence();
+    else if (id==='screen-library'||id==='screen-mountain') soundLibrary();
+    else if (id==='screen-chara-talk'||id==='screen-dialogue') soundDialogue();
+    else if (id==='screen-reaction')  soundCharaPop();
+    else soundNext();
+  }
+
+  // ================================================================
   function restart() {
     history = [];
     currentChara = 'majimaji';
