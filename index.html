@@ -387,14 +387,75 @@
           <!-- 右下：鋭角緑 -->
           <path d="M750 262 L800 262 L800 471 L700 471 Z" fill="#00712B"/>
 
-          <!-- 動くドット（白丸にアニメーション） -->
-
-          <!-- marginary テキスト（中央、上下パーツのすぐ間） -->
+          <!-- ===== 生活の痕跡レイヤー ===== -->
+          <!-- 焚き火（左下）-->
+          <g id="bonfire" transform="translate(55,420)">
+            <ellipse cx="0" cy="12" rx="14" ry="4" fill="#8C6239" opacity="0.5"/>
+            <path d="M-6,12 Q-2,-2 0,-10 Q2,-2 6,12Z" fill="#E8864A" opacity="0.9">
+              <animate attributeName="d" dur="1.2s" repeatCount="indefinite"
+                values="M-6,12 Q-2,-2 0,-10 Q2,-2 6,12Z;M-5,12 Q-3,0 1,-12 Q3,0 5,12Z;M-6,12 Q-2,-2 0,-10 Q2,-2 6,12Z"/>
+            </path>
+            <path d="M-3,12 Q0,2 1,-6 Q2,2 3,12Z" fill="#F5C842" opacity="0.8">
+              <animate attributeName="d" dur="0.9s" repeatCount="indefinite"
+                values="M-3,12 Q0,2 1,-6 Q2,2 3,12Z;M-2,12 Q1,4 2,-4 Q3,4 4,12Z;M-3,12 Q0,2 1,-6 Q2,2 3,12Z"/>
+            </path>
+          </g>
+          <!-- 足跡（中央下）-->
+          <g opacity="0.25" fill="#8C6239">
+            <ellipse cx="415" cy="455" rx="5" ry="7" transform="rotate(-15,415,455)"/>
+            <ellipse cx="428" cy="440" rx="5" ry="7" transform="rotate(10,428,440)"/>
+            <ellipse cx="441" cy="425" rx="5" ry="7" transform="rotate(-15,441,425)"/>
+            <ellipse cx="454" cy="410" rx="5" ry="7" transform="rotate(10,454,410)"/>
+          </g>
+          <!-- カップ（右下エリア）-->
+          <g transform="translate(620,400)" opacity="0.7">
+            <rect x="-10" y="-14" width="20" height="22" rx="3" fill="#fff" stroke="#ccc" stroke-width="1.5"/>
+            <path d="M10,-8 Q18,-8 18,0 Q18,8 10,8" fill="none" stroke="#ccc" stroke-width="1.5"/>
+            <path d="M-6,-8 Q0,-16 6,-8" fill="none" stroke="#aaa" stroke-width="1" opacity="0.5">
+              <animate attributeName="d" dur="3s" repeatCount="indefinite"
+                values="M-6,-8 Q0,-16 6,-8;M-4,-10 Q2,-20 8,-10;M-6,-8 Q0,-16 6,-8"/>
+            </path>
+          </g>
+          <!-- 木に吊るされた問い（右上）-->
+          <g transform="translate(560,60)" opacity="0.8">
+            <line x1="0" y1="-20" x2="0" y2="0" stroke="#8C6239" stroke-width="1.5"/>
+            <rect x="-22" y="0" width="44" height="28" rx="3" fill="#fffde8" stroke="#ddd" stroke-width="1"/>
+            <line x1="-14" y1="10" x2="14" y2="10" stroke="#bbb" stroke-width="1"/>
+            <line x1="-14" y1="18" x2="8" y2="18" stroke="#bbb" stroke-width="1"/>
+          </g>
+          <!-- 小屋の灯り（左上）-->
+          <g id="cabin-light" transform="translate(30,155)">
+            <rect x="-8" y="-10" width="16" height="14" rx="1" fill="#F5C842" opacity="0.0">
+              <animate attributeName="opacity" dur="4s" repeatCount="indefinite"
+                values="0.0;0.7;0.5;0.8;0.6;0.0" keyTimes="0;0.2;0.4;0.6;0.8;1"/>
+            </rect>
+          </g>
+          <!-- メモ（中央下エリア）-->
+          <g transform="translate(200,450)" opacity="0.6">
+            <rect x="-18" y="-12" width="36" height="26" rx="2" fill="#fffde8" stroke="#ddd" stroke-width="1" transform="rotate(-8)"/>
+            <line x1="-10" y1="-4" x2="10" y2="-4" stroke="#ccc" stroke-width="1" transform="rotate(-8)"/>
+            <line x1="-10" y1="2" x2="6" y2="2" stroke="#ccc" stroke-width="1" transform="rotate(-8)"/>
+          </g>
           <text x="400" y="248" text-anchor="middle"
             font-family="Inter,sans-serif" font-weight="300"
             font-size="32" letter-spacing="14" fill="#111">marginary</text>
         </svg>
       </div>
+      <!-- 時間帯あいさつ -->
+      <div id="time-greeting" style="position:absolute;top:16px;right:16px;z-index:5;font-size:9px;letter-spacing:0.2em;color:rgba(255,255,255,0.7);pointer-events:none;"></div>
+
+      <!-- キャラ同士の会話 -->
+      <div id="chara-dialogue-scene" style="position:absolute;top:8px;left:8px;right:8px;z-index:6;pointer-events:none;display:flex;flex-direction:column;gap:6px;opacity:0;transition:opacity 0.8s;">
+        <div style="display:flex;align-items:flex-end;gap:6px;">
+          <span id="cd-chara-a" style="flex-shrink:0;"></span>
+          <div id="cd-bubble-a" style="background:rgba(255,255,255,0.88);border-radius:4px 12px 12px 12px;padding:7px 11px;font-size:10px;letter-spacing:0.06em;color:#444;line-height:1.7;max-width:180px;box-shadow:0 2px 8px rgba(0,0,0,0.08);"></div>
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:6px;align-self:flex-end;flex-direction:row-reverse;">
+          <span id="cd-chara-b" style="flex-shrink:0;"></span>
+          <div id="cd-bubble-b" style="background:rgba(255,255,255,0.88);border-radius:12px 4px 12px 12px;padding:7px 11px;font-size:10px;letter-spacing:0.06em;color:#444;line-height:1.7;max-width:180px;box-shadow:0 2px 8px rgba(0,0,0,0.08);display:none;"></div>
+        </div>
+      </div>
+
       <!-- キャラからの問いかけカード -->
       <div id="chara-question-card" style="display:none;position:absolute;bottom:32px;left:16px;right:16px;z-index:11;"
            onclick="event.stopPropagation()">
@@ -1961,6 +2022,10 @@
     initTitleCanvas();
     updateAllCharaSVG('majimaji');
     applyCharaConfig('majimaji');
+    // 時間帯あいさつ
+    applyTimeGreeting();
+    // キャラ同士の会話（起動時）
+    setTimeout(() => startCharaDialogue(), 1200);
     // 帰ってきた問い
     showEchoCardIfReady();
     scheduleEchoQuestion();
@@ -2464,9 +2529,14 @@
     });
     // タイトルに戻ったとき：pending フラグがあれば問いかけ表示
     if (id === 'screen-title') {
+      applyTimeGreeting();
+      // pending フラグがあれば問いかけ表示
       if (localStorage.getItem('marginary_pending_chara_q') === '1') {
         localStorage.removeItem('marginary_pending_chara_q');
-        setTimeout(() => tryShowCharaQuestion(1.0), 600); // pending時は確実に表示
+        setTimeout(() => tryShowCharaQuestion(1.0), 600);
+      } else {
+        // キャラ同士の会話を50%で表示
+        if (Math.random() < 0.5) setTimeout(() => startCharaDialogue(), 800);
       }
     }
     if (id === 'screen-question') {
@@ -4952,62 +5022,146 @@
   ];;
 
   // ================================================================
-  // ===== キャラからの問いかけ =====
+  // ===== キャラ同士の会話 =====
+  // ================================================================
+  const CHARA_DIALOGUES = [
+    // [charaA, lineA, charaB, lineB]
+    ['majimaji', 'この問い、少し重たいね。', 'namake', 'でも、まだ森の入口にある気がするよん。'],
+    ['concrete',  'あなた、また同じところに戻ってきたわね。', 'majimaji', 'でもそれって、大事なことだと思うさ。'],
+    ['kasa',      'この問い、雨の日に生まれた感じがするムッシュ。', 'yurayura', 'ンゴ、じっとりしてるンゴ。'],
+    ['sun',       '答えを出そうとしてるぜ。', 'majimaji', 'まだそっとしておいていいと思うよ。'],
+    ['namake',    'ねえ、この問い、誰のものだと思う？', 'concrete', '置いた人のものじゃないかしら。'],
+    ['majimaji',  'ことばにならないのに、ここに来る。', 'yurayura', 'それがもう、問いなんじゃないンゴ？'],
+    ['kasa',      '問いが古くなってきたムッシュ。', 'namake', 'でも熟成してるかもよん。'],
+    ['concrete',  '問いって、育つのね。', 'sun',     'そうだな、変わってくぜ。'],
+    ['majimaji',  'この森、また少し変わった気がするさ。', 'namake', '問いが増えると変わるよん。'],
+    ['yurayura',  '夜に置いていった問い、朝には違う顔してるンゴ。', 'majimaji', 'そうかもね。'],
+  ];
+
+  // 問いの内容があるときだけ出す会話
+  const CHARA_DIALOGUES_WITH_ENTRIES = [
+    ['majimaji', 'この問い、まだ答えを探してる？', 'concrete', 'それとも、問い続けることを選んだのかしら。'],
+    ['kasa',     'ここに置かれた問い、重さが違うムッシュ。', 'namake', 'ゆっくり熟成させてあげてよん。'],
+    ['sun',      'ここの問いは、全部本気だぜ。', 'majimaji', 'だから森に置くんだと思うよ。'],
+  ];
+
+  function startCharaDialogue() {
+    const scene = document.getElementById('chara-dialogue-scene');
+    const charaA = document.getElementById('cd-chara-a');
+    const charaB = document.getElementById('cd-chara-b');
+    const bubbleA = document.getElementById('cd-bubble-a');
+    const bubbleB = document.getElementById('cd-bubble-b');
+    if (!scene || !bubbleA) return;
+
+    const entries = getDepthEntries ? getDepthEntries() : [];
+    const pool = entries.length > 0
+      ? [...CHARA_DIALOGUES, ...CHARA_DIALOGUES_WITH_ENTRIES]
+      : CHARA_DIALOGUES;
+    const d = pool[Math.floor(Math.random() * pool.length)];
+
+    if (charaA) charaA.innerHTML = charaInnerSVGFixed(d[0], 32, 32);
+    if (charaB) charaB.innerHTML = charaInnerSVGFixed(d[2], 32, 32);
+    bubbleA.textContent = d[1];
+    bubbleB.textContent = d[3];
+    bubbleB.style.display = 'none';
+
+    // フェードイン → Bの吹き出しを遅れて表示
+    scene.style.opacity = '0';
+    scene.style.display = 'flex';
+    setTimeout(() => { scene.style.opacity = '1'; }, 100);
+    setTimeout(() => { bubbleB.style.display = 'block'; }, 2000);
+
+    // 8秒後にフェードアウト
+    setTimeout(() => { scene.style.opacity = '0'; }, 8000);
+    setTimeout(() => { scene.style.display = 'none'; }, 9000);
+  }
+
+  // ================================================================
+  // ===== 時間帯で振る舞いを変える =====
+  // ================================================================
+  const TIME_GREETINGS = {
+    majimaji: { dawn:'夜明けだよ。', morning:'おはようさ。', noon:'昼だね。', afternoon:'午後だね。', evening:'夕方になったよ。', night:'まだ起きてたの？', midnight:'深夜だよ。眠れない？' },
+    concrete: { dawn:'夜明けね。', morning:'おはよう。', noon:'お昼ね。', afternoon:'午後だわ。', evening:'夕方になったわね。', night:'まだ起きてたの？', midnight:'こんな時間に。' },
+    kasa:     { dawn:'夜明けムッシュ。', morning:'おはようムッシュ。', noon:'昼ムッシュ。', afternoon:'午後ムッシュ。', evening:'夕方ムッシュ。', night:'まだ起きてるムッシュ。', midnight:'深夜ムッシュ。' },
+    yurayura: { dawn:'夜明けンゴ。', morning:'おはようンゴ。', noon:'昼ンゴ。', afternoon:'午後ンゴ。', evening:'夕方ンゴ。', night:'まだ起きてるンゴ？', midnight:'深夜ンゴ。' },
+    namake:   { dawn:'夜明けよん。', morning:'おはようよん。', noon:'昼だよん。', afternoon:'午後よん。', evening:'夕方よん。', night:'まだ起きてたよん。', midnight:'深夜よん。眠れない？' },
+    sun:      { dawn:'夜明けだぜ！', morning:'おはようだぜ！', noon:'昼だぜ！', afternoon:'午後だぜ！', evening:'夕方だぜ！', night:'まだ起きてるのか！', midnight:'深夜だぜ！' },
+  };
+
+  function getTimePeriod() {
+    const h = new Date().getHours();
+    if (h >= 4  && h < 6)  return 'dawn';
+    if (h >= 6  && h < 11) return 'morning';
+    if (h >= 11 && h < 13) return 'noon';
+    if (h >= 13 && h < 17) return 'afternoon';
+    if (h >= 17 && h < 20) return 'evening';
+    if (h >= 20 && h < 24) return 'night';
+    return 'midnight';
+  }
+
+  function applyTimeGreeting() {
+    const el = document.getElementById('time-greeting');
+    if (!el) return;
+    const period = getTimePeriod();
+    const map = TIME_GREETINGS[currentChara] || TIME_GREETINGS.majimaji;
+    el.textContent = map[period] || '';
+  }
+
   // ================================================================
   const CHARA_Q_LAST_KEY = 'marginary_chara_q_last';
 
   // キーワード × キャラ問いかけパターン
   const CHARA_Q_PATTERNS = [
     { test: /普通|常識|みんな/, questions: [
-      '「普通」って誰かに決めてもらったもの？それとも自分で選んでるもの？',
-      '最近、"普通じゃない"と感じた瞬間ってあった？',
-      'その"普通"、10年後も同じだと思う？',
+      'その「普通」、どこから来たんだろう。',
+      '「普通」の外側に、何がある？',
+      'みんなが同じ方を向いているとき、あなたはどこを見てる？',
     ]},
     { test: /仕事|働く|会社|職場/, questions: [
-      'もし仕事がなくなったとして、何をしてると思う？',
-      '今の仕事、誰かに説明できないけどやりたいことってある？',
-      '「働くこと」と「生きること」、どこかで混ざってない？',
+      'それをしていない自分を、想像できる？',
+      '「しなければならない」と「したい」の間にいる感じ、ある？',
+      'その場所で、ふと遠くを見ることはある？',
     ]},
     { test: /意味|価値|なぜ|なんで/, questions: [
-      'その問いを立てたとき、体のどこかで感じた感覚があった？',
-      '意味が見つからないとき、それでも続けることってある？',
-      '「意味」って後からついてくるもの？最初からあるもの？',
+      '問いの答えより、問い続けることの方が大事なときってあるかな。',
+      'その「なぜ」、誰に向けている？',
+      '意味を探しているとき、何かを失っていることはある？',
     ]},
     { test: /時間|忙しい|余裕|毎日/, questions: [
-      '今週、ぼーっとした時間ってあった？',
-      '「忙しい」って言うとき、何かを守ってることってない？',
-      '時間が止まったら、最初に何をしたい？',
+      '流れている時間と、積み重なっている時間。どっちの中にいる感じ？',
+      'その速さ、自分で選んでる？',
+      '止まってみたら、何が見えてくると思う？',
     ]},
     { test: /自分|わたし|ぼく|アイデンティティ/, questions: [
       'ひとりのとき、どんな自分でいる？',
-      '「本当の自分」って、誰かに見せたことある？',
-      '5年前の自分が見たら、今の自分をどう思うかな？',
+      'その「自分らしさ」、いつ頃から？',
+      'いくつかの自分が同居している感じ、ある？',
     ]},
     { test: /孤独|一人|つながり|寂しい/, questions: [
-      'ひとりでいることと、孤独でいることって違うと思う？',
-      '最後に「この人にわかってもらえた」と感じたのはいつ？',
-      'つながっているのに、孤独を感じることってある？',
+      'ひとりでいることと、孤独でいることは、同じ？',
+      'つながっているのに遠い感じ、したことある？',
+      'その距離感、自分で作ってる部分ってある？',
     ]},
     { test: /体|からだ|疲れ|眠い|だるい/, questions: [
-      '体が「もう無理」って言ってるとき、聞いてあげてる？',
-      '最近、体が喜んでいる瞬間ってあった？',
-      '疲れているとき、自分に何をしてあげてる？',
+      'その重さ、どこから来てる気がする？',
+      '体が何かを言おうとしている感じ、ある？',
+      '休むことと、逃げることは違うのかな。',
     ]},
     { test: /変化|変わる|成長|昔/, questions: [
-      '変わることで失うものを、恐れてることってある？',
-      '昔と今で、一番変わったと思う部分ってどこ？',
-      '変わりたいのに変われない、その理由を自分で知ってる？',
+      '変わることで、何かが終わる感じがする？',
+      '昔の自分に会えたとして、何を話す？',
+      '変わりたいのか、変わりたくないのか、まだわからない？',
     ]},
   ];
 
   const CHARA_Q_DEFAULTS = [
-    '最近、言葉にできなかったけど感じたことってある？',
-    'いまここにある問いを、誰かに話したことある？',
-    '「答えなくていい問い」を持っていることって、どんな感じ？',
-    'もし今日が最後の日だったとして、何を問いたい？',
-    'ここしばらくで、一番長く頭に残っている言葉は？',
-    '置いていった問い、まだ心のどこかにある？',
-    'ことばにならないものを、ことばにしようとしてる理由って何だろう？',
+    '最近、言葉にならなかったけど何か感じたことある？',
+    'いま、どんな問いの中にいる？',
+    '置いていった問い、まだどこかにある？',
+    'ことばにしようとして、できなかったものって何だろう。',
+    'その感覚、いつ頃からある？',
+    '何かが引っかかっているとき、それは何のサインだと思う？',
+    '答えより、問いの方が好きなことってある？',
   ];
 
   // キャラの前置き（問いかけ文の前）
