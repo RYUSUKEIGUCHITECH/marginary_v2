@@ -958,12 +958,20 @@
       </div>
 
       <!-- スクロールコンテンツ -->
-      <div style="position:relative;flex:1;overflow-y:auto;z-index:1;">
+      <div style="position:relative;flex:1;overflow-y:auto;z-index:1;display:flex;flex-direction:column;">
         <div style="padding:24px 20px 0;">
-          <div style="font-size:12px;letter-spacing:0.12em;color:#333;font-weight:400;">気になる概念を選ぶ</div>
+          <div style="font-size:12px;letter-spacing:0.12em;color:#333;font-weight:400;">気になる概念・アートを選ぶ</div>
         </div>
-        <div style="padding:16px 20px 32px;">
+        <!-- タブ -->
+        <div style="display:flex;border-bottom:1px solid #e8e8e4;margin:12px 20px 0;">
+          <button id="lib-tab-btn-concepts" onclick="switchLibTab('concepts')" style="flex:1;padding:10px 4px;border:none;background:none;font-family:inherit;font-size:9px;letter-spacing:0.2em;color:#222;cursor:pointer;border-bottom:2px solid #222;">概念</button>
+          <button id="lib-tab-btn-art" onclick="switchLibTab('art')" style="flex:1;padding:10px 4px;border:none;background:none;font-family:inherit;font-size:9px;letter-spacing:0.2em;color:#aaa;cursor:pointer;border-bottom:2px solid transparent;">アート</button>
+        </div>
+        <div id="lib-tab-concepts" style="padding:16px 20px 32px;">
           <div id="lib-fragments"></div>
+        </div>
+        <div id="lib-tab-art" style="display:none;padding:16px 20px 32px;">
+          <div id="lib-art-fragments"></div>
         </div>
       </div>
 
@@ -1141,8 +1149,8 @@
           <div style="font-size:11px;letter-spacing:0.08em;color:#aaa;margin-bottom:16px;line-height:1.8;">タップで定義を確認、＋で選択。</div>
           <!-- タブ -->
           <div style="display:flex;border-bottom:1px solid #ddd;margin-bottom:16px;">
-            <button id="tab-btn-concepts" onclick="switchDepthTab('concepts')" style="flex:1;padding:10px 4px;border:none;background:none;font-family:inherit;font-size:9px;letter-spacing:0.2em;color:#222;cursor:pointer;border-bottom:2px solid #222;">保存した概念</button>
-            <button id="tab-btn-fragments" onclick="switchDepthTab('fragments')" style="flex:1;padding:10px 4px;border:none;background:none;font-family:inherit;font-size:9px;letter-spacing:0.2em;color:#aaa;cursor:pointer;border-bottom:2px solid transparent;">関連する断片</button>
+            <button id="tab-btn-concepts" onclick="switchDepthTab('concepts')" style="flex:1;padding:10px 4px;border:none;background:none;font-family:inherit;font-size:9px;letter-spacing:0.2em;color:#222;cursor:pointer;border-bottom:2px solid #222;">保存した概念・アート</button>
+            <button id="tab-btn-fragments" onclick="switchDepthTab('fragments')" style="flex:1;padding:10px 4px;border:none;background:none;font-family:inherit;font-size:9px;letter-spacing:0.2em;color:#aaa;cursor:pointer;border-bottom:2px solid transparent;">概念・アートの断片</button>
           </div>
           <div id="tab-panel-concepts"><div id="depth-concepts-list" style="display:flex;flex-direction:column;gap:8px;"></div></div>
           <div id="tab-panel-fragments" style="display:none;"><div id="depth-fragments-list" style="display:flex;flex-direction:column;gap:8px;"></div></div>
@@ -4117,12 +4125,72 @@
     const padInfo = { x: padX, y: padY };
     const matched = matchFragments(allTexts, padInfo);
     renderFragmentCards(matched);
+    renderLibraryArt(allTexts);
 
     // 山に「近い」言葉を表示
     renderMountainWords();
 
     // 保存した言葉を背景に表示
     renderSavedBackground();
+  }
+
+  function switchLibTab(tab) {
+    const btnC = document.getElementById('lib-tab-btn-concepts');
+    const btnA = document.getElementById('lib-tab-btn-art');
+    const panC = document.getElementById('lib-tab-concepts');
+    const panA = document.getElementById('lib-tab-art');
+    const isConcepts = tab === 'concepts';
+    if (btnC) { btnC.style.color = isConcepts ? '#222' : '#aaa'; btnC.style.borderBottom = isConcepts ? '2px solid #222' : '2px solid transparent'; }
+    if (btnA) { btnA.style.color = !isConcepts ? '#222' : '#aaa'; btnA.style.borderBottom = !isConcepts ? '2px solid #222' : '2px solid transparent'; }
+    if (panC) panC.style.display = isConcepts ? 'block' : 'none';
+    if (panA) panA.style.display = !isConcepts ? 'block' : 'none';
+  }
+
+  function renderLibraryArt(inputTexts) {
+    const el = document.getElementById('lib-art-fragments');
+    if (!el) return;
+    const combined = (inputTexts || []).join(' ');
+
+    // mood/themesでスコアリングして上位12件
+    const scored = ART_FRAGMENTS.map(f => {
+      let score = 0;
+      (f.mood || []).forEach(m => { if (combined.includes(m.slice(0,4))) score += 2; });
+      (f.themes || []).forEach(t => { if (combined.includes(t)) score += 1; });
+      return { f, score };
+    });
+    scored.sort((a, b) => b.score - a.score);
+    const display = scored.slice(0, 12).map(s => s.f);
+
+    el.innerHTML = '';
+    display.forEach(frag => {
+      const card = document.createElement('div');
+      card.style.cssText = 'background:#fff;border-radius:16px;padding:20px 20px 16px;margin-bottom:12px;position:relative;overflow:hidden;';
+      card.innerHTML =
+        '<div style="font-size:14px;font-weight:700;letter-spacing:0.06em;color:#333;margin-bottom:4px;">'+frag.concept+'</div>' +
+        '<div style="font-size:10px;letter-spacing:0.12em;color:#aaa;margin-bottom:10px;">— '+frag.author+'</div>' +
+        '<div style="font-size:12px;letter-spacing:0.04em;color:#555;line-height:1.8;margin-bottom:14px;">'+frag.desc+'</div>' +
+        '<div style="display:flex;gap:8px;">' +
+          '<button onclick="libArtAction(\'close\',\''+frag.id+'\',\''+frag.concept.replace(/'/g,"\\'")+'\')" style="flex:1;padding:11px 8px;border:1px solid #ddd;border-radius:12px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;color:#888;cursor:pointer;">近い</button>' +
+          '<button onclick="libArtAction(\'skip\',\''+frag.id+'\',\''+frag.concept.replace(/'/g,"\\'")+'\')" style="flex:1;padding:11px 8px;border:1px solid #ddd;border-radius:12px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;color:#888;cursor:pointer;">違う</button>' +
+          '<button id="lib-art-save-'+frag.id+'" onclick="libArtAction(\'save\',\''+frag.id+'\',\''+frag.concept.replace(/'/g,"\\'")+'\')" style="flex:1;padding:11px 8px;border:1px solid #ddd;border-radius:12px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;color:#888;cursor:pointer;">保存</button>' +
+        '</div>';
+      el.appendChild(card);
+    });
+  }
+
+  function libArtAction(action, id, concept) {
+    if (action === 'close') {
+      addCloseWord(concept);
+    } else if (action === 'save') {
+      const btn = document.getElementById('lib-art-save-' + id);
+      const frags = getSavedFragments();
+      const art = ART_FRAGMENTS.find(a => a.id === id);
+      if (art && !frags.find(f => f.id === id)) {
+        frags.push({ id, concept: art.concept, author: art.author, desc: art.desc, themes: art.themes || [], mood: art.mood || [] });
+        localStorage.setItem('marginary_saved_fragments', JSON.stringify(frags));
+      }
+      if (btn) { btn.textContent = '保存済'; btn.style.background = 'var(--lime)'; btn.style.color = '#fff'; btn.style.border = 'none'; }
+    }
   }
 
   // 「近い」を選んだ言葉を localStorage で管理
@@ -4610,23 +4678,107 @@
   function switchDepthTab(tab) {
     const btnC = document.getElementById('tab-btn-concepts');
     const btnF = document.getElementById('tab-btn-fragments');
+    const btnA = document.getElementById('tab-btn-art');
     const panC = document.getElementById('tab-panel-concepts');
     const panF = document.getElementById('tab-panel-fragments');
-    if (tab === 'concepts') {
-      if (btnC) { btnC.style.color='#222'; btnC.style.borderBottom='2px solid #222'; }
-      if (btnF) { btnF.style.color='#aaa'; btnF.style.borderBottom='2px solid transparent'; }
-      if (panC) panC.style.display = 'block';
-      if (panF) panF.style.display = 'none';
-    } else {
-      if (btnC) { btnC.style.color='#aaa'; btnC.style.borderBottom='2px solid transparent'; }
-      if (btnF) { btnF.style.color='#222'; btnF.style.borderBottom='2px solid #222'; }
-      if (panC) panC.style.display = 'none';
-      if (panF) panF.style.display = 'block';
-    }
+    const panA = document.getElementById('tab-panel-art');
+    const all = [
+      [btnC, panC, tab === 'concepts'],
+      [btnF, panF, tab === 'fragments'],
+      [btnA, panA, tab === 'art'],
+    ];
+    all.forEach(([btn, pan, active]) => {
+      if (btn) { btn.style.color = active ? '#222' : '#aaa'; btn.style.borderBottom = active ? '2px solid #222' : '2px solid transparent'; }
+      if (pan) pan.style.display = active ? 'block' : 'none';
+    });
+    if (tab === 'art') renderDepthArtList(_depthSelectedConcepts);
   }
 
   // ================================================================
-  // ===== ShakeCard =====
+  // ===== 美術断片データ =====
+  // ================================================================
+  const ART_FRAGMENTS = [
+    // 西洋美術史
+    {id:"a001",concept:"ルネサンスの遠近法",desc:"画面の奥に消失点を設け、視点を一点に収束させることで現実の深さを再現する技法。見ることが支配の構造と結びついた。",author:"ブルネレスキ",themes:["遠近法","視点","支配","空間","リアリズム"],mood:["一点から世界を見る","視点が権力を持つ","奥行きの幻想"]},
+    {id:"a002",concept:"崇高（サブライム）",desc:"圧倒的な自然の力や広大さの前で人間が感じる畏怖と魅惑が混ざり合う感覚。美しさとは異なる、言語を超えた感情。",author:"バーク・カント",themes:["崇高","圧倒","自然","畏怖","言語を超える"],mood:["言葉を失う大きさ","恐れと魅惑の混合","圧倒された感覚"]},
+    {id:"a003",concept:"キアロスクーロ",desc:"光と影の劇的な対比によって立体感・ドラマ・感情を表現するバロック絵画の技法。",author:"カラヴァッジオ",themes:["光","影","対比","ドラマ","感情"],mood:["光の中の影","明暗の境界","対比が語るもの"]},
+    {id:"a004",concept:"ヴァニタス",desc:"頭蓋骨・砂時計・枯れた花などを通じて、すべての栄華は虚しく過ぎ去るという無常を描く静物画の伝統。",author:"オランダ絵画",themes:["無常","虚しさ","死","時間","静物"],mood:["一切は過ぎ去る","栄華の虚しさ","死を傍に置く"]},
+    {id:"a005",concept:"印象派の瞬間性",desc:"固定した「真実」ではなく、光や大気が刻々と変化する一瞬の知覚的印象を捉えようとする態度。",author:"モネ・ルノワール",themes:["瞬間","光","変化","知覚","印象"],mood:["今この瞬間の光","変わり続けるものを捉える","固定できない美しさ"]},
+    {id:"a006",concept:"象徴主義の内面世界",desc:"外の現実より内面の感情・夢・精神的なものを象徴的なイメージで表現しようとする19世紀末の芸術運動。",author:"モロー・クノップフ",themes:["内面","象徴","夢","感情","精神"],mood:["内面を外に出す","象徴が語ること","現実より内側"]},
+    {id:"a007",concept:"キュビズムの複数視点",desc:"一つの対象を同時に複数の視点から捉え、時間と空間を再構成する。真実は一つの視点では捉えられない。",author:"ピカソ・ブラック",themes:["視点","複数","時間","空間","再構成"],mood:["一つの見方では足りない","複数の角度から","同時に見る"]},
+    {id:"a008",concept:"シュルレアリスムの無意識",desc:"理性の制御を外し、夢・無意識・偶然をそのまま表現することで、隠れた現実を明らかにしようとした。",author:"ダリ・マグリット",themes:["無意識","夢","偶然","隠れた","現実"],mood:["夢が現実を映す","理性の外にあるもの","無意識から来るイメージ"]},
+    {id:"a009",concept:"抽象表現主義の身体性",desc:"絵画行為そのもの（筆のストローク・身体の動き・偶然性）が意味を持つ。完成品より行為が重要。",author:"ポロック・デ・クーニング",themes:["身体","行為","ストローク","偶然","過程"],mood:["描く行為そのものが意味","身体が作品を作る","過程の痕跡"]},
+    {id:"a010",concept:"マグリットの裏切り",desc:"「これはパイプではない」：物体のリアルな描写と言語ラベルのずれを示す。表象は現実そのものではない。",author:"マグリット",themes:["表象","言語","ずれ","現実","名前"],mood:["名前と実体のずれ","見えているものは何か","表象の罠"]},
+    // 現代美術
+    {id:"a011",concept:"レディメイド",desc:"既製品をそのまま美術作品として提示すること。「何が芸術か」という問いを、美的技巧でなく文脈・制度に委ねた。",author:"デュシャン",themes:["既製品","文脈","制度","芸術の定義","問い"],mood:["これは芸術か","文脈が意味を作る","制度への問い"]},
+    {id:"a012",concept:"ミニマリズムの余白",desc:"余分な表現を削ぎ落とし、純粋な形・色・素材だけを残すことで、見る者の知覚と空間への意識を呼び起こす。",author:"ジャッド・フレヴィン",themes:["削ぎ落とす","余白","知覚","空間","純粋"],mood:["何もない中に何かある","引き算の美学","余白が語る"]},
+    {id:"a013",concept:"ポップアートの消費批判",desc:"広告・漫画・大量生産品のイメージを高い芸術の文脈に持ち込むことで、消費社会と芸術の境界を問う。",author:"ウォーホル・リキテンスタイン",themes:["消費","大量生産","境界","批判","イメージ"],mood:["消費されるものの意味","コピーと本物の境界","大量生産と価値"]},
+    {id:"a014",concept:"コンセプチュアル・アートの脱物質化",desc:"物理的な作品よりアイデア・プロセス・言語そのものが作品となる。芸術は概念だ。",author:"コスース・ルウィット",themes:["概念","脱物質化","アイデア","言語","プロセス"],mood:["形ではなく考えが作品","物が消えた後に残るもの","プロセスそのもの"]},
+    {id:"a015",concept:"サイトスペシフィック",desc:"特定の場所のために作られた作品。場所から切り離すと意味を失う。空間・文脈・歴史が作品の一部。",author:"セラ・ターレル",themes:["場所","文脈","空間","歴史","固有性"],mood:["ここにしかない意味","場所が作品を作る","文脈の中にしかない"]},
+    {id:"a016",concept:"フルクサスの日常性",desc:"日常の行為・偶然・参加者との相互作用を芸術とすること。芸術と生活の境界を溶かす。",author:"ボイス・オノ",themes:["日常","参加","偶然","境界","生活"],mood:["日常が芸術になる","作者と鑑賞者の境界","生きることが作品"]},
+    {id:"a017",concept:"インスタレーションの没入",desc:"空間全体を作品として構成し、鑑賞者が作品の中に入り込む体験を作る。見るより経験する。",author:"テュレル・エリアソン",themes:["没入","空間","経験","身体","環境"],mood:["作品の中にいる","空間に包まれる","経験が作品になる"]},
+    {id:"a018",concept:"アプロプリエーション",desc:"既存のイメージ・スタイル・作品を流用・引用し、新しい文脈に置くことで意味を変える手法。オリジナルの問い直し。",author:"シャーマン・クーンズ",themes:["引用","流用","意味","オリジナル","文脈"],mood:["元の文脈から引き剥がす","引用で意味が変わる","オリジナルは存在するか"]},
+    {id:"a019",concept:"身体芸術（ボディ・アート）",desc:"アーティスト自身の身体を素材・媒体・場として使う表現。身体の限界・痛み・存在そのものを問う。",author:"アブラモヴィッチ",themes:["身体","限界","痛み","存在","媒体"],mood:["身体が語る","限界まで行くこと","存在の物質性"]},
+    {id:"a020",concept:"関係性の美学",desc:"作品ではなく「人と人の間に生まれるもの」を芸術とする考え方。鑑賞体験より関係・対話・共同性。",author:"ブリオー",themes:["関係","対話","共同","他者","間"],mood:["人との間に何か生まれる","関係が作品になる","一緒に作られるもの"]},
+    {id:"a021",concept:"崩壊の美学",desc:"完成や永続ではなく、朽ちること・解体・消えていくプロセスに美を見出す。",author:"ディーター・ロス",themes:["崩壊","朽ちる","消える","過程","無常"],mood:["壊れていくことの美しさ","完成しないことの意味","消えていくものを見る"]},
+    {id:"a022",concept:"パフォーマンス・アートの一回性",desc:"繰り返し不可能な一回限りの行為としての芸術。記録されても本質は失われる。",author:"アブラモヴィッチ・ボイス",themes:["一回性","繰り返し","記録","身体","時間"],mood:["この瞬間にしかない","記録できない体験","一度だけの意味"]},
+    {id:"a023",concept:"アール・ブリュット（生の芸術）",desc:"美術教育を受けていない人、精神的困難を抱えた人の芸術。制度化された芸術観の外からの表現。",author:"デュビュッフェ",themes:["教育外","制度","自発","精神","生"],mood:["訓練されていない表現","制度の外にある芸術","ありのままの表現"]},
+    {id:"a024",concept:"ゲルニカの証言",desc:"スペイン内戦の爆撃を象徴・抽象で描くことで、暴力の証言者となる芸術の可能性と限界。",author:"ピカソ",themes:["暴力","証言","象徴","歴史","記憶"],mood:["芸術が歴史を証言する","言葉にならない暴力","象徴による告発"]},
+    {id:"a025",concept:"白の絵画（ラウシェンバーグ）",desc:"白い絵具だけで塗られたキャンバス。それでも光・影・鑑賞者の影が「絵画」を作る。何もなさの豊かさ。",author:"ラウシェンバーグ",themes:["白","空虚","豊かさ","光","影"],mood:["何もなさの中にあるもの","空白が満たされる","見る者が作る"]},
+    {id:"a026",concept:"大地の芸術（ランド・アート）",desc:"美術館を出て、大地・自然・荒野そのものを素材とした巨大な作品。制度の外で意味を問う。",author:"スミッソン・クリスト",themes:["大地","自然","スケール","制度外","場所"],mood:["制度の外に出る","大地そのものが作品","自然スケールの美"]},
+    {id:"a027",concept:"フェミニスト・アートの問い直し",desc:"芸術史の男性中心性・女性の表象のされ方を問い直し、見る主体・見られる客体の関係を批判する。",author:"ジュディ・シカゴ・ハモンズ",themes:["フェミニズム","表象","主体","客体","批判"],mood:["誰が見て誰が見られるか","芸術史への問い","主体として見る"]},
+    {id:"a028",concept:"デジタル崇高",desc:"膨大なデータ・アルゴリズム・ネットワークが生む圧倒的スケールの前での畏怖。新しい崇高の形。",author:"現代美術",themes:["デジタル","崇高","データ","アルゴリズム","圧倒"],mood:["データの大きさに圧倒される","アルゴリズムの前の無力感","新しい種類の崇高"]},
+    {id:"a029",concept:"痕跡としての絵画",desc:"完成した作品より、制作過程が残した痕跡・修正・消した跡が時間と行為を可視化する。",author:"リヒター・フロントシー",themes:["痕跡","過程","時間","修正","可視化"],mood:["消した跡に意味がある","行為の記録","過程が見える"]},
+    {id:"a030",concept:"オブジェの不気味さ",desc:"馴染みのある物体が文脈を外れて置かれたとき、奇妙で不安な感覚（不気味の谷）が生まれる。",author:"シュルレアリスム",themes:["不気味","文脈","異物","見慣れたもの","不安"],mood:["見慣れたものが怖くなる","文脈が感覚を変える","不気味な安らぎ"]},
+  ];
+
+  function renderDepthArtList(selected) {
+    const el = document.getElementById('depth-art-list');
+    if (!el) return;
+    el.innerHTML = '';
+    ART_FRAGMENTS.forEach(frag => {
+      const isSel = (selected || []).includes('art_' + frag.id);
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid '+(isSel?'var(--lime)':'#e0e0da')+';border-radius:3px;cursor:pointer;background:'+(isSel?'var(--lime)':'transparent')+';transition:all 0.15s;';
+      row.innerHTML =
+        '<div style="flex:1;">' +
+          '<div style="font-size:11px;font-weight:600;letter-spacing:0.04em;color:'+(isSel?'#fff':'#333')+';">'+frag.concept+'</div>' +
+          '<div style="font-size:10px;letter-spacing:0.03em;color:'+(isSel?'rgba(255,255,255,0.8)':'#888')+'margin-top:3px;line-height:1.7;">'+frag.author+'</div>' +
+        '</div>' +
+        '<button style="flex-shrink:0;width:28px;height:28px;border:1px solid '+(isSel?'var(--lime)':'#ccc')+';border-radius:50%;background:'+(isSel?'var(--lime)':'transparent')+';color:'+(isSel?'#fff':'#aaa')+';font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;transition:all 0.15s;margin-top:2px;">' +
+          (isSel?'✓':'+') +
+        '</button>';
+
+      // タップで定義ポップアップ
+      row.querySelector('div').addEventListener('click', () => {
+        openConceptDefPopup({ concept: frag.concept, author: frag.author, desc: frag.desc, themes: frag.themes || [], mood: frag.mood || [] });
+      });
+
+      // ＋ボタンで選択
+      row.querySelector('button').addEventListener('click', (e) => {
+        e.stopPropagation();
+        const key = 'art_' + frag.id;
+        const idx = _depthSelectedConcepts.indexOf(key);
+        if (idx === -1) _depthSelectedConcepts.push(key);
+        else _depthSelectedConcepts.splice(idx, 1);
+        renderDepthArtList(_depthSelectedConcepts);
+        // STEP3のタグも更新
+        const s3 = document.getElementById('depth-step-3');
+        if (s3 && s3.style.display !== 'none') renderStep3ConceptTags();
+      });
+
+      el.appendChild(row);
+    });
+  }
+
+  // STEP3タグ更新（美術IDにも対応）
+  function resolveArtLabel(id) {
+    if (!id.startsWith('art_')) return null;
+    const fragId = id.replace('art_', '');
+    const f = ART_FRAGMENTS.find(a => a.id === fragId);
+    return f ? f.concept : null;
+  }
+
   // ================================================================
 
   const SHAKE_CARDS = [
@@ -5057,7 +5209,7 @@
 
   const STEP_CONFIG = {
     1: { label: 'STEP 1 / 3', title: '違和感を選ぶ',   back: null,  next: 2 },
-    2: { label: 'STEP 2 / 3', title: '違和感に関連する概念を選ぶ',     back: 1,     next: 3 },
+    2: { label: 'STEP 2 / 3', title: '違和感に関連する概念・アートを選ぶ',     back: 1,     next: 3 },
     3: { label: 'STEP 3 / 3', title: '問いと概念を作る',   back: 2,     next: null },
   };
 
@@ -5128,6 +5280,9 @@
 
         // IDからラベルを引く関数
         const resolveLabel = (id) => {
+          if (id.startsWith('art_')) {
+            return resolveArtLabel(id);
+          }
           if (id.startsWith('frag_')) {
             const fid = id.replace('frag_', '');
             const f = sfList.find(f => f.id === fid);
@@ -5663,21 +5818,31 @@
   }
 
   async function generateBeingSVGFromAPI(entry, container, seed) {
-    const prompt = `あなたはSVGアーティストです。以下の「知的な深み」エントリから、抽象的な生き物・存在をSVGで描いてください。
+    const prompt = `You are a SVG artist specializing in strange, liminal creatures. Generate one SVG creature based on the philosophical concept below.
 
-概念名: ${entry.originalConceptName || ''}
-問い: ${entry.questionText || ''}
-メモ: ${entry.memo || ''}
-気配: ${seed.text || ''}
+Concept: ${entry.originalConceptName || ''}
+Question: ${entry.questionText || ''}
+Atmosphere: ${seed.text || ''}
 
-要件:
-- viewBox="0 0 160 160" のSVGを1つ生成
-- 背景なし（透明）
-- 生き物っぽい有機的な形（目・体・アクセント要素を含む）
-- 不気味だけど少し可愛い、説明しきれない存在感
-- アニメーション（@keyframesとanimation属性）を1つ入れる
-- 色は3〜4色まで、落ち着いたトーン
-- <svg>タグから</svg>タグまでのみ出力（説明不要、コードブロックなし）`;
+CREATURE DESIGN RULES — follow all of these:
+
+1. UNCANNY CUTE: The creature must feel both unsettling AND endearing. Think: a soft round body with too many limbs, or huge asymmetric eyes that stare slightly off-center, or a mouth that is almost a smile but not quite.
+
+2. UNEXPLAINABLE: It should look like it belongs to a classification system that doesn't exist yet. Not a known animal. Not a monster. Something in-between — a "being" that makes you feel there's a name for it you just can't remember.
+
+3. MEANINGFUL FORM: Let the concept subtly shape the creature's features. If the concept is about memory, give it layered translucent rings. If it's about contradiction, give it two heads facing opposite directions. The connection should feel intuitive, not literal.
+
+4. COMPOSITION RULES:
+   - viewBox="0 0 160 160", no background
+   - Centered figure, roughly 60–100px tall
+   - 1–2 large expressive eyes (can be circles, ovals, or abstract shapes)
+   - An organic body (blob, rounded polygon, or layered curves — no hard rectangles)
+   - At least one "wrong" detail: extra limb, asymmetric feature, floating element, loop, drip, or fringe
+   - 1 gentle looping animation (@keyframes) — subtle breathing, floating, or swaying
+
+5. COLOR: 3–4 muted/dusty colors. Think: warm grey, faded moss, dull mauve, pale coral, or sage. Avoid bright primary colors. One accent slightly warmer or cooler than the others.
+
+6. OUTPUT: SVG code only. No explanation, no markdown fences. Start with <svg and end with </svg>.`;
 
     try {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -5694,12 +5859,17 @@
         }),
       });
 
+      const rawText = await res.text();
       if (!res.ok) {
-        const errText = await res.text();
-        throw new Error('HTTP ' + res.status + ': ' + errText.slice(0, 200));
+        throw new Error('HTTP ' + res.status + ': ' + rawText.slice(0, 400));
       }
-      const data = await res.json();
-      console.log('API response:', JSON.stringify(data).slice(0, 200));
+      let data;
+      try {
+        data = JSON.parse(rawText);
+      } catch(parseErr) {
+        throw new Error('JSON parse failed. Raw: ' + rawText.slice(0, 300));
+      }
+      console.log('API ok, type:', data.type, 'content len:', (data.content||[]).length);
 
       // content配列からテキストを取得
       let text = '';
