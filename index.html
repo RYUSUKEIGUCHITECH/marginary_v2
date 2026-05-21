@@ -395,10 +395,39 @@
             font-size="32" letter-spacing="14" fill="#111">marginary</text>
         </svg>
       </div>
+      <!-- キャラからの問いかけカード -->
+      <div id="chara-question-card" style="display:none;position:absolute;bottom:32px;left:16px;right:16px;z-index:11;"
+           onclick="event.stopPropagation()">
+        <div style="background:rgba(255,255,255,0.97);border-radius:18px;padding:20px 20px 16px;box-shadow:0 4px 28px rgba(0,0,0,0.12);">
+          <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;">
+            <span id="chara-q-chara" class="chara-svg" style="flex-shrink:0;" data-w="44" data-h="44"></span>
+            <div style="flex:1;">
+              <div id="chara-q-header" style="font-size:8px;letter-spacing:0.24em;color:#bbb;margin-bottom:8px;line-height:1.8;"></div>
+              <div id="chara-q-text" style="font-size:14px;letter-spacing:0.05em;color:#222;line-height:2.1;font-weight:500;white-space:pre-line;"></div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:8px;">
+            <button onclick="dismissCharaQuestion()" style="padding:8px 16px;border:1px solid #ddd;border-radius:20px;background:none;font-family:inherit;font-size:9px;letter-spacing:0.16em;color:#aaa;cursor:pointer;">また今度</button>
+            <button onclick="answerCharaQuestion()" style="padding:8px 18px;border:none;border-radius:20px;background:#222;font-family:inherit;font-size:9px;letter-spacing:0.16em;color:#fff;cursor:pointer;">答えてみる</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 帰ってきた問い（1日後） -->
+      <div id="echo-question-card" style="display:none;position:absolute;bottom:32px;left:16px;right:16px;z-index:10;"
+           onclick="event.stopPropagation();openEchoQuestion()">
+        <div style="background:rgba(255,255,255,0.96);border-radius:18px;padding:20px 20px 16px;box-shadow:0 4px 24px rgba(0,0,0,0.10);">
+          <div style="font-size:8px;letter-spacing:0.28em;color:#aaa;margin-bottom:10px;">前に森へ置いた問いが、少し姿を変えて戻ってきました</div>
+          <div id="echo-original-q" style="font-size:10px;letter-spacing:0.04em;color:#bbb;margin-bottom:8px;line-height:1.7;"></div>
+          <div id="echo-new-q" style="font-size:14px;letter-spacing:0.05em;color:#222;line-height:2.0;font-weight:500;"></div>
+          <div style="display:flex;justify-content:flex-end;margin-top:12px;gap:8px;">
+            <button onclick="event.stopPropagation();dismissEcho()" style="padding:7px 16px;border:1px solid #ddd;border-radius:20px;background:none;font-family:inherit;font-size:9px;letter-spacing:0.16em;color:#aaa;cursor:pointer;">あとで</button>
+            <button onclick="event.stopPropagation();openEchoQuestion()" style="padding:7px 16px;border:none;border-radius:20px;background:#222;font-family:inherit;font-size:9px;letter-spacing:0.16em;color:#fff;cursor:pointer;">受け取る</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-
-  <!-- ====== SCREEN 2a: 初回INTRO ====== -->
   <div class="screen tap-screen" id="screen-intro-first">
     <div class="card" style="position:relative; min-height:320px;" onclick="goTo('screen-intro')">
       <div class="tap-hint">タップで次へ</div>
@@ -995,7 +1024,7 @@
               background:var(--lime);color:var(--lime-text);
               font-family:inherit;font-size:11px;letter-spacing:0.18em;
               font-weight:700;cursor:pointer;
-            ">保存する</button>
+            ">ことばを置く</button>
             <button onclick="mountainWordAction('delete')" style="
               flex:1;padding:14px 8px;border:1px solid #e0e0e0;border-radius:12px;
               background:none;color:#aaa;
@@ -1110,8 +1139,8 @@
   </div>
 
   <!-- ====== SCREEN: 深み編集（ステップ式） ====== -->
-  <div class="screen" id="screen-depth-edit" style="background:#fff;">
-    <div style="width:100%;height:100%;display:flex;flex-direction:column;">
+  <div class="screen" id="screen-depth-edit" style="background:#fff;justify-content:flex-start;align-items:stretch;">
+    <div style="width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;">
 
       <!-- ヘッダー -->
       <div style="padding:18px 20px 14px;flex-shrink:0;border-bottom:1px solid #e8e8e4;background:#fff;">
@@ -1127,7 +1156,7 @@
             display:none;padding:8px 16px;border:none;border-radius:20px;
             background:#222;color:#f8f8f6;
             font-family:inherit;font-size:9px;letter-spacing:0.2em;cursor:pointer;
-          ">保存する</button>
+          ">ことばを置く</button>
         </div>
         <div>
           <div id="step-label" style="font-size:8px;letter-spacing:0.28em;color:#bbb;margin-bottom:2px;">STEP 1 / 3</div>
@@ -1172,25 +1201,29 @@
           </div>
 
           <!-- 問い -->
-          <div style="background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;">
+          <div style="background:#fff;border-radius:16px;padding:16px;margin-bottom:8px;">
             <div style="font-size:8px;letter-spacing:0.28em;color:#bbb;margin-bottom:8px;">問い</div>
             <textarea id="depth-question" placeholder="この違和感から、どんな問いが生まれる？" style="
               width:100%;min-height:80px;border:none;background:transparent;
               font-family:inherit;font-size:13px;letter-spacing:0.06em;
               line-height:2.0;color:#222;resize:none;outline:none;padding:0;
               box-sizing:border-box;
-            "></textarea>
+            " oninput="onQuestionInput()"></textarea>
           </div>
 
           <!-- 概念名 -->
           <div style="background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;">
-            <div style="font-size:8px;letter-spacing:0.28em;color:#bbb;margin-bottom:8px;">概念名</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+              <div style="font-size:8px;letter-spacing:0.28em;color:#bbb;">概念名</div>
+              <div id="concept-aura-badge" style="display:none;font-size:8px;letter-spacing:0.12em;color:#888;background:#f5f4f0;border-radius:20px;padding:2px 10px;"></div>
+            </div>
             <input id="depth-concept-name" type="text" placeholder="この感覚に名前をつけるなら..." style="
               width:100%;border:none;background:transparent;
               font-family:inherit;font-size:15px;font-weight:600;
               letter-spacing:0.06em;color:#222;outline:none;padding:0;
               box-sizing:border-box;
-            ">
+            " oninput="onConceptNameInput()">
+          </div>
           </div>
 
           <!-- メモ -->
@@ -1222,14 +1255,14 @@
       </div>
 
       <!-- フッターナビ -->
-      <div style="flex-shrink:0;border-top:1px solid #e8e8e4;background:#fff;display:flex;align-items:center;position:relative;">
+      <div style="flex-shrink:0;border-top:1px solid #e8e8e4;background:#fff;display:flex;align-items:center;position:relative;z-index:10;">
         <!-- キャラ（左下） -->
-        <div style="position:absolute;bottom:100%;left:16px;display:flex;align-items:flex-end;gap:8px;pointer-events:none;">
-          <span id="depth-edit-chara" class="chara-svg" data-w="48" data-h="48" style="flex-shrink:0;"></span>
+        <div style="position:absolute;bottom:100%;left:16px;display:flex;align-items:flex-end;gap:8px;pointer-events:none;z-index:10;">
+          <span id="depth-edit-chara" class="chara-svg" data-w="48" data-h="48" style="flex-shrink:0;display:block;width:48px;height:48px;"></span>
           <div id="depth-edit-chara-serif" style="
             background:#fff;border:1px solid #e8e8e4;border-radius:12px;
             padding:8px 12px;font-size:10px;letter-spacing:0.08em;
-            color:#555;line-height:1.7;max-width:160px;
+            color:#555;line-height:1.7;max-width:200px;
             box-shadow:0 2px 8px rgba(0,0,0,0.06);margin-bottom:4px;
           "></div>
         </div>
@@ -1335,6 +1368,47 @@
           font-family:inherit;font-size:10px;letter-spacing:0.18em;
           color:#aaa;cursor:pointer;
         ">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN: 保存後クエスト ====== -->
+  <div class="screen" id="screen-quest" style="justify-content:flex-start;align-items:stretch;background:#f8f8f6;">
+    <div style="width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;">
+      <!-- スクロール領域 -->
+      <div style="flex:1;overflow-y:auto;padding:40px 24px 24px;">
+
+        <!-- キャラ＋一言 -->
+        <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:28px;">
+          <span id="quest-chara" class="chara-svg" data-w="56" data-h="56" style="flex-shrink:0;margin-top:4px;"></span>
+          <div id="quest-chara-text" style="
+            background:#fff;border:1px solid #e8e8e4;border-radius:4px 16px 16px 16px;
+            padding:14px 16px;font-size:12px;letter-spacing:0.06em;
+            color:#444;line-height:2.0;flex:1;
+            box-shadow:0 2px 8px rgba(0,0,0,0.05);
+          "></div>
+        </div>
+
+        <!-- クエストカード -->
+        <div style="background:#fff;border-radius:16px;padding:24px 20px;margin-bottom:28px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+          <div style="font-size:8px;letter-spacing:0.28em;color:#bbb;margin-bottom:12px;">TODAY'S QUEST</div>
+          <div id="quest-text" style="font-size:14px;letter-spacing:0.06em;color:#222;line-height:2.0;font-weight:500;"></div>
+        </div>
+
+        <!-- ボタン -->
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <button onclick="acceptQuest()" style="
+            width:100%;padding:16px;border:none;border-radius:20px;
+            background:#222;color:#f8f8f6;
+            font-family:inherit;font-size:11px;letter-spacing:0.2em;cursor:pointer;
+          ">やってみる</button>
+          <button onclick="skipQuest()" style="
+            width:100%;padding:16px;border:1px solid #ddd;border-radius:20px;
+            background:none;color:#888;
+            font-family:inherit;font-size:11px;letter-spacing:0.2em;cursor:pointer;
+          ">森に置いておく</button>
+        </div>
+
       </div>
     </div>
   </div>
@@ -1887,6 +1961,11 @@
     initTitleCanvas();
     updateAllCharaSVG('majimaji');
     applyCharaConfig('majimaji');
+    // 帰ってきた問い
+    showEchoCardIfReady();
+    scheduleEchoQuestion();
+    // キャラからの問いかけ（起動時30%）
+    setTimeout(() => tryShowCharaQuestion(0.30), 800);
   });
 
   function applyCharaConfig(charaKey) {
@@ -2376,7 +2455,6 @@
     if (!target) { console.warn('goTo: screen not found:', id); return; }
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     target.classList.add('active');
-    // iOSタッチイベントのコールスタック内で直接audioを初期化して音を鳴らす
     ensureAudio();
     playSoundForScreen(id);
     document.querySelectorAll('.chara-svg').forEach(el => {
@@ -2384,6 +2462,13 @@
       el.offsetHeight;
       el.style.animation = '';
     });
+    // タイトルに戻ったとき：pending フラグがあれば問いかけ表示
+    if (id === 'screen-title') {
+      if (localStorage.getItem('marginary_pending_chara_q') === '1') {
+        localStorage.removeItem('marginary_pending_chara_q');
+        setTimeout(() => tryShowCharaQuestion(1.0), 600); // pending時は確実に表示
+      }
+    }
     if (id === 'screen-question') {
       // セリフを再適用
       const cfg = CHARA_CONFIG[currentChara] || CHARA_CONFIG.majimaji;
@@ -4291,7 +4376,7 @@
       if (themesEl) {
         themesEl.insertAdjacentHTML('afterend', `
           <div id="cdp-mountain-btns" style="display:flex;gap:10px;margin-top:16px;margin-bottom:4px;">
-            <button onclick="mountainWordAction('save');closeConceptDefPopup();" style="flex:1;padding:12px 8px;border:none;border-radius:8px;background:#222;color:#f8f8f6;font-family:inherit;font-size:10px;letter-spacing:0.16em;cursor:pointer;">保存する</button>
+            <button onclick="mountainWordAction('save');closeConceptDefPopup();" style="flex:1;padding:12px 8px;border:none;border-radius:8px;background:#222;color:#f8f8f6;font-family:inherit;font-size:10px;letter-spacing:0.16em;cursor:pointer;">ことばを置く</button>
             <button onclick="mountainWordAction('delete');closeConceptDefPopup();" style="flex:1;padding:12px 8px;border:1px solid #e0e0e0;border-radius:8px;background:none;color:#aaa;font-family:inherit;font-size:10px;letter-spacing:0.16em;cursor:pointer;">違う</button>
           </div>`);
       }
@@ -4561,7 +4646,10 @@
         ? `<div style="font-size:10px;letter-spacing:0.04em;color:#888;line-height:1.7;">${e.questionText.slice(0,30)}${e.questionText.length>30?'…':''}</div>`
         : '';
       const date = new Date(e.updatedAt).toLocaleDateString('ja-JP',{month:'numeric',day:'numeric'});
-      card.innerHTML = `${name}${q}<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;"><div style="font-size:8px;letter-spacing:0.14em;color:#ccc;">${date}</div><div style="display:flex;gap:6px;"><button onclick="event.stopPropagation();viewBeingForEntry('${e.id}')" style="font-size:9px;letter-spacing:0.1em;color:#888;background:none;border:1px solid #e0e0da;border-radius:20px;padding:3px 10px;cursor:pointer;font-family:inherit;">存在</button><button onclick="event.stopPropagation();openShareModal('${e.id}')" style="font-size:9px;letter-spacing:0.12em;color:#aaa;background:none;border:1px solid #e0e0da;border-radius:20px;padding:3px 10px;cursor:pointer;font-family:inherit;">シェア</button></div></div>`;
+      const questBadge = e.quest
+        ? `<div style="font-size:9px;letter-spacing:0.04em;color:#888;line-height:1.6;margin-top:6px;padding:6px 10px;background:#f5f4f0;border-radius:8px;">🎯 ${e.quest}</div>`
+        : '';
+      card.innerHTML = `${name}${q}${questBadge}<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;"><div style="font-size:8px;letter-spacing:0.14em;color:#ccc;">${date}</div><div style="display:flex;gap:6px;"><button onclick="event.stopPropagation();viewBeingForEntry('${e.id}')" style="font-size:9px;letter-spacing:0.1em;color:#888;background:none;border:1px solid #e0e0da;border-radius:20px;padding:3px 10px;cursor:pointer;font-family:inherit;">存在</button><button onclick="event.stopPropagation();openShareModal('${e.id}')" style="font-size:9px;letter-spacing:0.12em;color:#aaa;background:none;border:1px solid #e0e0da;border-radius:20px;padding:3px 10px;cursor:pointer;font-family:inherit;">シェア</button></div></div>`;
       container.appendChild(card);
     });
   }
@@ -4624,9 +4712,9 @@
       const row = document.createElement('div');
       row.style.cssText = 'padding:12px 14px;border:1px solid '+(isSelected?'var(--lime)':'#e0e0da')+';border-radius:3px;cursor:pointer;background:'+(isSelected?'var(--lime)':'transparent')+';transition:all 0.15s;display:flex;align-items:center;gap:10px;';
       row.innerHTML =
-        '<div style="width:6px;height:6px;border-radius:50%;flex-shrink:0;background:'+(isSelected?'#fff':'#d0d0cc')+'"></div>'+
-        '<div style="font-size:12px;letter-spacing:0.06em;color:'+(isSelected?'#fff':'#444')+';line-height:1.7;flex:1;">'+(f.text||'')+'</div>'+
-        (isSelected?'<div style="font-size:10px;color:#f8f8f6;opacity:0.6;">✓</div>':'');
+        '<div style="width:6px;height:6px;border-radius:50%;flex-shrink:0;background:'+(isSelected?(currentChara==="namake"?"#333":"#fff"):"#d0d0cc")+'"></div>'+
+        '<div style="font-size:12px;letter-spacing:0.06em;color:'+(isSelected?(currentChara==="namake"?"#333":"#fff"):"#444")+';line-height:1.7;flex:1;">'+(f.text||'')+'</div>'+
+        (isSelected?'<div style="font-size:10px;color:'+(currentChara==="namake"?"#333":"#fff")+';opacity:0.6;">✓</div>':'');
       row.addEventListener('click', () => toggleDepthSource(f.id, f.text || ''));
       container.appendChild(row);
     });
@@ -4742,10 +4830,10 @@
       row.style.cssText = 'display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid '+(isSel?'var(--lime)':'#e0e0da')+';border-radius:3px;cursor:pointer;background:'+(isSel?'var(--lime)':'transparent')+';transition:all 0.15s;';
       row.innerHTML =
         '<div style="flex:1;">' +
-          '<div style="font-size:11px;font-weight:600;letter-spacing:0.04em;color:'+(isSel?'#fff':'#333')+';">'+frag.concept+'</div>' +
+          '<div style="font-size:11px;font-weight:600;letter-spacing:0.04em;color:'+(isSel?(currentChara==="namake"?"#333":"#fff"):"#333")+';">'+frag.concept+'</div>' +
           '<div style="font-size:10px;letter-spacing:0.03em;color:'+(isSel?'rgba(255,255,255,0.8)':'#888')+'margin-top:3px;line-height:1.7;">'+frag.author+'</div>' +
         '</div>' +
-        '<button style="flex-shrink:0;width:28px;height:28px;border:1px solid '+(isSel?'var(--lime)':'#ccc')+';border-radius:50%;background:'+(isSel?'var(--lime)':'transparent')+';color:'+(isSel?'#fff':'#aaa')+';font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;transition:all 0.15s;margin-top:2px;">' +
+        '<button style="flex-shrink:0;width:28px;height:28px;border:1px solid '+(isSel?'var(--lime)':'#ccc')+';border-radius:50%;background:'+(isSel?'var(--lime)':'transparent')+';color:'+(isSel?(currentChara==="namake"?"#333":"#fff"):"#aaa")+';font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;transition:all 0.15s;margin-top:2px;">' +
           (isSel?'✓':'+') +
         '</button>';
 
@@ -4863,7 +4951,301 @@
     { id:'sk-n06', type:'noise', characterId:'namake',  text:'……地図のない旅でも、歩いた跡は地図になるよん。', themes:[], moods:['迷ってる','どうしたらいい','先が見えない'], relatedConcepts:[] },
   ];;
 
-  // ===== ShakeCard ロジック =====
+  // ================================================================
+  // ===== キャラからの問いかけ =====
+  // ================================================================
+  const CHARA_Q_LAST_KEY = 'marginary_chara_q_last';
+
+  // キーワード × キャラ問いかけパターン
+  const CHARA_Q_PATTERNS = [
+    { test: /普通|常識|みんな/, questions: [
+      '「普通」って誰かに決めてもらったもの？それとも自分で選んでるもの？',
+      '最近、"普通じゃない"と感じた瞬間ってあった？',
+      'その"普通"、10年後も同じだと思う？',
+    ]},
+    { test: /仕事|働く|会社|職場/, questions: [
+      'もし仕事がなくなったとして、何をしてると思う？',
+      '今の仕事、誰かに説明できないけどやりたいことってある？',
+      '「働くこと」と「生きること」、どこかで混ざってない？',
+    ]},
+    { test: /意味|価値|なぜ|なんで/, questions: [
+      'その問いを立てたとき、体のどこかで感じた感覚があった？',
+      '意味が見つからないとき、それでも続けることってある？',
+      '「意味」って後からついてくるもの？最初からあるもの？',
+    ]},
+    { test: /時間|忙しい|余裕|毎日/, questions: [
+      '今週、ぼーっとした時間ってあった？',
+      '「忙しい」って言うとき、何かを守ってることってない？',
+      '時間が止まったら、最初に何をしたい？',
+    ]},
+    { test: /自分|わたし|ぼく|アイデンティティ/, questions: [
+      'ひとりのとき、どんな自分でいる？',
+      '「本当の自分」って、誰かに見せたことある？',
+      '5年前の自分が見たら、今の自分をどう思うかな？',
+    ]},
+    { test: /孤独|一人|つながり|寂しい/, questions: [
+      'ひとりでいることと、孤独でいることって違うと思う？',
+      '最後に「この人にわかってもらえた」と感じたのはいつ？',
+      'つながっているのに、孤独を感じることってある？',
+    ]},
+    { test: /体|からだ|疲れ|眠い|だるい/, questions: [
+      '体が「もう無理」って言ってるとき、聞いてあげてる？',
+      '最近、体が喜んでいる瞬間ってあった？',
+      '疲れているとき、自分に何をしてあげてる？',
+    ]},
+    { test: /変化|変わる|成長|昔/, questions: [
+      '変わることで失うものを、恐れてることってある？',
+      '昔と今で、一番変わったと思う部分ってどこ？',
+      '変わりたいのに変われない、その理由を自分で知ってる？',
+    ]},
+  ];
+
+  const CHARA_Q_DEFAULTS = [
+    '最近、言葉にできなかったけど感じたことってある？',
+    'いまここにある問いを、誰かに話したことある？',
+    '「答えなくていい問い」を持っていることって、どんな感じ？',
+    'もし今日が最後の日だったとして、何を問いたい？',
+    'ここしばらくで、一番長く頭に残っている言葉は？',
+    '置いていった問い、まだ心のどこかにある？',
+    'ことばにならないものを、ことばにしようとしてる理由って何だろう？',
+  ];
+
+  // キャラの前置き（問いかけ文の前）
+  const CHARA_Q_PREFIX = {
+    majimaji: (name) => `マジマジが、前に置いていった問いを眺めているさ。`,
+    concrete:  (name) => `カワラちゃんが、あなたの問いをじっと見ているわ。`,
+    kasa:      (name) => `ムッシュアンブレラが、問いの森を歩いているムッシュ。`,
+    yurayura:  (name) => `ユラユランゴが、揺れながら問いを読んでいるンゴ。`,
+    namake:    (name) => `ナマケールが、ぼんやり問いを見ているよん。`,
+    sun:       (name) => `テカリ王子が、問いを見て黙り込んでいるぜ。`,
+  };
+
+  let _charaQCurrentText = '';
+
+  function tryShowCharaQuestion(prob) {
+    // 確率チェック
+    if (Math.random() > prob) return;
+    // 過去の問いがなければ出さない
+    const entries = getDepthEntries ? getDepthEntries() : [];
+    if (entries.length === 0) return;
+    // 直近1時間以内に出していたらスキップ
+    const last = parseInt(localStorage.getItem(CHARA_Q_LAST_KEY) || '0');
+    if (Date.now() - last < 60 * 60 * 1000) return;
+
+    // 過去の問いからキーワードを集める
+    const allText = entries.map(e => (e.questionText || '') + (e.originalConceptName || '') + (e.sourceText || '')).join(' ');
+
+    // マッチングで問いを選ぶ
+    let candidates = CHARA_Q_DEFAULTS.slice();
+    for (const p of CHARA_Q_PATTERNS) {
+      if (p.test.test(allText)) {
+        candidates = p.questions;
+        break;
+      }
+    }
+    const question = candidates[Math.floor(Math.random() * candidates.length)];
+
+    showCharaQuestionCard(question);
+  }
+
+  function showCharaQuestionCard(question) {
+    const card    = document.getElementById('chara-question-card');
+    const charaEl = document.getElementById('chara-q-chara');
+    const header  = document.getElementById('chara-q-header');
+    const textEl  = document.getElementById('chara-q-text');
+    if (!card || !textEl) return;
+
+    if (charaEl) charaEl.innerHTML = charaInnerSVGFixed(currentChara, 44, 44);
+    const prefixFn = CHARA_Q_PREFIX[currentChara] || CHARA_Q_PREFIX.majimaji;
+    if (header) header.textContent = prefixFn();
+    textEl.textContent = '「' + question + '」';
+    _charaQCurrentText = question;
+
+    // echo-question-card が出ていたら一旦隠す
+    const echoCard = document.getElementById('echo-question-card');
+    if (echoCard) echoCard.style.display = 'none';
+
+    card.style.display = 'block';
+    localStorage.setItem(CHARA_Q_LAST_KEY, String(Date.now()));
+  }
+
+  function dismissCharaQuestion() {
+    const card = document.getElementById('chara-question-card');
+    if (card) card.style.display = 'none';
+    // echoが待機中なら復元
+    showEchoCardIfReady();
+  }
+
+  function answerCharaQuestion() {
+    const card = document.getElementById('chara-question-card');
+    if (card) card.style.display = 'none';
+    // STEP3を開いてキャラの問いを引き継ぐ
+    _editingDepthEntry     = null;
+    _depthSelectedSourceIds  = [];
+    _depthSelectedSourceText = _charaQCurrentText;
+    _depthSelectedConcepts   = [];
+    _depthSelectedFragments  = [];
+    goTo('screen-depth-edit');
+    setTimeout(() => {
+      goToDepthStep(3);
+      const qEl = document.getElementById('depth-question');
+      if (qEl) { qEl.value = _charaQCurrentText; onQuestionInput(); }
+    }, 200);
+  }
+
+  // ================================================================
+  const ECHO_KEY       = 'marginary_echo';
+
+  function scheduleEchoQuestion() {
+    const entries = JSON.parse(localStorage.getItem(_DEPTH_KEY) || '[]');
+    const now = Date.now();
+    const oneDayAgo = now - 24 * 60 * 60 * 1000;
+    const candidates = entries.filter(e =>
+      e.questionText && e.questionText.trim().length > 4 &&
+      e.savedAt && e.savedAt < oneDayAgo && !e.echoGenerated
+    );
+    if (!candidates.length) return;
+    const entry = candidates[Math.floor(Math.random() * candidates.length)];
+    generateEchoQuestion(entry);
+  }
+
+  async function generateEchoQuestion(entry) {
+    const existing = JSON.parse(localStorage.getItem(ECHO_KEY) || 'null');
+    if (existing && !existing.seen) return;
+    const prompt = `ユーザーが1日前に森に置いた問いがあります。この問いを「少し姿を変えて」ユーザーに返してください。
+
+元の問い: ${entry.questionText}
+${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
+
+ルール：
+- 元の問いのエッセンスを保ちながら、別の角度・時間軸・比喩で問い直す
+- 1〜2文で、詩的で少し不思議な言い回しにする
+- 「いまのあなたにとって」「もし〜なら」「〜は〜の一部？」のような問いかけが自然
+- 口調は柔らかく、押しつけがましくない
+
+変容した問いのみ出力（前置き不要）：`;
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 200, messages: [{ role: 'user', content: prompt }] }),
+      });
+      const data = JSON.parse(await res.text());
+      const newQ = (Array.isArray(data.content) ? data.content.filter(c=>c.type==='text').map(c=>c.text).join('') : '').trim();
+      if (!newQ) return;
+      localStorage.setItem(ECHO_KEY, JSON.stringify({
+        originalQuestion: entry.questionText, newQuestion: newQ,
+        entryId: entry.id, generatedAt: Date.now(), seen: false,
+      }));
+      const entries2 = JSON.parse(localStorage.getItem(_DEPTH_KEY) || '[]');
+      const idx = entries2.findIndex(e => e.id === entry.id);
+      if (idx !== -1) { entries2[idx].echoGenerated = true; localStorage.setItem(_DEPTH_KEY, JSON.stringify(entries2)); }
+      showEchoCardIfReady();
+    } catch(e) { console.warn('echo generation failed:', e); }
+  }
+
+  function showEchoCardIfReady() {
+    const echo = JSON.parse(localStorage.getItem(ECHO_KEY) || 'null');
+    if (!echo || echo.seen) return;
+    const card   = document.getElementById('echo-question-card');
+    const origEl = document.getElementById('echo-original-q');
+    const newEl  = document.getElementById('echo-new-q');
+    if (!card) return;
+    if (origEl) origEl.textContent = '元の問い：' + echo.originalQuestion;
+    if (newEl)  newEl.textContent  = echo.newQuestion;
+    card.style.display = 'block';
+  }
+
+  function dismissEcho() {
+    const card = document.getElementById('echo-question-card');
+    if (card) card.style.display = 'none';
+    const echo = JSON.parse(localStorage.getItem(ECHO_KEY) || 'null');
+    if (echo) { echo.seen = true; localStorage.setItem(ECHO_KEY, JSON.stringify(echo)); }
+  }
+
+  function openEchoQuestion() {
+    const echo = JSON.parse(localStorage.getItem(ECHO_KEY) || 'null');
+    if (!echo) return;
+    echo.seen = true;
+    localStorage.setItem(ECHO_KEY, JSON.stringify(echo));
+    const card = document.getElementById('echo-question-card');
+    if (card) card.style.display = 'none';
+    _editingDepthEntry     = null;
+    _depthSelectedSource   = [echo.originalQuestion];
+    _depthSelectedConcepts = [];
+    _depthSelectedFragments= [];
+    goTo('screen-depth-edit');
+    setTimeout(() => {
+      goToDepthStep(3);
+      const qEl = document.getElementById('depth-question');
+      if (qEl) { qEl.value = echo.newQuestion; onQuestionInput(); }
+    }, 200);
+  }
+
+  // ================================================================
+  // ===== 保存後アクションクエスト =====
+  // ================================================================
+
+  const QUEST_PATTERNS = [
+    { test: /普通|一般|常識|みんな/, quest: '街で"普通っぽい"と感じたものを3つ見つけて、心の中でメモしてみる。',
+      serif: { majimaji:'その"普通"、森に置いておいたよ。\n今日は街で"普通っぽいもの"を3つ探してみる？', concrete:'その"普通"は誰が決めたのかしら。\n今日、街で"普通っぽいもの"を3つ見つけてみてね。', kasa:'ムッシュも"普通"が何かわからないムッシュ。\n今日は街で"普通っぽいもの"を3つ探してみてムッシュ。', yurayura:'その"普通"ンゴ、森に預けてきたンゴ。\n街で"普通っぽいもの"を3つ見つけてみるンゴ？', namake:'その"普通"ね、森に置いてきたよん。\n今日は街で"普通っぽいもの"を3つ探してみてよん。', sun:'その"普通"、森に叩き込んできたぜ！\n今日は街で"普通っぽいもの"を3つ探してみろ！' }},
+    { test: /働く|仕事|会社|職場/, quest: '仕事中に1分だけ立ち止まって、「なぜこれをしているんだろう」と自分に問いかける。',
+      serif: { majimaji:'森に預けたよ。\n今日、仕事の合間に1分だけ「なぜこれをしているんだろう」って問いかけてみて。', concrete:'問いを置いてきたわ。\n仕事の合間に1分、「なぜこれをしているのかしら」と問いかけてみてね。', kasa:'ムッシュも仕事の意味を考えるムッシュ。\n今日1分だけ立ち止まって問いかけてみてムッシュ。', yurayura:'森に置いてきたンゴ。\n仕事の合間に1分、「なぜ」って問いかけてみるンゴ。', namake:'森に置いてきたよん。\n仕事しながら1分だけ「なぜ」って問いかけてみてよん。', sun:'森に置いてきたぜ！\n仕事中に1分止まって「なぜだ」って問いかけてみろ！' }},
+    { test: /自分|アイデンティティ/, quest: '信頼できる人に「自分ってどんな人に見える？」と聞いてみる。',
+      serif: { majimaji:'置いてきたよ。\n今日、誰かに「自分ってどんな人に見える？」って聞いてみる？', concrete:'置いてきたわ。\n誰かに「私ってどんな人に見える？」と聞いてみてね。', kasa:'ムッシュも自分がわからないムッシュ。\n誰かに「自分ってどんな人に見える？」と聞いてみてムッシュ。', yurayura:'森に届けてきたンゴ。\n誰かに「自分ってどんな人」って聞いてみるンゴ？', namake:'置いてきたよん。\n誰かに「自分ってどんな人に見える？」って聞いてみてよん。', sun:'置いてきたぜ！\n誰かに「俺ってどんな人間だ？」って聞いてみろ！' }},
+    { test: /時間|忙しい|余裕/, quest: '意図的に何もしない時間を5分つくる。スマホも置いて。',
+      serif: { majimaji:'森に預けたよ。\n今日、何もしない5分を意図的に作ってみて。', concrete:'預けてきたわ。\n今日、何もしない5分を意図的に作ってみてね。', kasa:'ムッシュも時間が足りないムッシュ。\n何もしない5分を作ってみてムッシュ。', yurayura:'森に置いてきたンゴ。\n何もしない5分、作ってみるンゴ？', namake:'預けてきたよん。\n何もしない5分をのんびり作ってみてよん。', sun:'預けてきたぜ！\n何もしない5分を今日中に作ってみろ！' }},
+    { test: /意味|価値|なぜ|なんで/, quest: '誰かに「最近楽しかったこと」を聞く。自分のことを話してもいい。',
+      serif: { majimaji:'うん、置いておいたよ。\n今日、誰かに「最近楽しいことある？」って聞いてみる？', concrete:'置いてきたわ。\n誰かに「最近楽しいことある？」って聞いてみてね。', kasa:'意味はムッシュにもわからないムッシュ。\n誰かに「最近楽しいことある？」と聞いてみてムッシュ。', yurayura:'置いてきたンゴ。\n誰かに「最近楽しいことある？」って聞いてみるンゴ？', namake:'置いてきたよん。\n誰かに「最近楽しいことある？」って聞いてみてよん。', sun:'置いてきたぜ！\n誰かに「最近楽しかったことは？」って聞いてみろ！' }},
+    { test: /孤独|一人|つながり/, quest: '最近連絡していない人に、ひとことだけメッセージを送る。',
+      serif: { majimaji:'ちゃんと森に届いたよ。\n今日、誰かに連絡してみる？ひとことでもいい。', concrete:'届けてきたわ。\n今日、誰かにひとことだけ連絡してみてね。', kasa:'ムッシュも一人は寂しいムッシュ。\n誰かにひとことだけ連絡してみてムッシュ。', yurayura:'森に届けてきたンゴ。\n誰かにひとことだけ連絡してみるンゴ？', namake:'届けてきたよん。\n誰かにひとことだけ連絡してみてよん。', sun:'届けてきたぜ！\n誰かにひとことだけ連絡してみろ！' }},
+    { test: /体|からだ|疲れ|眠い|だるい/, quest: '何も考えずに外を10分歩く。空や地面を見ながら。',
+      serif: { majimaji:'置いてきたよ。\n今日、10分だけ外を歩いてみて。考えなくていい。', concrete:'置いてきたわ。\n今日10分だけ、何も考えずに外を歩いてみてね。', kasa:'ムッシュも外が好きムッシュ。\n10分だけ外を歩いてみてムッシュ。', yurayura:'置いてきたンゴ。\n10分だけ外をぼーっと歩いてみるンゴ。', namake:'置いてきたよん。\nのんびり10分、外を歩いてみてよん。', sun:'置いてきたぜ！\n今日10分、外を歩いてみろ！' }},
+  ];
+
+  const QUEST_DEFAULTS = [
+    { quest:'その問いを、信頼できる人に話してみる。反応は関係ない。',
+      serif:{ majimaji:'森に置いてきたよ。\n今日、その問いを誰かに話してみる？', concrete:'森に置いてきたわ。\n今日、その問いを誰かに話してみてね。', kasa:'森に置いてきたムッシュ。\n誰かにその問いを話してみてムッシュ。', yurayura:'森に置いてきたンゴ。\n誰かにその問いを話してみるンゴ？', namake:'森に置いてきたよん。\n誰かにその問いを話してみてよん。', sun:'森に置いてきたぜ！\n今日、その問いを誰かにぶつけてみろ！' }},
+    { quest:'その問いを紙に書いて、よく見える場所に貼ってみる。',
+      serif:{ majimaji:'うん、ちゃんと届いたさ。\n今日、その問いを紙に書いて部屋に貼ってみて。', concrete:'ちゃんと届いたわ。\n今日、その問いを紙に書いて貼ってみてね。', kasa:'ちゃんと届いたムッシュ。\n紙に書いて部屋に貼ってみてムッシュ。', yurayura:'届いたンゴ。\n紙に書いて部屋に貼ってみるンゴ？', namake:'ちゃんと届いたよん。\n紙に書いて部屋に貼ってみてよん。', sun:'届いたぜ！\n紙に書いて部屋に貼ってみろ！' }},
+    { quest:'その問いを心に持ちながら、いつもと違う道を歩いてみる。',
+      serif:{ majimaji:'置いてきたよ。\n今日、その問いを胸に歩いてみる？', concrete:'置いてきたわ。\n今日、その問いを胸にいつもと違う道を歩いてみてね。', kasa:'置いてきたムッシュ。\nその問いを胸にいつもと違う道を歩いてみてムッシュ。', yurayura:'置いてきたンゴ。\nその問いを胸にいつもと違う道を歩いてみるンゴ。', namake:'置いてきたよん。\nその問いを胸にのんびり歩いてみてよん。', sun:'置いてきたぜ！\nその問いを胸にいつもと違う道を歩いてみろ！' }},
+  ];
+
+  function showQuestScreen(entry) {
+    const charaEl = document.getElementById('quest-chara');
+    if (charaEl) charaEl.innerHTML = charaInnerSVGFixed(currentChara, 56, 56);
+
+    const q = (entry.questionText || '') + (entry.originalConceptName || '') + (entry.sourceText || '');
+    let chosen = null;
+    for (const p of QUEST_PATTERNS) {
+      if (p.test.test(q)) { chosen = p; break; }
+    }
+    if (!chosen) chosen = QUEST_DEFAULTS[Math.floor(Math.random() * QUEST_DEFAULTS.length)];
+
+    const serif = (chosen.serif[currentChara] || chosen.serif.majimaji);
+    document.getElementById('quest-chara-text').textContent = serif;
+    document.getElementById('quest-text').textContent = chosen.quest;
+
+    // クエストをエントリに保存
+    const entries = JSON.parse(localStorage.getItem(_DEPTH_KEY) || '[]');
+    const idx = entries.findIndex(e => e.id === entry.id);
+    if (idx !== -1) { entries[idx].quest = chosen.quest; localStorage.setItem(_DEPTH_KEY, JSON.stringify(entries)); }
+
+    goTo('screen-quest');
+  }
+
+  function acceptQuest() {
+    renderPresence('screen-depth-list');
+    goTo('screen-presence');
+  }
+
+  function skipQuest() {
+    renderPresence('screen-depth-list');
+    goTo('screen-presence');
+  }
+
+  // ================================================================
   let _shakeQueue   = []; // マッチングで得たカードのキュー
   let _shakeIndex   = 0;
   let _shakeTimer   = null;
@@ -5285,7 +5667,9 @@
           }
           if (id.startsWith('frag_')) {
             const fid = id.replace('frag_', '');
-            const f = sfList.find(f => f.id === fid);
+            // THOUGHT_FRAGMENTS_ALL と保存済み断片の両方を検索
+            const allF = (typeof THOUGHT_FRAGMENTS_ALL !== 'undefined' ? THOUGHT_FRAGMENTS_ALL : []);
+            const f = allF.find(f => f.id === fid) || sfList.find(f => f.id === fid);
             return f ? f.concept : null;
           }
           if (id.startsWith('close_')) {
@@ -5440,7 +5824,7 @@
       // 右：+ボタンで選択
       const btn = document.createElement('button');
       btn.textContent = isSel ? '✓' : '+';
-      btn.style.cssText = 'flex-shrink:0;width:28px;height:28px;border:1px solid '+(isSel?'var(--lime)':'#ccc')+';border-radius:50%;background:'+(isSel?'var(--lime)':'transparent')+';color:'+(isSel?'#fff':'#aaa')+';font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;transition:all 0.15s;';
+      btn.style.cssText = 'flex-shrink:0;width:28px;height:28px;border:1px solid '+(isSel?'var(--lime)':'#ccc')+';border-radius:50%;background:'+(isSel?'var(--lime)':'transparent')+';color:'+(isSel?(currentChara==="namake"?"#333":"#fff"):"#aaa")+';font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;transition:all 0.15s;';
       const itemId = item.id;
       btn.addEventListener('click', function(e) { e.stopPropagation(); toggleDepthConcept(itemId); });
       row.appendChild(info);
@@ -5488,7 +5872,7 @@
       // 右：+ボタン（選択）
       const btn = document.createElement('button');
       btn.textContent = isSel ? '✓' : '+';
-      btn.style.cssText = 'flex-shrink:0;width:28px;height:28px;border:1px solid '+(isSel?'var(--lime)':'#ccc')+';border-radius:50%;background:'+(isSel?'var(--lime)':'transparent')+';color:'+(isSel?'#fff':'#aaa')+';font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;transition:all 0.15s;margin-top:2px;';
+      btn.style.cssText = 'flex-shrink:0;width:28px;height:28px;border:1px solid '+(isSel?'var(--lime)':'#ccc')+';border-radius:50%;background:'+(isSel?'var(--lime)':'transparent')+';color:'+(isSel?(currentChara==="namake"?"#333":"#fff"):"#aaa")+';font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;transition:all 0.15s;margin-top:2px;';
       const fId = f.id;
       btn.addEventListener('click', function(e) { e.stopPropagation(); toggleDepthFragment(fId); });
       inner.appendChild(info);
@@ -5499,6 +5883,116 @@
   }
 
   // --- 保存 ---
+  // ── STEP3 マジマジの問い返し ──
+  let _questionInputTimer = null;
+  let _lastQuestion = '';
+
+  function onQuestionInput() {
+    const q = document.getElementById('depth-question')?.value.trim() || '';
+    updateAuraBadge(q);
+    clearTimeout(_questionInputTimer);
+    if (q.length < 5) { hideMajimajiResponse(); _lastQuestion = ''; return; }
+    _questionInputTimer = setTimeout(() => {
+      if (q === _lastQuestion) return;
+      _lastQuestion = q;
+      generateMajimajiResponse(q);
+    }, 1500);
+  }
+
+  function onConceptNameInput() {
+    const q = document.getElementById('depth-question')?.value.trim() || '';
+    updateAuraBadge(q);
+  }
+
+  function updateAuraBadge(questionText) {
+    const badge = document.getElementById('concept-aura-badge');
+    if (!badge) return;
+    if (!questionText || questionText.length < 4) { badge.style.display = 'none'; return; }
+    let best = null, bestScore = -1;
+    PRESENCE_SEEDS.forEach(seed => {
+      let score = 0;
+      seed.mood.forEach(m => { if (questionText.includes(m.slice(0,3))) score += 2; });
+      seed.relatedConcepts.forEach(c => { if (questionText.includes(c)) score += 3; });
+      if (score > bestScore) { bestScore = score; best = seed; }
+    });
+    const seed = (bestScore > 0 && best) ? best : PRESENCE_SEEDS[Math.floor(Math.random() * PRESENCE_SEEDS.length)];
+    badge.textContent = seed.text;
+    badge.style.display = 'inline-flex';
+  }
+
+  function hideMajimajiResponse() {
+    // 何もしない（フッター吹き出しは別途 setDepthCharaSerif で管理）
+  }
+
+  async function generateMajimajiResponse(question) {
+    const serifEl = document.getElementById('depth-edit-chara-serif');
+    if (!serifEl) return;
+    const response = buildMajimajiLocal(question);
+    serifEl.textContent = response;
+  }
+
+  function buildMajimajiLocal(q) {
+    const patterns = [
+      { test: /なぜ|どうして|なんで/, responses: [
+        'その「なぜ」、昔からあった問い？それとも最近生まれたのかな？',
+        'その問いを立てたのは、何かが変わった瞬間だったのかもよ。',
+        'なぜって聞くとき、もう答えの半分は知ってる気がするさ。',
+      ]},
+      { test: /自分|わたし|ぼく|僕|私/, responses: [
+        'その「自分」って、誰に見せてる自分のことかな？',
+        'その感覚、ずっとあったの？それとも最近生まれた？',
+        '「自分らしさ」って、自分で決めてるもの？それとも気づいたらそうなってたもの？',
+      ]},
+      { test: /仕事|働く|会社|職場/, responses: [
+        'その「働く」は生きることの一部？それとも、どこかから借りてきたゲーム？',
+        '仕事じゃなかったとしたら、それでも同じことをしてるかな？',
+        'その問い、仕事を離れたあとも残りそうかな？',
+      ]},
+      { test: /時間|いつ|毎日|日常/, responses: [
+        'その時間、流れてる感じがする？それとも積み重なってる感じ？',
+        '「ずっとこうだった」と「最近こうなった」、どっちに近い？',
+        'その日常、いつから「当たり前」になったのかな。',
+      ]},
+      { test: /怖い|不安|心配|こわい/, responses: [
+        'その怖さ、何かを大切にしてるからこその怖さかもさ。',
+        '怖いものと、怖いけど近づきたいもの、似てることがあるよ。',
+        'その不安、何が起きることへの備えなのかな。',
+      ]},
+      { test: /普通|みんな|一般|常識/, responses: [
+        'その「普通」は、誰が決めたんだろう？',
+        '「みんな」って言うとき、その中に自分は入ってる？',
+        '普通じゃなかったら、何が困るのかな。',
+      ]},
+      { test: /意味|価値|大切|重要/, responses: [
+        'その意味、誰かに証明したいもの？それとも自分だけで十分なもの？',
+        '意味がなかったとしても、やり続けることってあるかな。',
+        'その「大切さ」、最初からあった？それとも後から気づいた？',
+      ]},
+      { test: /好き|嫌い|苦手|得意/, responses: [
+        'その「好き」、なんで好きかって言葉にできそう？',
+        '好きと得意って、どっちが先にあったのかな。',
+        'その感覚、誰かに教わったもの？それとも自分で発見したもの？',
+      ]},
+    ];
+
+    for (const p of patterns) {
+      if (p.test.test(q)) {
+        return p.responses[Math.floor(Math.random() * p.responses.length)];
+      }
+    }
+
+    // デフォルト
+    const defaults = [
+      'その問い、どこから来たのかな？',
+      'それって、昔からあった問い？それとも最近生まれた問い？',
+      'その感覚に名前をつけるとしたら、どんな言葉が近い？',
+      'その問いの反対側にある問いって、なんだろう？',
+      'それを問うことで、何かが動き出す気がするさ。',
+      'その問いを立てたとき、体のどこかで感じた感覚があるかな。',
+    ];
+    return defaults[Math.floor(Math.random() * defaults.length)];
+  }
+
   function saveDepthEntry() {
     const now = new Date().toISOString();
     const existing = currentDepthId ? getDepthEntryById(currentDepthId) : null;
@@ -5522,8 +6016,12 @@
     if (btn) { btn.textContent = '保存済'; btn.style.background = '#555'; }
     setTimeout(() => {
       _presenceFromEntryId = entry.id;
-      renderPresence('screen-depth-list');
-      goTo('screen-presence');
+      _questNextScreen = 'screen-presence';
+      showQuestScreen(entry);
+      // 保存後40%でキャラ問いかけ予約（クエスト画面を閉じてタイトルに戻ったとき用）
+      if (Math.random() < 0.40) {
+        localStorage.setItem('marginary_pending_chara_q', '1');
+      }
     }, 600);
   }
 
