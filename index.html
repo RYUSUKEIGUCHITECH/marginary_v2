@@ -471,6 +471,54 @@
       </div>
     </div>
   </div>
+  <!-- ====== SCREEN: 森を歩く ====== -->
+  <div class="screen" id="screen-forest" style="background:#f4f2ed;justify-content:flex-start;align-items:stretch;">
+    <div style="width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;">
+      <!-- ヘッダー -->
+      <div style="flex-shrink:0;padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;background:#f4f2ed;">
+        <button onclick="goTo('screen-intro')" style="background:none;border:none;font-family:inherit;font-size:9px;letter-spacing:0.18em;color:#aaa;cursor:pointer;padding:0;">← 戻る</button>
+        <div style="font-size:9px;letter-spacing:0.28em;color:#aaa;">FOREST WALK</div>
+        <div style="width:40px;"></div>
+      </div>
+      <!-- スクロール本体 -->
+      <div id="forest-scroll" style="flex:1;overflow-y:auto;padding:8px 0 60px;">
+        <div id="forest-content" style="display:flex;flex-direction:column;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN: 雑談 ====== -->
+  <div class="screen" id="screen-chat" style="background:#f8f8f6;justify-content:flex-start;align-items:stretch;">
+    <div style="width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;">
+      <!-- ヘッダー -->
+      <div style="flex-shrink:0;padding:16px 20px 12px;border-bottom:1px solid #e8e8e4;background:#fff;display:flex;align-items:center;justify-content:space-between;">
+        <button onclick="goTo('screen-title')" style="background:none;border:none;font-family:inherit;font-size:9px;letter-spacing:0.18em;color:#aaa;cursor:pointer;padding:0;">← 戻る</button>
+        <div style="font-size:10px;letter-spacing:0.2em;color:#333;">雑談</div>
+        <button onclick="endChat()" id="chat-end-btn" style="display:none;padding:7px 16px;border:none;border-radius:20px;background:#222;font-family:inherit;font-size:9px;letter-spacing:0.16em;color:#fff;cursor:pointer;">森に置く</button>
+        <div id="chat-end-placeholder" style="width:60px;"></div>
+      </div>
+      <!-- 会話ログ -->
+      <div id="chat-log" style="flex:1;overflow-y:auto;padding:20px 16px 12px;display:flex;flex-direction:column;gap:12px;">
+        <!-- 最初のキャラ発言はJSで挿入 -->
+      </div>
+      <!-- 入力エリア -->
+      <div style="flex-shrink:0;padding:10px 16px 24px;background:#fff;border-top:1px solid #e8e8e4;">
+        <div style="display:flex;gap:8px;align-items:flex-end;">
+          <textarea id="chat-input" placeholder="ひとことどうぞ" style="
+            flex:1;min-height:44px;max-height:100px;padding:12px 14px;
+            border:1px solid #e0e0da;border-radius:12px;
+            font-family:inherit;font-size:13px;letter-spacing:0.04em;
+            color:#222;resize:none;outline:none;background:#f8f8f6;line-height:1.7;
+          " oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+          <button onclick="sendChat()" style="
+            flex-shrink:0;width:44px;height:44px;border:none;border-radius:12px;
+            background:#222;color:#fff;font-size:16px;cursor:pointer;
+          ">↑</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="screen tap-screen" id="screen-intro-first">
     <div class="card" style="position:relative; min-height:320px;" onclick="goTo('screen-intro')">
       <div class="tap-hint">タップで次へ</div>
@@ -538,6 +586,18 @@
           font-size:13px; font-weight:700; letter-spacing:3px;
           font-family:inherit; cursor:pointer;
         ">ことばを置いていく</button>
+        <button onclick="event.stopPropagation(); goTo('screen-chat')" style="
+          width:100%; padding:13px; margin-top:10px; border:1px solid #ddd; border-radius:12px;
+          background:#fff; color:#555;
+          font-size:11px; font-weight:400; letter-spacing:3px;
+          font-family:inherit; cursor:pointer;
+        ">雑談する</button>
+        <button onclick="event.stopPropagation(); goTo('screen-forest')" id="forest-walk-btn" style="
+          width:100%; padding:13px; margin-top:8px; border:none; border-radius:12px;
+          background:none; color:#00712B;
+          font-size:11px; font-weight:400; letter-spacing:3px;
+          font-family:inherit; cursor:pointer;
+        ">森を歩く</button>
       </div>
 
       <!-- タップヒント -->
@@ -964,7 +1024,7 @@
       <!-- 地層エリア（木くず地面） -->
       <div id="tamatta-strata" style="position:relative;height:38%;flex-shrink:0;background:#B8956A;overflow:hidden;"></div>
       <!-- タップで次へ -->
-      <div onclick="renderCharaTalk('screen-library');goTo('screen-chara-talk');" style="text-align:center;padding:10px;color:#ffffff;font-size:13px;letter-spacing:0.2em;flex-shrink:0;font-weight:700;cursor:pointer;background:#A07848;">タップで次へ</div>
+      <div onclick="onTamattaTap()" style="text-align:center;padding:10px;color:#ffffff;font-size:13px;letter-spacing:0.2em;flex-shrink:0;font-weight:700;cursor:pointer;background:#A07848;">タップで次へ</div>
     </div>
   </div>
 
@@ -2522,11 +2582,27 @@
       el.style.animation = '';
     });
     // タイトルに戻ったとき：pending フラグがあれば問いかけ表示
+    if (id === 'screen-forest') {
+      setTimeout(() => renderForest(), 50);
+    }
+    if (id === 'screen-chat') {
+      // ログをリセットしてキャラの挨拶を表示
+      const log = document.getElementById('chat-log');
+      if (log) log.innerHTML = '';
+      const endBtn = document.getElementById('chat-end-btn');
+      const endPh  = document.getElementById('chat-end-placeholder');
+      if (endBtn) endBtn.style.display = 'none';
+      if (endPh)  endPh.style.display  = 'block';
+      const inp = document.getElementById('chat-input');
+      if (inp) { inp.value = ''; inp.style.height = 'auto'; }
+      _lastChatInput = '';
+      // キャラの最初の一言
+      setTimeout(() => appendChatBubble('chara', CHAT_OPENING[currentChara] || CHAT_OPENING.majimaji), 200);
+    }
     if (id === 'screen-title') {
       applyTimeGreeting();
       if (localStorage.getItem('marginary_pending_chara_q') === '1') {
         localStorage.removeItem('marginary_pending_chara_q');
-        // pendingはgutai画面に入ったときに表示するためフラグだけ保持
       } else {
         if (Math.random() < 0.5) setTimeout(() => startCharaDialogue(), 800);
       }
@@ -2594,6 +2670,14 @@
       if (btn) { btn.style.opacity = '0'; btn.style.pointerEvents = 'none'; }
       if (hint) hint.style.display = 'block';
       if (card) card.style.cursor = 'pointer';
+      // 森を歩くボタンのカラーをキャラに合わせる
+      const forestBtn = document.getElementById('forest-walk-btn');
+      if (forestBtn) {
+        const cc = currentChara === 'namake' ? '#8C6239' :
+          getComputedStyle(document.documentElement).getPropertyValue('--lime').trim() ||
+          (CHARA_CONFIG[currentChara] || CHARA_CONFIG.majimaji).lime || '#00712B';
+        forestBtn.style.color = cc;
+      }
       const isFirstIntro = localStorage.getItem('marginary_first_intro') === '1';
       if (isFirstIntro) {
         localStorage.removeItem('marginary_first_intro');
@@ -5170,7 +5254,383 @@
   ];;
 
   // ================================================================
-  // ===== キャラ同士の会話 =====
+  // ===== 雑談機能 =====
+  // ================================================================
+  let _lastChatInput = '';
+  let _fromChat = false;
+
+  const CHAT_RESPONSES = [
+    { test: /疲れ|つかれ|しんど|ヘトヘト|ぐったり/, reply: {
+      majimaji: '疲れの底に、何があるんだろうね。',
+      concrete:  '疲れって、何かを頑張ってた証拠かしら。',
+      kasa:      '疲れはムッシュも知ってるムッシュ。その底に何があるムッシュ。',
+      yurayura:  '疲れ、どこから来たんだろうンゴ。',
+      namake:    '疲れって、どこから来たのかなあよん。',
+      sun:       '疲れてるなら、まず座れ！どこから来た疲れだ？',
+    }},
+    { test: /不安|こわい|怖い|心配|ドキドキ/, reply: {
+      majimaji: 'その不安、何かを大切にしてる証だと思うよ。',
+      concrete:  '不安って、何かを大切にしてる証拠でもあるわね。',
+      kasa:      '不安はまだ形になる前の問いかもムッシュ。',
+      yurayura:  '不安ンゴ、まだ形になってない問いかもしれないンゴ。',
+      namake:    'その不安、まだ形になる前の問いかもよん。',
+      sun:       '不安か！それはまだ形になってない問いだぜ！',
+    }},
+    { test: /楽しい|たのしい|嬉しい|うれしい|最高|よかった/, reply: {
+      majimaji: 'その感じ、どこに置いておこうか。',
+      concrete:  'その楽しさ、ちゃんと残しておきましょう。',
+      kasa:      '楽しいはムッシュも嬉しいムッシュ。どこに置くムッシュ。',
+      yurayura:  'いいンゴ！その気持ち、どこに残るンゴ？',
+      namake:    'うれしいね、その気持ちどこに置くよん。',
+      sun:       'いいな！その気持ち、どこに置いていく？',
+    }},
+    { test: /眠い|ねむい|眠れ|寝れ|だるい|ダルい/, reply: {
+      majimaji: '眠い日は、世界との距離が少し遠いね。',
+      concrete:  '眠いときって、世界と少し距離があるわよね。',
+      kasa:      '眠いのはムッシュもわかるムッシュ。世界が遠いムッシュ。',
+      yurayura:  '眠い日は世界が遠いンゴ。',
+      namake:    '眠い日は、世界がちょっと遠いよん。',
+      sun:       '眠いのか！世界との距離が遠くなってるぜ！',
+    }},
+    { test: /悲しい|かなしい|つらい|辛い|しんどい/, reply: {
+      majimaji: 'その重さ、ここに置いていっていいよ。',
+      concrete:  'それ、ちゃんと受け止めてるわ。',
+      kasa:      '悲しいはムッシュも知ってるムッシュ。ここに置いてくムッシュ。',
+      yurayura:  '悲しいンゴ。ここに置いていくといいンゴ。',
+      namake:    'その重さ、ここに置いていっていいよん。',
+      sun:       '悲しいか。その重さ、ここに置いていけ！',
+    }},
+    { test: /わからない|わかんない|迷ってる|迷う|どうすれば|どうしたら/, reply: {
+      majimaji: 'わからないままでいるのも、ひとつの在り方だよ。',
+      concrete:  'わからないまま持ってるのも、ひとつの在り方よ。',
+      kasa:      'わからないままでもいいムッシュ。それも在り方ムッシュ。',
+      yurayura:  'わからないままでもいいンゴ。それも在り方ンゴ。',
+      namake:    'わからないままでいいよん。それもひとつの在り方よん。',
+      sun:       'わからないままでいい！それも立派な在り方だぜ！',
+    }},
+    { test: /むずかしい|難しい|うまくいかない|うまく行かない/, reply: {
+      majimaji: '難しいって感じるとき、何かがぶつかってるね。',
+      concrete:  '難しいって感じるとき、何かがぶつかってるのかしら。',
+      kasa:      '難しいはぶつかってる証拠ムッシュ。',
+      yurayura:  '難しいンゴ。何かがぶつかってる感じンゴ。',
+      namake:    '難しいって感じるとき、何かがぶつかってるよん。',
+      sun:       '難しいか！何かがぶつかってる証拠だぜ！',
+    }},
+    { test: /なんか|もやもや|なんとなく|ぼんやり|よくわからん/, reply: {
+      majimaji: 'そのもやもや、まだ言葉になってないだけかもしれないね。',
+      concrete:  'そのもやもや、もう少し置いておきましょう。',
+      kasa:      'もやもやはムッシュも好きムッシュ。言葉になる前の感じムッシュ。',
+      yurayura:  'もやもやンゴ。言葉になる前の感じがするンゴ。',
+      namake:    'そのもやもや、まだ言葉になってないだけかもよん。',
+      sun:       'もやもやか！言葉になる前の感じだぜ！',
+    }},
+    { test: /仕事|会社|職場|上司|同僚|仕事/, reply: {
+      majimaji: 'その場所での感じ、どこから来てるんだろう。',
+      concrete:  'その場所での感じ、もう少し聞かせてもらえる？',
+      kasa:      '仕事の感じ、ムッシュも気になるムッシュ。',
+      yurayura:  'その場所での感じンゴ、どこから来てるンゴ？',
+      namake:    'その場所での感じ、どこから来てるのかなよん。',
+      sun:       'その場所での感じ、どこから来てるんだ？',
+    }},
+    { test: /人|誰か|友達|家族|親|恋人|パートナー/, reply: {
+      majimaji: 'その人との間に、何があるんだろう。',
+      concrete:  'その人との関係、大切にしてるのね。',
+      kasa:      'その人との間に何があるムッシュ。',
+      yurayura:  'その人との間に何かあるンゴ？',
+      namake:    'その人との間に、何があるのかなよん。',
+      sun:       'その人との間に何かあるな！',
+    }},
+  ];
+  const CHAT_DEFAULT = { majimaji:'それ、もう少し森に置いてみてもいいかもね。', concrete:'それ、もう少し森に置いてみてもいいかしら。', kasa:'それ、森に置いてみるのもいいムッシュ。', yurayura:'それ、森に置いてみるといいンゴ。', namake:'それ、森に置いてみてもいいよん。', sun:'それ、森に置いてみろ！きっと何かある！' };
+
+  const CHAT_OPENING = {
+    majimaji: 'なんか気になってること、あった？',
+    concrete:  'なんか気になってること、あったかしら？',
+    kasa:      'なんか気になってることがあるムッシュ？',
+    yurayura:  'なんか気になってること、あるンゴ？',
+    namake:    'なんか気になってること、あったよん？',
+    sun:       'なんか気になってること、あるか？',
+  };
+
+  function sendChat() {
+    const input = document.getElementById('chat-input');
+    if (!input) return;
+    const text = input.value.trim();
+    if (!text) return;
+    _lastChatInput = text;
+    input.value = '';
+    input.style.height = 'auto';
+
+    appendChatBubble('user', text);
+
+    // ローカルフォールバック
+    let localReplyMap = CHAT_DEFAULT;
+    for (const p of CHAT_RESPONSES) {
+      if (p.test.test(text)) { localReplyMap = p.reply; break; }
+    }
+    const localReply = localReplyMap[currentChara] || localReplyMap.majimaji;
+
+    // AI返答（失敗時はローカル）
+    generateChatReply(text).then(aiReply => {
+      const reply = aiReply || localReply;
+      appendChatBubble('chara', reply);
+      const endBtn = document.getElementById('chat-end-btn');
+      const endPh  = document.getElementById('chat-end-placeholder');
+      if (endBtn) endBtn.style.display = 'block';
+      if (endPh)  endPh.style.display  = 'none';
+    });
+  }
+
+  function appendChatBubble(role, text) {
+    const log = document.getElementById('chat-log');
+    if (!log) return;
+    const div = document.createElement('div');
+    if (role === 'user') {
+      div.style.cssText = 'display:flex;justify-content:flex-end;';
+      div.innerHTML = '<div style="background:#222;color:#fff;border-radius:16px 4px 16px 16px;padding:12px 16px;font-size:13px;letter-spacing:0.04em;line-height:1.8;max-width:75%;">' + text + '</div>';
+    } else {
+      div.style.cssText = 'display:flex;align-items:flex-start;gap:10px;';
+      div.innerHTML = '<span style="flex-shrink:0;margin-top:2px;">' + charaInnerSVGFixed(currentChara, 36, 36) + '</span><div style="background:#fff;border-radius:4px 16px 16px 16px;padding:12px 16px;font-size:13px;letter-spacing:0.04em;color:#333;line-height:1.8;max-width:75%;box-shadow:0 2px 6px rgba(0,0,0,0.06);">' + text + '</div>';
+    }
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function endChat() {
+    const userBubbles = document.querySelectorAll('#chat-log div[style*="flex-end"] div');
+    const userTexts = Array.from(userBubbles).map(el => el.textContent.trim()).filter(Boolean);
+    userTexts.forEach(t => {
+      saveFragment(t, currentChara, 'gutai');
+      history.push({ gutai: t, oboroke: '', chara: currentChara, category: 'chat' });
+    });
+    _fromChat = true;
+    goTo('screen-tamatta');
+  }
+
+  function onTamattaTap() {
+    if (_fromChat) {
+      _fromChat = false;
+      goTo('screen-chara-select');
+    } else {
+      renderCharaTalk('screen-library');
+      goTo('screen-chara-talk');
+    }
+  }
+
+  async function generateChatReply(text) {
+    const charaPersonas = {
+      majimaji: 'あなたはマジマジという妖精キャラクターです。口調は「〜さ」「〜よ」「〜かな？」など柔らかく妖精っぽく。',
+      concrete:  'あなたはカワラちゃんというキャラクターです。口調は「〜わね」「〜かしら」「〜てね」など穏やかで知的な女性口調。',
+      kasa:      'あなたはムッシュアンブレラというキャラクターです。語尾に必ず「ムッシュ」をつける。例：「そうですムッシュ」「気になるムッシュ」',
+      yurayura:  'あなたはユラユランゴというキャラクターです。語尾に必ず「ンゴ」をつける。例：「そうンゴ」「気になるンゴ」',
+      namake:    'あなたはナマケールというキャラクターです。語尾に「よん」をつける。のんびりした口調。例：「そうよん」「いいよん」',
+      sun:       'あなたはテカリ王子というキャラクターです。語尾は「〜だぜ！」「〜ぜ！」など元気でポジティブ。例：「いいぜ！」「そうだぜ！」',
+    };
+
+    const persona = charaPersonas[currentChara] || charaPersonas.majimaji;
+    const prompt = `${persona}
+
+ユーザーが「${text}」と言いました。
+
+キャラクターとして、この発言に対して1〜2文で自然に返してください。
+- 質問や説明はしない。ただそこにいる感じで返す
+- 共感しつつ、少し問いかけるか、受け止める
+- 絶対にキャラの口調を崩さない
+- 返答のみ出力（前置き不要）`;
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 150, messages: [{ role: 'user', content: prompt }] }),
+      });
+      const raw = await res.text();
+      const data = JSON.parse(raw);
+      const reply = (Array.isArray(data.content) ? data.content.filter(c => c.type === 'text').map(c => c.text).join('') : '').trim();
+      return reply || null;
+    } catch(e) {
+      return null;
+    }
+  }
+
+  // ================================================================
+  // ================================================================
+  // ===== 森を歩く =====
+  // ================================================================
+
+  const FOREST_CHARA_LINES = {
+    majimaji: [
+      'この問い、まだ根っこに残ってるさ。',
+      '今日はあまり急がなくてもいいよ。',
+      '問いって、置いた人だけのものなのかな。',
+      '森は何も急かさないさ。',
+      'ことばを置くと、少し軽くなる気がするよ。',
+    ],
+    concrete: [
+      'この問い、まだ根っこに残ってるわ。',
+      '今日はあまり急がなくてもいいかしら。',
+      '問いって、置いた人だけのものなのかしらね。',
+      '森って、静かで好きだわ。',
+      'ことばを置くと、少し軽くなるわよね。',
+    ],
+    kasa: [
+      'この問い、まだ根っこに残ってるムッシュ。',
+      '今日はあまり急がなくてもいいムッシュ。',
+      '問いって、置いた人だけのものなのかムッシュ。',
+      '森は何も急かさないムッシュ。',
+      'ことばを置くと、軽くなるムッシュ。',
+    ],
+    yurayura: [
+      'この問い、まだ根っこに残ってるンゴ。',
+      '今日はあまり急がなくてもいいンゴ。',
+      '問いって、置いた人だけのものなのかンゴ。',
+      'この辺り、静かでいいンゴ。',
+      'ことばを置くと、少し軽くなるンゴ。',
+    ],
+    namake: [
+      'この問い、まだ根っこに残ってるよん。',
+      '今日はあまり急がなくてもいいよん。',
+      '問いって、置いた人だけのものなのかなよん。',
+      'のんびり歩くほど、いろんなものが見えてくるよん。',
+      'ことばを置くと、少し軽くなるよん。',
+    ],
+    sun: [
+      'この問い、まだ根っこに残ってるぜ！',
+      '今日はあまり急がなくてもいいぜ！',
+      'ここにある問いは、全部本気だぜ！',
+      '森は静かだが、力強いぜ！',
+      'ことばを置くと、軽くなるぜ！',
+    ],
+  };
+
+  const FOREST_QUESTS = [
+    '外を3分だけ歩いて、気になったものを1つ見る。',
+    '今日、少し引っかかった言葉をメモする。',
+    '今夜、何もしない10分をつくってみる。',
+    '誰かに「最近どう？」と聞いてみる。',
+    '窓から空を1分だけ眺める。',
+    '今日の気分を、色で例えるとしたら何色？',
+  ];
+
+  const FOREST_DECOS = ['🌿','🍃','🌱','🌾','🍂','🌲'];
+
+  function buildForestFragments() {
+    let seed = Math.floor(Date.now() / (1000 * 60 * 30));
+    const rng = () => { seed = (seed * 1664525 + 1013904223) & 0xffffffff; return Math.abs(seed) / 0x80000000; };
+    const fragments = [];
+
+    // 1. 過去の問い
+    const entries = (_getDepthEntriesSafe ? _getDepthEntriesSafe() : []).slice(-8);
+    entries.forEach(e => { if (e.questionText) fragments.push({ type:'question', text:e.questionText, concept:e.originalConceptName||'', id:e.id }); });
+    (getFragments ? getFragments().slice(-5) : []).forEach(f => { if (f.text) fragments.push({ type:'question', text:f.text, concept:'', id:'' }); });
+
+    // 2. キャラの独り言
+    const charaLines = FOREST_CHARA_LINES[currentChara] || FOREST_CHARA_LINES.majimaji;
+    const lines = [...charaLines].sort(() => rng()-0.5).slice(0,3);
+    lines.forEach(l => fragments.push({ type:'chara_line', text:l }));
+
+    // 3. 概念カード
+    const pool = [...(typeof THOUGHT_FRAGMENTS_ALL!=='undefined'?THOUGHT_FRAGMENTS_ALL:[]), ...(typeof ART_FRAGMENTS!=='undefined'?ART_FRAGMENTS:[])];
+    for(let i=0;i<4;i++){
+      const c = pool[Math.floor(rng()*pool.length)];
+      if(c) fragments.push({ type:'concept', title:c.concept, text:c.desc||'', author:c.author||'' });
+    }
+
+    // 4. クエスト
+    [0,1].forEach(i => fragments.push({ type:'quest', text:FOREST_QUESTS[Math.floor(rng()*FOREST_QUESTS.length)] }));
+
+    // シャッフル
+    for(let i=fragments.length-1;i>0;i--){ const j=Math.floor(rng()*(i+1)); [fragments[i],fragments[j]]=[fragments[j],fragments[i]]; }
+    return fragments;
+  }
+
+  function renderForestFragment(frag, idx) {
+    const el = document.createElement('div');
+    const ml = ['16px','32px','20px'][idx%3];
+    const charaColor = (CHARA_CONFIG[currentChara] || CHARA_CONFIG.majimaji).green || '#00712B';
+    const btnStyle = `font-size:9px;letter-spacing:0.16em;color:${charaColor};background:none;border:none;padding:4px 0;cursor:pointer;font-family:inherit;`;
+
+    if (frag.type === 'question') {
+      el.style.cssText = `margin:20px ${ml} 4px;`;
+      const txt = (frag.text||'').replace(/'/g,"\\'").replace(/\n/g,' ');
+      const id  = (frag.id||'');
+      el.innerHTML = `<div style="background:#fff;border-radius:3px 14px 14px 14px;padding:16px 18px;max-width:88%;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+        ${frag.concept?`<div style="font-size:8px;letter-spacing:0.2em;color:#aaa;margin-bottom:6px;">${frag.concept}</div>`:''}
+        <div style="font-size:13px;letter-spacing:0.05em;color:#222;line-height:1.9;">${frag.text}</div>
+        <div style="margin-top:10px;">
+          <button style="font-size:8px;letter-spacing:0.14em;color:#888;background:none;border:1px solid #e0e0da;border-radius:20px;padding:4px 12px;cursor:pointer;font-family:inherit;">問いにする</button>
+        </div></div>`;
+      el.querySelector('button').onclick = () => forestToQuestion(frag.text);
+
+    } else if (frag.type === 'chara_line') {
+      el.style.cssText = `margin:28px 16px 4px;display:flex;align-items:flex-end;gap:8px;`;
+      el.innerHTML = `<span style="flex-shrink:0;">${charaInnerSVGFixed(currentChara,32,32)}</span>
+        <div style="background:rgba(255,255,255,0.75);border-radius:4px 12px 12px 12px;padding:10px 14px;font-size:11px;letter-spacing:0.06em;color:#555;line-height:1.9;max-width:80%;">${frag.text}</div>`;
+
+    } else if (frag.type === 'concept') {
+      el.style.cssText = `margin:24px ${ml} 4px;`;
+      el.innerHTML = `<div style="border-left:2px solid #c8b89a;padding:12px 16px;max-width:85%;">
+        <div style="font-size:9px;letter-spacing:0.22em;color:#b0956a;margin-bottom:5px;">${frag.author}</div>
+        <div style="font-size:13px;font-weight:600;letter-spacing:0.06em;color:#333;margin-bottom:5px;">${frag.title}</div>
+        <div style="font-size:11px;letter-spacing:0.04em;color:#777;line-height:1.8;">${frag.text}</div>
+        <div style="margin-top:8px;">
+          <button style="font-size:8px;letter-spacing:0.14em;color:#888;background:none;border:1px solid #e0e0da;border-radius:20px;padding:4px 12px;cursor:pointer;font-family:inherit;">問いにする</button>
+        </div></div>`;
+      el.querySelector('button').onclick = () => forestToQuestion(frag.title);
+
+    } else if (frag.type === 'quest') {
+      el.style.cssText = `margin:28px ${ml} 4px;`;
+      el.innerHTML = `<div style="background:#f9f6ef;border-radius:12px;padding:14px 18px;max-width:85%;border:1px dashed #d4c4a0;">
+        <div style="font-size:8px;letter-spacing:0.22em;color:#b0956a;margin-bottom:6px;">QUEST</div>
+        <div style="font-size:12px;letter-spacing:0.05em;color:#444;line-height:1.9;">${frag.text}</div>
+      </div>`;
+    }
+
+    // 装飾
+    if (idx%5===3) {
+      const d = document.createElement('div');
+      d.style.cssText = `text-align:${idx%2?'right':'left'};padding:2px 28px;font-size:20px;opacity:0.25;`;
+      d.textContent = FOREST_DECOS[idx%FOREST_DECOS.length];
+      el.appendChild(d);
+    }
+    return el;
+  }
+
+  function renderForest() {
+    const content = document.getElementById('forest-content');
+    if (!content) return;
+    content.innerHTML = '';
+
+    const top = document.createElement('div');
+    top.style.cssText = 'padding:16px 20px 8px;text-align:center;';
+    top.innerHTML = `<div style="font-size:9px;letter-spacing:0.3em;color:#bbb;margin-bottom:16px;">— 森 の 中 —</div>
+      <svg width="50" height="68" viewBox="0 0 60 80" style="opacity:0.15;">
+        <rect x="27" y="50" width="6" height="30" fill="#8C6239"/>
+        <ellipse cx="30" cy="35" rx="22" ry="28" fill="#4a7c4e"/>
+        <ellipse cx="30" cy="20" rx="16" ry="20" fill="#5a8c5e"/>
+      </svg>`;
+    content.appendChild(top);
+
+    buildForestFragments().forEach((frag, i) => {
+      content.appendChild(renderForestFragment(frag, i));
+      if (i%5===4) { const sp=document.createElement('div'); sp.style.height='20px'; content.appendChild(sp); }
+    });
+
+    const end = document.createElement('div');
+    end.style.cssText = 'padding:48px 20px 20px;text-align:center;';
+    end.innerHTML = `<div style="font-size:9px;letter-spacing:0.28em;color:#ccc;">— ここまで歩いた —</div>
+      <button onclick="goTo('screen-intro')" style="margin-top:20px;padding:10px 24px;border:1px solid #ddd;border-radius:20px;background:none;font-family:inherit;font-size:9px;letter-spacing:0.2em;color:#aaa;cursor:pointer;">森を出る</button>`;
+    content.appendChild(end);
+  }
+
+  function forestToQuestion(text) {
+    const gutai = document.getElementById('gutai-text');
+    if (gutai) gutai.value = text;
+    mode = 'gutai';
+    goTo('screen-gutai-input');
+    setTimeout(() => { const nb=document.getElementById('gutai-next-btn'); if(nb) nb.disabled=false; }, 100);
+  }
+
   // ================================================================
   const CHARA_DIALOGUES = [
     // [charaA, lineA, charaB, lineB]
