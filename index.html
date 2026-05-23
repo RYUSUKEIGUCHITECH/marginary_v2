@@ -472,13 +472,13 @@
     </div>
   </div>
   <!-- ====== SCREEN: 森を歩く ====== -->
-  <div class="screen" id="screen-forest" style="background:#f4f2ed;justify-content:flex-start;align-items:stretch;">
-    <div style="width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;">
+  <div class="screen" id="screen-forest" style="justify-content:flex-start;align-items:stretch;">
+    <div id="forest-wrapper" style="width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;transition:background 1.5s;">
       <!-- ヘッダー -->
-      <div style="flex-shrink:0;padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;background:#f4f2ed;">
-        <button onclick="goTo('screen-intro')" style="background:none;border:none;font-family:inherit;font-size:9px;letter-spacing:0.18em;color:#aaa;cursor:pointer;padding:0;">← 戻る</button>
-        <div style="font-size:9px;letter-spacing:0.28em;color:#aaa;">FOREST WALK</div>
-        <div style="width:40px;"></div>
+      <div id="forest-header" style="flex-shrink:0;padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;transition:background 1.5s;">
+        <button onclick="goTo('screen-intro')" id="forest-back-btn" style="background:none;border:none;font-family:inherit;font-size:9px;letter-spacing:0.18em;color:#aaa;cursor:pointer;padding:0;">← 戻る</button>
+        <div id="forest-title" style="font-size:9px;letter-spacing:0.28em;color:#aaa;">FOREST WALK</div>
+        <button onclick="forestStartChat()" id="forest-chat-btn" style="background:none;border:none;font-family:inherit;font-size:9px;letter-spacing:0.18em;color:#aaa;cursor:pointer;padding:0;">話しかける</button>
       </div>
       <!-- スクロール本体 -->
       <div id="forest-scroll" style="flex:1;overflow-y:auto;padding:8px 0 60px;">
@@ -586,7 +586,7 @@
           font-size:13px; font-weight:700; letter-spacing:3px;
           font-family:inherit; cursor:pointer;
         ">ことばを置いていく</button>
-        <button onclick="event.stopPropagation(); goTo('screen-chat')" style="
+        <button onclick="event.stopPropagation(); goTo('screen-chat')" id="chat-start-btn" style="
           width:100%; padding:13px; margin-top:10px; border:1px solid #ddd; border-radius:12px;
           background:#fff; color:#555;
           font-size:11px; font-weight:400; letter-spacing:3px;
@@ -2677,6 +2677,15 @@
           getComputedStyle(document.documentElement).getPropertyValue('--lime').trim() ||
           (CHARA_CONFIG[currentChara] || CHARA_CONFIG.majimaji).lime || '#00712B';
         forestBtn.style.color = cc;
+      }
+      // 雑談するボタンも同じカラーに
+      const chatStartBtn = document.getElementById('chat-start-btn');
+      if (chatStartBtn) {
+        const cc2 = currentChara === 'namake' ? '#8C6239' :
+          getComputedStyle(document.documentElement).getPropertyValue('--lime').trim() ||
+          (CHARA_CONFIG[currentChara] || CHARA_CONFIG.majimaji).lime || '#00712B';
+        chatStartBtn.style.color = cc2;
+        chatStartBtn.style.border = '1px solid ' + cc2;
       }
       const isFirstIntro = localStorage.getItem('marginary_first_intro') === '1';
       if (isFirstIntro) {
@@ -5258,6 +5267,7 @@
   // ================================================================
   let _lastChatInput = '';
   let _fromChat = false;
+  let _pickedConcepts = [];
 
   const CHAT_RESPONSES = [
     { test: /疲れ|つかれ|しんど|ヘトヘト|ぐったり/, reply: {
@@ -5458,49 +5468,51 @@
   // ===== 森を歩く =====
   // ================================================================
 
+  // 時間帯・季節の色調
+  const FOREST_AMBIENCES = {
+    dawn:      { bg:'#f0ede6', header:'#f0ede6', text:'#a89880', label:'夜明けの森' },
+    morning:   { bg:'#f4f2ed', header:'#f4f2ed', text:'#aaa',    label:'朝の森' },
+    noon:      { bg:'#f5f3ee', header:'#f5f3ee', text:'#aaa',    label:'昼の森' },
+    afternoon: { bg:'#f3efe8', header:'#f3efe8', text:'#b09070', label:'午後の森' },
+    evening:   { bg:'#ede7de', header:'#ede7de', text:'#c09060', label:'夕暮れの森' },
+    night:     { bg:'#2a2a28', header:'#2a2a28', text:'#666',    label:'夜の森' },
+    midnight:  { bg:'#1e1e1c', header:'#1e1e1c', text:'#555',    label:'深夜の森' },
+  };
+
+  // 季節補正
+  function getSeasonTint() {
+    const m = new Date().getMonth();
+    if (m>=2&&m<=4)  return { overlay:'rgba(255,220,220,0.04)', label:'春' };
+    if (m>=5&&m<=7)  return { overlay:'rgba(180,230,180,0.06)', label:'夏' };
+    if (m>=8&&m<=10) return { overlay:'rgba(220,160,80,0.05)',  label:'秋' };
+    return                   { overlay:'rgba(200,220,255,0.05)', label:'冬' };
+  }
+
+  function applyForestAmbience() {
+    const period = getTimePeriod();
+    const amb = FOREST_AMBIENCES[period] || FOREST_AMBIENCES.morning;
+    const wrapper = document.getElementById('forest-wrapper');
+    const header  = document.getElementById('forest-header');
+    const title   = document.getElementById('forest-title');
+    const backBtn = document.getElementById('forest-back-btn');
+    const chatBtn = document.getElementById('forest-chat-btn');
+    if (wrapper) wrapper.style.background = amb.bg;
+    if (header)  header.style.background  = amb.bg;
+    if (title)   { title.textContent = amb.label; title.style.color = amb.text; }
+    const isNight = period === 'night' || period === 'midnight';
+    if (backBtn) backBtn.style.color = isNight ? '#555' : '#aaa';
+    if (chatBtn) chatBtn.style.color = isNight ? '#666' : '#aaa';
+    // forestContentの背景も
+    const content = document.getElementById('forest-content');
+    if (content) content.style.background = amb.bg;
+  }
   const FOREST_CHARA_LINES = {
-    majimaji: [
-      'この問い、まだ根っこに残ってるさ。',
-      '今日はあまり急がなくてもいいよ。',
-      '問いって、置いた人だけのものなのかな。',
-      '森は何も急かさないさ。',
-      'ことばを置くと、少し軽くなる気がするよ。',
-    ],
-    concrete: [
-      'この問い、まだ根っこに残ってるわ。',
-      '今日はあまり急がなくてもいいかしら。',
-      '問いって、置いた人だけのものなのかしらね。',
-      '森って、静かで好きだわ。',
-      'ことばを置くと、少し軽くなるわよね。',
-    ],
-    kasa: [
-      'この問い、まだ根っこに残ってるムッシュ。',
-      '今日はあまり急がなくてもいいムッシュ。',
-      '問いって、置いた人だけのものなのかムッシュ。',
-      '森は何も急かさないムッシュ。',
-      'ことばを置くと、軽くなるムッシュ。',
-    ],
-    yurayura: [
-      'この問い、まだ根っこに残ってるンゴ。',
-      '今日はあまり急がなくてもいいンゴ。',
-      '問いって、置いた人だけのものなのかンゴ。',
-      'この辺り、静かでいいンゴ。',
-      'ことばを置くと、少し軽くなるンゴ。',
-    ],
-    namake: [
-      'この問い、まだ根っこに残ってるよん。',
-      '今日はあまり急がなくてもいいよん。',
-      '問いって、置いた人だけのものなのかなよん。',
-      'のんびり歩くほど、いろんなものが見えてくるよん。',
-      'ことばを置くと、少し軽くなるよん。',
-    ],
-    sun: [
-      'この問い、まだ根っこに残ってるぜ！',
-      '今日はあまり急がなくてもいいぜ！',
-      'ここにある問いは、全部本気だぜ！',
-      '森は静かだが、力強いぜ！',
-      'ことばを置くと、軽くなるぜ！',
-    ],
+    majimaji: ['この問い、まだ根っこに残ってるさ。','今日はあまり急がなくてもいいよ。','問いって、置いた人だけのものなのかな。','森は何も急かさないさ。','ことばを置くと、少し軽くなる気がするよ。'],
+    concrete:  ['この問い、まだ根っこに残ってるわ。','今日はあまり急がなくてもいいかしら。','問いって、置いた人だけのものなのかしらね。','森って、静かで好きだわ。','ことばを置くと、少し軽くなるわよね。'],
+    kasa:      ['この問い、まだ根っこに残ってるムッシュ。','今日はあまり急がなくてもいいムッシュ。','問いって、置いた人だけのものなのかムッシュ。','森は何も急かさないムッシュ。','ことばを置くと、軽くなるムッシュ。'],
+    yurayura:  ['この問い、まだ根っこに残ってるンゴ。','今日はあまり急がなくてもいいンゴ。','問いって、置いた人だけのものなのかンゴ。','この辺り、静かでいいンゴ。','ことばを置くと、少し軽くなるンゴ。'],
+    namake:    ['この問い、まだ根っこに残ってるよん。','今日はあまり急がなくてもいいよん。','問いって、置いた人だけのものなのかなよん。','のんびり歩くほど、いろんなものが見えてくるよん。','ことばを置くと、少し軽くなるよん。'],
+    sun:       ['この問い、まだ根っこに残ってるぜ！','今日はあまり急がなくてもいいぜ！','ここにある問いは、全部本気だぜ！','森は静かだが、力強いぜ！','ことばを置くと、軽くなるぜ！'],
   };
 
   const FOREST_QUESTS = [
@@ -5518,28 +5530,14 @@
     let seed = Math.floor(Date.now() / (1000 * 60 * 30));
     const rng = () => { seed = (seed * 1664525 + 1013904223) & 0xffffffff; return Math.abs(seed) / 0x80000000; };
     const fragments = [];
-
-    // 1. 過去の問い
     const entries = (_getDepthEntriesSafe ? _getDepthEntriesSafe() : []).slice(-8);
     entries.forEach(e => { if (e.questionText) fragments.push({ type:'question', text:e.questionText, concept:e.originalConceptName||'', id:e.id }); });
     (getFragments ? getFragments().slice(-5) : []).forEach(f => { if (f.text) fragments.push({ type:'question', text:f.text, concept:'', id:'' }); });
-
-    // 2. キャラの独り言
     const charaLines = FOREST_CHARA_LINES[currentChara] || FOREST_CHARA_LINES.majimaji;
-    const lines = [...charaLines].sort(() => rng()-0.5).slice(0,3);
-    lines.forEach(l => fragments.push({ type:'chara_line', text:l }));
-
-    // 3. 概念カード
+    [...charaLines].sort(() => rng()-0.5).slice(0,3).forEach(l => fragments.push({ type:'chara_line', text:l }));
     const pool = [...(typeof THOUGHT_FRAGMENTS_ALL!=='undefined'?THOUGHT_FRAGMENTS_ALL:[]), ...(typeof ART_FRAGMENTS!=='undefined'?ART_FRAGMENTS:[])];
-    for(let i=0;i<4;i++){
-      const c = pool[Math.floor(rng()*pool.length)];
-      if(c) fragments.push({ type:'concept', title:c.concept, text:c.desc||'', author:c.author||'' });
-    }
-
-    // 4. クエスト
-    [0,1].forEach(i => fragments.push({ type:'quest', text:FOREST_QUESTS[Math.floor(rng()*FOREST_QUESTS.length)] }));
-
-    // シャッフル
+    for(let i=0;i<4;i++){ const c=pool[Math.floor(rng()*pool.length)]; if(c) fragments.push({ type:'concept', title:c.concept, text:c.desc||'', author:c.author||'', fragId:c.id||'' }); }
+    [0,1].forEach(() => fragments.push({ type:'quest', text:FOREST_QUESTS[Math.floor(rng()*FOREST_QUESTS.length)] }));
     for(let i=fragments.length-1;i>0;i--){ const j=Math.floor(rng()*(i+1)); [fragments[i],fragments[j]]=[fragments[j],fragments[i]]; }
     return fragments;
   }
@@ -5547,79 +5545,135 @@
   function renderForestFragment(frag, idx) {
     const el = document.createElement('div');
     const ml = ['16px','32px','20px'][idx%3];
-    const charaColor = (CHARA_CONFIG[currentChara] || CHARA_CONFIG.majimaji).green || '#00712B';
-    const btnStyle = `font-size:9px;letter-spacing:0.16em;color:${charaColor};background:none;border:none;padding:4px 0;cursor:pointer;font-family:inherit;`;
+    const period = getTimePeriod();
+    const isNight = period==='night'||period==='midnight';
+    const cardBg   = isNight ? 'rgba(50,50,48,0.85)' : '#fff';
+    const cardText = isNight ? '#ccc' : '#222';
+    const subText  = isNight ? '#888' : '#aaa';
+    const charaColor = (CHARA_CONFIG[currentChara]||CHARA_CONFIG.majimaji).green||'#00712B';
 
     if (frag.type === 'question') {
-      el.style.cssText = `margin:20px ${ml} 4px;`;
-      const txt = (frag.text||'').replace(/'/g,"\\'").replace(/\n/g,' ');
-      const id  = (frag.id||'');
-      el.innerHTML = `<div style="background:#fff;border-radius:3px 14px 14px 14px;padding:16px 18px;max-width:88%;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
-        ${frag.concept?`<div style="font-size:8px;letter-spacing:0.2em;color:#aaa;margin-bottom:6px;">${frag.concept}</div>`:''}
-        <div style="font-size:13px;letter-spacing:0.05em;color:#222;line-height:1.9;">${frag.text}</div>
-        <div style="margin-top:10px;">
-          <button style="font-size:8px;letter-spacing:0.14em;color:#888;background:none;border:1px solid #e0e0da;border-radius:20px;padding:4px 12px;cursor:pointer;font-family:inherit;">問いにする</button>
-        </div></div>`;
-      el.querySelector('button').onclick = () => forestToQuestion(frag.text);
+      el.style.cssText = 'margin:20px '+ml+' 4px;';
+      const inner = document.createElement('div');
+      inner.style.cssText = 'background:'+cardBg+';border-radius:3px 14px 14px 14px;padding:16px 18px;max-width:88%;box-shadow:0 2px 8px rgba(0,0,0,0.08);';
+      inner.innerHTML = (frag.concept?'<div style="font-size:8px;letter-spacing:0.2em;color:'+subText+';margin-bottom:6px;">'+frag.concept+'</div>':'')
+        + '<div style="font-size:13px;letter-spacing:0.05em;color:'+cardText+';line-height:1.9;">'+frag.text+'</div>';
+      if (frag.id) {
+        const btn = document.createElement('button');
+        btn.style.cssText = 'margin-top:10px;font-size:8px;letter-spacing:0.14em;color:'+charaColor+';background:none;border:none;padding:0;cursor:pointer;font-family:inherit;display:block;';
+        btn.textContent = '更新する →';
+        btn.onclick = () => forestUpdateQuestion(frag.id, frag.text);
+        inner.appendChild(btn);
+      }
+      el.appendChild(inner);
 
     } else if (frag.type === 'chara_line') {
-      el.style.cssText = `margin:28px 16px 4px;display:flex;align-items:flex-end;gap:8px;`;
-      el.innerHTML = `<span style="flex-shrink:0;">${charaInnerSVGFixed(currentChara,32,32)}</span>
-        <div style="background:rgba(255,255,255,0.75);border-radius:4px 12px 12px 12px;padding:10px 14px;font-size:11px;letter-spacing:0.06em;color:#555;line-height:1.9;max-width:80%;">${frag.text}</div>`;
+      el.style.cssText = 'margin:28px 16px 4px;display:flex;align-items:flex-end;gap:8px;';
+      const svg = document.createElement('span');
+      svg.style.cssText = 'flex-shrink:0;';
+      svg.innerHTML = charaInnerSVGFixed(currentChara, 32, 32);
+      const bubble = document.createElement('div');
+      bubble.style.cssText = 'background:'+(isNight?'rgba(60,60,58,0.8)':'rgba(255,255,255,0.75)')+';border-radius:4px 12px 12px 12px;padding:10px 14px;font-size:11px;letter-spacing:0.06em;color:'+(isNight?'#aaa':'#555')+';line-height:1.9;max-width:80%;';
+      bubble.textContent = frag.text;
+      el.appendChild(svg); el.appendChild(bubble);
 
     } else if (frag.type === 'concept') {
-      el.style.cssText = `margin:24px ${ml} 4px;`;
-      el.innerHTML = `<div style="border-left:2px solid #c8b89a;padding:12px 16px;max-width:85%;">
-        <div style="font-size:9px;letter-spacing:0.22em;color:#b0956a;margin-bottom:5px;">${frag.author}</div>
-        <div style="font-size:13px;font-weight:600;letter-spacing:0.06em;color:#333;margin-bottom:5px;">${frag.title}</div>
-        <div style="font-size:11px;letter-spacing:0.04em;color:#777;line-height:1.8;">${frag.text}</div>
-        <div style="margin-top:8px;">
-          <button style="font-size:8px;letter-spacing:0.14em;color:#888;background:none;border:1px solid #e0e0da;border-radius:20px;padding:4px 12px;cursor:pointer;font-family:inherit;">問いにする</button>
-        </div></div>`;
-      el.querySelector('button').onclick = () => forestToQuestion(frag.title);
+      el.style.cssText = 'margin:24px '+ml+' 4px;';
+      const picked = _pickedConcepts.includes(frag.fragId);
+      const inner = document.createElement('div');
+      inner.style.cssText = 'border-left:2px solid '+(picked?charaColor:'#c8b89a')+';padding:12px 16px;max-width:85%;';
+      inner.innerHTML = '<div style="font-size:9px;letter-spacing:0.22em;color:'+(isNight?'#887060':'#b0956a')+';margin-bottom:5px;">'+frag.author+'</div>'
+        + '<div style="font-size:13px;font-weight:600;letter-spacing:0.06em;color:'+(isNight?'#ccc':'#333')+';margin-bottom:5px;">'+frag.title+'</div>'
+        + '<div style="font-size:11px;letter-spacing:0.04em;color:'+(isNight?'#888':'#777')+';line-height:1.8;">'+frag.text+'</div>';
+      const pickBtn = document.createElement('button');
+      pickBtn.style.cssText = 'margin-top:8px;font-size:8px;letter-spacing:0.14em;color:'+(picked?charaColor:'#bbb')+';background:none;border:none;padding:0;cursor:pointer;font-family:inherit;display:block;';
+      pickBtn.textContent = picked ? '拾った ✓' : '拾う';
+      pickBtn.onclick = () => {
+        if (_pickedConcepts.includes(frag.fragId)) return;
+        _pickedConcepts.push(frag.fragId);
+        if (!_depthSelectedConcepts.includes('frag_'+frag.fragId)) _depthSelectedConcepts.push('frag_'+frag.fragId);
+        pickBtn.textContent = '拾った ✓'; pickBtn.style.color = charaColor;
+        inner.style.borderLeftColor = charaColor;
+      };
+      inner.appendChild(pickBtn);
+      el.appendChild(inner);
 
     } else if (frag.type === 'quest') {
-      el.style.cssText = `margin:28px ${ml} 4px;`;
-      el.innerHTML = `<div style="background:#f9f6ef;border-radius:12px;padding:14px 18px;max-width:85%;border:1px dashed #d4c4a0;">
-        <div style="font-size:8px;letter-spacing:0.22em;color:#b0956a;margin-bottom:6px;">QUEST</div>
-        <div style="font-size:12px;letter-spacing:0.05em;color:#444;line-height:1.9;">${frag.text}</div>
-      </div>`;
+      el.style.cssText = 'margin:28px '+ml+' 4px;';
+      const inner = document.createElement('div');
+      inner.style.cssText = 'background:'+(isNight?'rgba(50,45,35,0.8)':'#f9f6ef')+';border-radius:12px;padding:14px 18px;max-width:85%;border:1px dashed '+(isNight?'#554030':'#d4c4a0')+';';
+      inner.innerHTML = '<div style="font-size:8px;letter-spacing:0.22em;color:'+(isNight?'#886040':'#b0956a')+';margin-bottom:6px;">QUEST</div>'
+        + '<div style="font-size:12px;letter-spacing:0.05em;color:'+(isNight?'#aaa':'#444')+';line-height:1.9;">'+frag.text+'</div>';
+      el.appendChild(inner);
     }
 
-    // 装飾
     if (idx%5===3) {
       const d = document.createElement('div');
-      d.style.cssText = `text-align:${idx%2?'right':'left'};padding:2px 28px;font-size:20px;opacity:0.25;`;
+      d.style.cssText = 'text-align:'+(idx%2?'right':'left')+';padding:2px 28px;font-size:20px;opacity:0.25;';
       d.textContent = FOREST_DECOS[idx%FOREST_DECOS.length];
       el.appendChild(d);
     }
     return el;
   }
 
+  function forestUpdateQuestion(entryId, questionText) {
+    const entries = _getDepthEntriesSafe ? _getDepthEntriesSafe() : [];
+    const entry = entries.find(e => e.id === entryId);
+    if (entry) {
+      _editingDepthEntry = entry;
+      _depthSelectedSourceText = entry.sourceText || '';
+      _depthSelectedConcepts   = entry.selectedConcepts || [];
+      goTo('screen-depth-edit');
+      setTimeout(() => goToDepthStep(3), 200);
+    }
+  }
+
+  function forestStartChat() { goTo('screen-chat'); }
+
   function renderForest() {
+    _pickedConcepts = [];
     const content = document.getElementById('forest-content');
     if (!content) return;
     content.innerHTML = '';
 
+    // 時間帯・季節
+    const period = getTimePeriod();
+    const isNight = period==='night'||period==='midnight';
+    const amb = FOREST_AMBIENCES[period]||FOREST_AMBIENCES.morning;
+    const season = getSeasonTint();
+
+    // 背景色を適用
+    const wrapper = document.getElementById('forest-wrapper');
+    if (wrapper) wrapper.style.background = amb.bg;
+    const header = document.getElementById('forest-header');
+    if (header) header.style.background = amb.bg;
+    const titleEl = document.getElementById('forest-title');
+    if (titleEl) { titleEl.textContent = amb.label; titleEl.style.color = amb.text; }
+    const backBtn = document.getElementById('forest-back-btn');
+    if (backBtn) backBtn.style.color = isNight ? '#555' : '#aaa';
+    const chatBtn = document.getElementById('forest-chat-btn');
+    if (chatBtn) chatBtn.style.color = isNight ? '#666' : '#aaa';
+
     const top = document.createElement('div');
     top.style.cssText = 'padding:16px 20px 8px;text-align:center;';
-    top.innerHTML = `<div style="font-size:9px;letter-spacing:0.3em;color:#bbb;margin-bottom:16px;">— 森 の 中 —</div>
-      <svg width="50" height="68" viewBox="0 0 60 80" style="opacity:0.15;">
-        <rect x="27" y="50" width="6" height="30" fill="#8C6239"/>
-        <ellipse cx="30" cy="35" rx="22" ry="28" fill="#4a7c4e"/>
-        <ellipse cx="30" cy="20" rx="16" ry="20" fill="#5a8c5e"/>
-      </svg>`;
+    top.innerHTML = '<div style="font-size:9px;letter-spacing:0.3em;color:'+(isNight?'#555':'#bbb')+';margin-bottom:16px;">'+(season.label?season.label+'・':'')+amb.label+'</div>'
+      + '<svg width="50" height="68" viewBox="0 0 60 80" style="opacity:'+(isNight?0.3:0.15)+';">'
+      + '<rect x="27" y="50" width="6" height="30" fill="#8C6239"/>'
+      + '<ellipse cx="30" cy="35" rx="22" ry="28" fill="'+(isNight?'#3a5c3e':'#4a7c4e')+'"/>'
+      + '<ellipse cx="30" cy="20" rx="16" ry="20" fill="'+(isNight?'#4a6c4e':'#5a8c5e')+'"/>'
+      + '</svg>';
     content.appendChild(top);
 
     buildForestFragments().forEach((frag, i) => {
-      content.appendChild(renderForestFragment(frag, i));
+      try { content.appendChild(renderForestFragment(frag, i)); }
+      catch(e) { console.error('fragment error:', e.message, frag.type); }
       if (i%5===4) { const sp=document.createElement('div'); sp.style.height='20px'; content.appendChild(sp); }
     });
 
     const end = document.createElement('div');
     end.style.cssText = 'padding:48px 20px 20px;text-align:center;';
-    end.innerHTML = `<div style="font-size:9px;letter-spacing:0.28em;color:#ccc;">— ここまで歩いた —</div>
-      <button onclick="goTo('screen-intro')" style="margin-top:20px;padding:10px 24px;border:1px solid #ddd;border-radius:20px;background:none;font-family:inherit;font-size:9px;letter-spacing:0.2em;color:#aaa;cursor:pointer;">森を出る</button>`;
+    end.innerHTML = '<div style="font-size:9px;letter-spacing:0.28em;color:'+(isNight?'#444':'#ccc')+';">— ここまで歩いた —</div>'
+      + '<button onclick="goTo(\'screen-intro\')" style="margin-top:20px;padding:10px 24px;border:1px solid '+(isNight?'#444':'#ddd')+';border-radius:20px;background:none;font-family:inherit;font-size:9px;letter-spacing:0.2em;color:'+(isNight?'#555':'#aaa')+';cursor:pointer;">森を出る</button>';
     content.appendChild(end);
   }
 
