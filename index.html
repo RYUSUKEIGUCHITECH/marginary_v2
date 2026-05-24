@@ -471,6 +471,25 @@
       </div>
     </div>
   </div>
+  <!-- ====== アート作品モーダル ====== -->
+  <div id="art-modal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.92);flex-direction:column;align-items:center;justify-content:flex-start;overflow-y:auto;">
+    <div style="width:100%;max-width:480px;padding:20px 20px 40px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div id="art-modal-author" style="font-size:9px;letter-spacing:0.22em;color:#888;"></div>
+        <button onclick="closeArtModal()" style="background:none;border:none;color:#666;font-size:20px;cursor:pointer;padding:4px;">×</button>
+      </div>
+      <img id="art-modal-img" src="" alt="" style="width:100%;border-radius:8px;display:block;"/>
+      <div style="margin-top:16px;">
+        <div id="art-modal-title" style="font-size:16px;font-weight:600;letter-spacing:0.06em;color:#fff;margin-bottom:8px;"></div>
+        <div id="art-modal-desc" style="font-size:12px;letter-spacing:0.04em;color:#aaa;line-height:1.9;"></div>
+      </div>
+      <div style="margin-top:20px;display:flex;gap:10px;">
+        <button onclick="artModalToDepth()" style="flex:1;padding:12px;border:1px solid #444;border-radius:20px;background:none;font-family:inherit;font-size:9px;letter-spacing:0.18em;color:#aaa;cursor:pointer;">問いにする</button>
+        <a id="art-modal-link" href="" target="_blank" rel="noopener" style="flex:1;padding:12px;border:1px solid #444;border-radius:20px;background:none;font-family:inherit;font-size:9px;letter-spacing:0.18em;color:#aaa;cursor:pointer;text-decoration:none;text-align:center;">もっと見る</a>
+      </div>
+    </div>
+  </div>
+
   <!-- ====== SCREEN: 森を歩く ====== -->
   <div class="screen" id="screen-forest" style="justify-content:flex-start;align-items:stretch;">
     <div id="forest-wrapper" style="width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;transition:background 1.5s;">
@@ -4372,10 +4391,12 @@
         '<div style="font-size:14px;font-weight:700;letter-spacing:0.06em;color:#333;margin-bottom:4px;">'+frag.concept+'</div>' +
         '<div style="font-size:10px;letter-spacing:0.12em;color:#aaa;margin-bottom:10px;">— '+frag.author+'</div>' +
         '<div style="font-size:12px;letter-spacing:0.04em;color:#555;line-height:1.8;margin-bottom:14px;">'+frag.desc+'</div>' +
+        (frag.img ? '<div style="margin-bottom:10px;"><img src="'+frag.img+'" style="width:100%;border-radius:10px;cursor:pointer;" onclick="openArtModal(\''+frag.id+'\')" /></div>' : '') +
         '<div style="display:flex;gap:8px;">' +
           '<button onclick="libArtAction(\'close\',\''+frag.id+'\',\''+frag.concept.replace(/'/g,"\\'")+'\')" style="flex:1;padding:11px 8px;border:1px solid #ddd;border-radius:12px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;color:#888;cursor:pointer;">近い</button>' +
           '<button onclick="libArtAction(\'skip\',\''+frag.id+'\',\''+frag.concept.replace(/'/g,"\\'")+'\')" style="flex:1;padding:11px 8px;border:1px solid #ddd;border-radius:12px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;color:#888;cursor:pointer;">違う</button>' +
           '<button id="lib-art-save-'+frag.id+'" onclick="libArtAction(\'save\',\''+frag.id+'\',\''+frag.concept.replace(/'/g,"\\'")+'\')" style="flex:1;padding:11px 8px;border:1px solid #ddd;border-radius:12px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;color:#888;cursor:pointer;">保存</button>' +
+          (frag.img || frag.link ? '<button onclick="openArtModal(\''+frag.id+'\')" style="flex:1;padding:11px 8px;border:1px solid #ddd;border-radius:12px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;color:#888;cursor:pointer;">見る</button>' : '') +
         '</div>';
       el.appendChild(card);
     });
@@ -4947,15 +4968,15 @@
     {id:"a030",concept:"オブジェの不気味さ",desc:"馴染みのある物体が文脈を外れて置かれたとき、奇妙で不安な感覚（不気味の谷）が生まれる。",author:"シュルレアリスム",themes:["不気味","文脈","異物","見慣れたもの","不安"],mood:["見慣れたものが怖くなる","文脈が感覚を変える","不気味な安らぎ"]},
 
     // ── アーティスト個人 ──
-    {id:"a031",concept:"ルイーズ・ブルジョワの蜘蛛",desc:"巨大な蜘蛛の彫刻《ママン》は、保護と脅威を同時に体現する。幼少期の母への感情が直接形になった。",author:"ルイーズ・ブルジョワ",themes:["母","保護","脅威","身体","記憶"],mood:["大きなものへの畏怖","守られながら怖い","感情が形になる"]},
+    {id:"a031",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Maman_Ottawa_2015.jpg/400px-Maman_Ottawa_2015.jpg",link:"https://en.wikipedia.org/wiki/Maman_(sculpture)",concept:"ルイーズ・ブルジョワの蜘蛛",desc:"巨大な蜘蛛の彫刻《ママン》は、保護と脅威を同時に体現する。幼少期の母への感情が直接形になった。",author:"ルイーズ・ブルジョワ",themes:["母","保護","脅威","身体","記憶"],mood:["大きなものへの畏怖","守られながら怖い","感情が形になる"]},
     {id:"a032",concept:"アイ・ウェイウェイの証言",desc:"政治的抑圧・検閲・記録の破壊に対し、美術を通じて「存在した」ことを証明しようとする実践。",author:"アイ・ウェイウェイ",themes:["証言","政治","記録","抵抗","存在"],mood:["消されないために作る","存在の証明","芸術と権力"]},
-    {id:"a033",concept:"草間彌生の無限の網",desc:"無数の点と網目で画面を埋め尽くす反復。自己消去と宇宙との合一を求め、強迫的なまでに繰り返す。",author:"草間彌生",themes:["反復","消去","宇宙","強迫","無限"],mood:["繰り返すことで消えていく","無限の中の自分","点の集積が意味を持つ"]},
+    {id:"a033",concept:"草間彌生の無限の網",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Yayoi_Kusama_2.jpg/400px-Yayoi_Kusama_2.jpg",link:"https://ja.wikipedia.org/wiki/草間彌生",desc:"無数の点と網目で画面を埋め尽くす反復。自己消去と宇宙との合一を求め、強迫的なまでに繰り返す。",author:"草間彌生",themes:["反復","消去","宇宙","強迫","無限"],mood:["繰り返すことで消えていく","無限の中の自分","点の集積が意味を持つ"]},
     {id:"a034",concept:"バスキアの文字と身体",desc:"街の落書きから出発し、言語・人体・権力・人種を鋭く横断するイメージを描いた。美術市場への批判も内包する。",author:"ジャン＝ミシェル・バスキア",themes:["言語","身体","人種","権力","落書き"],mood:["言葉が武器になる","身体と社会の衝突","怒りが絵になる"]},
     {id:"a035",concept:"ガブリエル・オロスコの痕跡",desc:"日常の物体に微小な介入を加えることで、存在の不思議さや時間の痕跡を浮かび上がらせる。",author:"ガブリエル・オロスコ",themes:["介入","日常","痕跡","時間","不思議"],mood:["ほんの少しずれたもの","日常の中の異物","そっと変えられた世界"]},
     {id:"a036",concept:"ソフィ・カルの他者調査",desc:"見知らぬ人を追跡したり、自分の部屋を他者に委ねたりと、親密さと侵入の境界を問い続けた。",author:"ソフィ・カル",themes:["他者","追跡","親密","侵入","境界"],mood:["知らない人を知りたい","距離の倫理","観察と被観察"]},
     {id:"a037",concept:"マリーナ・アブラモヴィッチの持続",desc:"極限まで続けることで、身体・時間・関係性の本質が現れる。《アーティスト・イズ・プレゼント》では沈黙だけで人を泣かせた。",author:"マリーナ・アブラモヴィッチ",themes:["持続","身体","沈黙","関係","限界"],mood:["ただそこにいること","継続が意味を作る","沈黙の重さ"]},
     {id:"a038",concept:"ゲルハルト・リヒターの曖昧さ",desc:"写真を元に描いた意図的にぼかした絵画。記憶・写真・絵画の関係、知覚の不確かさを問い続けた。",author:"ゲルハルト・リヒター",themes:["曖昧","記憶","写真","知覚","不確か"],mood:["はっきり見えないもの","記憶の滲み","真実は曖昧だ"]},
-    {id:"a039",concept:"カラヴァッジオの暗闇",desc:"光が当たらない部分を深い闇で満たすことで、光を受けた部分が劇的に浮かびあがる。見えないことが見えることを作る。",author:"カラヴァッジオ",themes:["闇","光","劇的","見えない","浮かび上がる"],mood:["影の中にある真実","見えないものが語る","劇的な瞬間"]},
+    {id:"a039",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Caravaggio-Judith-Beheading-Holofernes.jpg/400px-Caravaggio-Judith-Beheading-Holofernes.jpg",link:"https://en.wikipedia.org/wiki/Judith_Beheading_Holofernes_(Caravaggio)",concept:"カラヴァッジオの暗闇",desc:"光が当たらない部分を深い闇で満たすことで、光を受けた部分が劇的に浮かびあがる。見えないことが見えることを作る。",author:"カラヴァッジオ",themes:["闇","光","劇的","見えない","浮かび上がる"],mood:["影の中にある真実","見えないものが語る","劇的な瞬間"]},
     {id:"a040",concept:"ヨーゼフ・ボイスの社会彫刻",desc:"すべての人間の創造的行為が社会を形作る彫刻だという思想。「芸術は人間である」とした。",author:"ヨーゼフ・ボイス",themes:["社会","創造","彫刻","人間","参加"],mood:["生きることが芸術","社会を作る","誰もが芸術家"]},
 
     // ── 建築家 ──
@@ -4971,8 +4992,14 @@
     {id:"a050",concept:"レム・コールハースの混乱",desc:"都市の混沌・密度・矛盾を否定せず、そのまま建築に取り込む。「ジャンク・スペース」という概念で現代建築を批判した。",author:"レム・コールハース",themes:["混乱","密度","矛盾","都市","批判"],mood:["混沌を受け入れる","整理できないものの中にある","矛盾がリアル"]},
 
     // ── 追加100件 ──
+    // ── 森の落下アート用 ──
+    {id:"f_scream",concept:"叫び",desc:"存在の不安と恐怖を、渦巻く自然と人物の絶叫で表現した。近代人の孤独と疎外感の象徴となった作品。",author:"エドヴァルド・ムンク",themes:["叫び","不安","孤独","恐怖","自然"],mood:["存在の恐怖","叫びたい感覚","孤独の渦"],img:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg/400px-Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg",link:"https://ja.wikipedia.org/wiki/叫び_(エドヴァルド・ムンク)"},
+    {id:"f_thinker",concept:"考える人",desc:"ダンテの神曲をもとに制作されたロダンの彫刻。考えることの重さと苦しみを筋肉の緊張で表現した。",author:"オーギュスト・ロダン",themes:["思考","苦しみ","沈黙","重さ","哲学"],mood:["考え込んでいる","重い問いを抱える","沈黙の中の思考"],img:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Camille_Claudel_and_Rodin.jpg/400px-Camille_Claudel_and_Rodin.jpg",link:"https://ja.wikipedia.org/wiki/考える人"},
+    {id:"f_fountain",concept:"泉",desc:"既製品の便器をそのまま展示した。「これは芸術か？」という問いを投げ、芸術の定義を根底から揺さぶった。",author:"マルセル・デュシャン",themes:["レディメイド","芸術の定義","問い","制度","反抗"],mood:["そもそも何が芸術か","制度を笑う","問うことが芸術"],img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Duchamp_Fountaine.jpg/400px-Duchamp_Fountaine.jpg",link:"https://ja.wikipedia.org/wiki/泉_(デュシャン)"},
+    {id:"f_pipe",concept:"これはパイプではない",desc:"パイプの絵の下に「これはパイプではない」と書いた。絵と言語と現実の関係、イメージが意味を裏切る瞬間。",author:"ルネ・マグリット",themes:["イメージ","言語","現実","裏切り","表象"],mood:["見えているものを疑う","言葉とイメージのずれ","当たり前を疑う"],img:"https://upload.wikimedia.org/wikipedia/en/b/b9/MagrittePipe.jpg",link:"https://ja.wikipedia.org/wiki/これはパイプではない"},
+    {id:"f_shark",concept:"生きているものの不可能な物理的死",desc:"ホルマリン漬けのサメを展示した作品。死と生、自然と人工、タイトルの長さ自体が問いになっている。",author:"ダミアン・ハースト",themes:["死","生","自然","人工","問い"],mood:["死を間近で見る","生と死の境界","タイトルが問い"],img:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Hirst-love.jpg/400px-Hirst-love.jpg",link:"https://ja.wikipedia.org/wiki/ダミアン・ハースト"},
     // 画家・彫刻家
-    {id:"a051",concept:"フリーダ・カーロの自画像",desc:"痛み・身体・アイデンティティをそのまま描いた。苦しみを隠さず、自分を見つめ続けることが作品になった。",author:"フリーダ・カーロ",themes:["自画像","痛み","身体","アイデンティティ","正直"],mood:["自分を見つめること","痛みが作品になる","隠さない強さ"]},
+    {id:"a051",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Frida_Kahlo%2C_by_Guillermo_Kahlo.jpg/400px-Frida_Kahlo%2C_by_Guillermo_Kahlo.jpg",link:"https://en.wikipedia.org/wiki/Frida_Kahlo",concept:"フリーダ・カーロの自画像",desc:"痛み・身体・アイデンティティをそのまま描いた。苦しみを隠さず、自分を見つめ続けることが作品になった。",author:"フリーダ・カーロ",themes:["自画像","痛み","身体","アイデンティティ","正直"],mood:["自分を見つめること","痛みが作品になる","隠さない強さ"]},
     {id:"a052",concept:"マーク・ロスコの色の場",desc:"大きな色の矩形が、境界を溶かしながら見る者を包む。絵画を「体験する場所」にしようとした。",author:"マーク・ロスコ",themes:["色","境界","包まれる","体験","場所"],mood:["色に飲み込まれる感覚","境界が溶ける","ただそこにある"]},
     {id:"a053",concept:"ジャスパー・ジョーンズの旗",desc:"星条旗をそのまま描くことで「これは旗か絵か」という問いを立てた。見慣れたものを見慣れないものにする。",author:"ジャスパー・ジョーンズ",themes:["旗","問い","見慣れた","境界","表象"],mood:["当たり前を疑う","見ることへの問い","同じでいて違う"]},
     {id:"a054",concept:"ドナルド・ジャッドの物体",desc:"「特定の物体」と呼んだ。絵画でも彫刻でもない、ただそこにある物体が空間と関係する。",author:"ドナルド・ジャッド",themes:["物体","空間","関係","分類不能","素材"],mood:["ただそこにある","分類できないもの","物と空間の対話"]},
@@ -4980,18 +5007,18 @@
     {id:"a056",concept:"アニッシュ・カプーアの虚空",desc:"深い黒や鏡面で「そこにないもの」を作る。見る者が吸い込まれる感覚。物質で虚空を表現した。",author:"アニッシュ・カプーア",themes:["虚空","黒","鏡","吸い込まれる","不在"],mood:["吸い込まれる感覚","何もないものの深さ","存在と不在の境界"]},
     {id:"a057",concept:"オラファー・エリアソンの自然現象",desc:"霧・光・水・影を操作して、自然現象を美術館に持ち込む。「見ることを見る」体験を作った。",author:"オラファー・エリアソン",themes:["自然","光","霧","知覚","体験"],mood:["自然が室内にある","見ることへの気づき","現象の中にいる"]},
     {id:"a058",concept:"イサム・ノグチの間",desc:"彫刻と空間の「間」に意味がある。日本的な「間（ま）」の概念を、石と空白で表現した。",author:"イサム・ノグチ",themes:["間","空間","石","空白","日本"],mood:["隙間に意味がある","何もない部分が語る","静けさの中の存在"]},
-    {id:"a059",concept:"アルベルト・ジャコメッティの細さ",desc:"ブロンズを極限まで細く削り、存在の孤独と脆さを形にした。人間の実存をそのまま像にした。",author:"ジャコメッティ",themes:["孤独","脆さ","実存","細さ","存在"],mood:["存在の頼りなさ","脆いのに立っている","孤独の形"]},
-    {id:"a060",concept:"レオナルドの未完成",desc:"多くの作品を未完成のまま残した。完成することより、探求し続けることの方が本質だったのかもしれない。",author:"レオナルド・ダ・ヴィンチ",themes:["未完成","探求","完成","問い","継続"],mood:["完成しないことの意味","探求が目的","終わらない問い"]},
-    {id:"a061",concept:"ヴェーラスケスの視線",desc:"《ラス・メニーナス》：画家自身が描かれ、鑑賞者の位置が問われる。誰が誰を見ているのか。",author:"ヴェラスケス",themes:["視線","鑑賞者","問い","画家","見る"],mood:["見ることと見られること","視線の交差","誰の視点か"]},
-    {id:"a062",concept:"ゴヤの戦争",desc:"《5月3日の処刑》：戦争の英雄性を剥ぎ取り、恐怖と暴力をそのまま描いた。芸術の証言としての役割。",author:"フランシスコ・デ・ゴヤ",themes:["戦争","暴力","証言","恐怖","英雄性"],mood:["美化しないこと","恐怖の直視","芸術が記録する"]},
+    {id:"a059",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Walking_Man_I_-_Giacometti.jpg/400px-Walking_Man_I_-_Giacometti.jpg",link:"https://en.wikipedia.org/wiki/Alberto_Giacometti",concept:"アルベルト・ジャコメッティの細さ",desc:"ブロンズを極限まで細く削り、存在の孤独と脆さを形にした。人間の実存をそのまま像にした。",author:"ジャコメッティ",themes:["孤独","脆さ","実存","細さ","存在"],mood:["存在の頼りなさ","脆いのに立っている","孤独の形"]},
+    {id:"a060",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/402px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg",link:"https://en.wikipedia.org/wiki/Mona_Lisa",concept:"レオナルドの未完成",desc:"多くの作品を未完成のまま残した。完成することより、探求し続けることの方が本質だったのかもしれない。",author:"レオナルド・ダ・ヴィンチ",themes:["未完成","探求","完成","問い","継続"],mood:["完成しないことの意味","探求が目的","終わらない問い"]},
+    {id:"a061",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Las_Meninas%2C_by_Diego_Vel%C3%A1zquez%2C_from_Prado_in_Google_Earth.jpg/400px-Las_Meninas%2C_by_Diego_Vel%C3%A1zquez%2C_from_Prado_in_Google_Earth.jpg",link:"https://en.wikipedia.org/wiki/Las_Meninas",concept:"ヴェーラスケスの視線",desc:"《ラス・メニーナス》：画家自身が描かれ、鑑賞者の位置が問われる。誰が誰を見ているのか。",author:"ヴェラスケス",themes:["視線","鑑賞者","問い","画家","見る"],mood:["見ることと見られること","視線の交差","誰の視点か"]},
+    {id:"a062",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Goya_Dog.jpg/400px-Goya_Dog.jpg",link:"https://en.wikipedia.org/wiki/Francisco_Goya",concept:"ゴヤの戦争",desc:"《5月3日の処刑》：戦争の英雄性を剥ぎ取り、恐怖と暴力をそのまま描いた。芸術の証言としての役割。",author:"フランシスコ・デ・ゴヤ",themes:["戦争","暴力","証言","恐怖","英雄性"],mood:["美化しないこと","恐怖の直視","芸術が記録する"]},
     {id:"a063",concept:"セザンヌの視点の揺らぎ",desc:"一枚の絵の中に複数の視点を混在させた。印象派から離れ、「見ること」の本質を問い続けた。",author:"ポール・セザンヌ",themes:["視点","揺らぎ","複数","見る","問い"],mood:["見方が揺れる","固定できない視点","見ることへの問い"]},
     {id:"a064",concept:"モンドリアンの純粋",desc:"具体的なものを徹底的に抽象化し、水平・垂直・三原色だけに還元した。純粋さへの強迫的な探求。",author:"ピエト・モンドリアン",themes:["純粋","抽象","還元","水平","垂直"],mood:["極限まで削ぎ落とす","純粋への強迫","余計なものをなくす"]},
     {id:"a065",concept:"ハマスホイの沈黙の室内",desc:"人物が背を向け、光が静かに射し込む室内画。言葉がない空間に、圧倒的な孤独と詩情が宿る。",author:"ヴィルヘルム・ハマスホイ",themes:["沈黙","孤独","室内","背","光"],mood:["静けさの重さ","背を向けた存在","言葉のない空間"]},
-    {id:"a066",concept:"クリムトの装飾と官能",desc:"金箔と装飾模様が、官能的な主題を包む。表面の豪華さと内側の不安が同居する世界。",author:"グスタフ・クリムト",themes:["装飾","官能","金","不安","表面"],mood:["美しさの中の不安","装飾が隠すもの","官能と死が隣合う"]},
+    {id:"a066",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg/400px-The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg",link:"https://en.wikipedia.org/wiki/The_Kiss_(Klimt)",concept:"クリムトの装飾と官能",desc:"金箔と装飾模様が、官能的な主題を包む。表面の豪華さと内側の不安が同居する世界。",author:"グスタフ・クリムト",themes:["装飾","官能","金","不安","表面"],mood:["美しさの中の不安","装飾が隠すもの","官能と死が隣合う"]},
     {id:"a067",concept:"エゴン・シーレの裸形",desc:"理想化を拒否し、痛々しく醜さも含んだ身体を描いた。自己と他者の欲望・苦悩を直視する。",author:"エゴン・シーレ",themes:["身体","醜さ","欲望","苦悩","直視"],mood:["理想化しない身体","痛みを直視する","美しくない美しさ"]},
     {id:"a068",concept:"バーネット・ニューマンのジップ",desc:"大きな色の平面を垂直に分割する線（ジップ）。崇高を「感じる」絵画を作ろうとした。",author:"バーネット・ニューマン",themes:["分割","崇高","垂直","感じる","絵画"],mood:["ただ縦一本の線","崇高を感じる","分断と統合"]},
-    {id:"a069",concept:"リンブラントの老い",desc:"晩年の自画像ほど、光と影が深まり、人間の内面が滲み出す。老いが絵画に深みをもたらした。",author:"レンブラント",themes:["老い","自画像","内面","深み","光と影"],mood:["老いることの深さ","内面が顔に出る","時間が絵を作る"]},
-    {id:"a070",concept:"フェルメールの光の粒",desc:"窓から射し込む光が、日常の一場面を永遠の瞬間に変える。静謐な日常の中の神聖さ。",author:"ヨハネス・フェルメール",themes:["光","日常","瞬間","静謐","神聖"],mood:["日常が永遠になる","光が神聖さを作る","静かな一瞬"]},
+    {id:"a069",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Rembrandt_van_Rijn_-_Self-Portrait_-_Google_Art_Project.jpg/400px-Rembrandt_van_Rijn_-_Self-Portrait_-_Google_Art_Project.jpg",link:"https://en.wikipedia.org/wiki/Rembrandt",concept:"リンブラントの老い",desc:"晩年の自画像ほど、光と影が深まり、人間の内面が滲み出す。老いが絵画に深みをもたらした。",author:"レンブラント",themes:["老い","自画像","内面","深み","光と影"],mood:["老いることの深さ","内面が顔に出る","時間が絵を作る"]},
+    {id:"a070",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Johannes_Vermeer_-_Het_melkmeisje_-_Google_Art_Project.jpg/400px-Johannes_Vermeer_-_Het_melkmeisje_-_Google_Art_Project.jpg",link:"https://en.wikipedia.org/wiki/Girl_with_a_Pearl_Earring",concept:"フェルメールの光の粒",desc:"窓から射し込む光が、日常の一場面を永遠の瞬間に変える。静謐な日常の中の神聖さ。",author:"ヨハネス・フェルメール",themes:["光","日常","瞬間","静謐","神聖"],mood:["日常が永遠になる","光が神聖さを作る","静かな一瞬"]},
     // 写真家
     {id:"a071",concept:"アンリ・カルティエ＝ブレッソンの決定的瞬間",desc:"人生には写真に収めるべき「決定的瞬間」がある。その瞬間を待つことが写真家の仕事。",author:"アンリ・カルティエ＝ブレッソン",themes:["瞬間","待つ","決定的","時間","偶然"],mood:["今この瞬間しかない","待ち続けること","偶然が必然になる"]},
     {id:"a072",concept:"ダイアン・アーバスの周縁",desc:"社会の周縁に生きる人々を正面から撮った。奇妙さと尊厳が同居する写真が、「普通」への問いを投げた。",author:"ダイアン・アーバス",themes:["周縁","尊厳","正面","普通","問い"],mood:["見てはいけないものを見る","奇妙さと尊厳","普通の外側"]},
@@ -5056,7 +5083,7 @@
     {id:"a125",concept:"横尾忠則のコラージュ的世界",desc:"死・肉体・大衆文化・宗教的イメージが混在する。ジャンルを越境し続け、分類を拒む。",author:"横尾忠則",themes:["コラージュ","死","大衆","宗教","越境"],mood:["混ぜることで生まれるもの","分類できない世界","越境の快楽"]},
     {id:"a126",concept:"舟越桂の木彫の沈黙",desc:"表情を持ちながら何も語らない木彫の顔。見る者が自分の感情を投影する余白がある。",author:"舟越桂",themes:["沈黙","木彫","余白","投影","顔"],mood:["語らない顔が語る","余白に自分を見る","沈黙が深い"]},
     {id:"a127",concept:"棟方志功の板画の生命力",desc:"刃を大胆に動かし、木版の素材と戦うように彫る。制御しない生命力が作品に宿る。",author:"棟方志功",themes:["板画","生命力","戦う","素材","制御しない"],mood:["制御しない表現","素材と戦う","生命力がある"]},
-    {id:"a128",concept:"ブランクーシの卵形",desc:"あらゆる複雑さをひとつの卵形に還元した。本質とは削ぎ落としの先にある純粋な形。",author:"コンスタンティン・ブランクーシ",themes:["卵","還元","本質","純粋","削ぎ落とす"],mood:["本質に向かう削ぎ落とし","シンプルの先にある","ひとつの形に宿るもの"]},
+    {id:"a128",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Brancusi_-_Sleeping_Muse_I.jpg/400px-Brancusi_-_Sleeping_Muse_I.jpg",link:"https://en.wikipedia.org/wiki/Constantin_Br%C3%A2ncu%C8%99i",concept:"ブランクーシの卵形",desc:"あらゆる複雑さをひとつの卵形に還元した。本質とは削ぎ落としの先にある純粋な形。",author:"コンスタンティン・ブランクーシ",themes:["卵","還元","本質","純粋","削ぎ落とす"],mood:["本質に向かう削ぎ落とし","シンプルの先にある","ひとつの形に宿るもの"]},
     {id:"a129",concept:"アーキグラムの未建設の建築",desc:"実現しなかった未来都市の提案群。建設されなかった建築が、思想として影響を与え続ける。",author:"アーキグラム",themes:["未建設","未来","提案","思想","影響"],mood:["実現しなかったものの力","夢が影響を持つ","建てられない建築"]},
     {id:"a130",concept:"磯崎新の廃墟と再生",desc:"広島の焼け跡から出発し、廃墟の上に新しい建築を立てることの意味を問い続けた。",author:"磯崎新",themes:["廃墟","再生","広島","記憶","建設"],mood:["廃墟の上に立てること","記憶の上の建築","再生の意味"]},
     {id:"a131",concept:"ベルナール・チュミの解体建築",desc:"形態・機能・意味の三者が一致しない「解体建築」を提唱。建築の前提を問い直した。",author:"ベルナール・チュミ",themes:["解体","形態","機能","意味","不一致"],mood:["形と機能がずれる","前提を疑う","不一致が生む可能性"]},
@@ -5637,17 +5664,67 @@
 
   // ================================================================
   // ================================================================
-  // ===== 落下アート =====
+  // ===== アート作品モーダル =====
+  // ================================================================
+  let _currentArtFrag = null;
+
+  function openArtModal(fragId) {
+    const pool = typeof ART_FRAGMENTS !== 'undefined' ? ART_FRAGMENTS : [];
+    const frag = pool.find(f => f.id === fragId);
+    if (!frag) return;
+    _currentArtFrag = frag;
+
+    const modal = document.getElementById('art-modal');
+    const img   = document.getElementById('art-modal-img');
+    const title = document.getElementById('art-modal-title');
+    const desc  = document.getElementById('art-modal-desc');
+    const author = document.getElementById('art-modal-author');
+    const link  = document.getElementById('art-modal-link');
+
+    if (frag.img) {
+      img.src = frag.img;
+      img.style.display = 'block';
+    } else {
+      img.style.display = 'none';
+    }
+    if (title)  title.textContent  = frag.concept || '';
+    if (desc)   desc.textContent   = frag.desc || '';
+    if (author) author.textContent = frag.author || '';
+    if (link) {
+      const url = frag.link || 'https://www.google.com/search?q=' + encodeURIComponent((frag.concept||'') + ' ' + (frag.author||''));
+      link.href = url;
+    }
+
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeArtModal() {
+    const modal = document.getElementById('art-modal');
+    if (modal) modal.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  function artModalToDepth() {
+    if (!_currentArtFrag) return;
+    closeArtModal();
+    // 図書館のアートタブから概念として渡す
+    if (typeof addSelectedSource === 'function') {
+      addSelectedSource(_currentArtFrag.id, _currentArtFrag.concept);
+    }
+    goTo('screen-depth-edit');
+  }
+
   // ================================================================
   const FOREST_ART_ITEMS = [
-    { emoji: '🖼', name: 'モナリザ' },
-    { emoji: '😱', name: '叫び' },
-    { emoji: '🤔', name: '考える人' },
-    { emoji: '👂', name: '真珠の耳飾りの少女' },
-    { emoji: '🔴', name: '草間彌生の水玉' },
-    { emoji: '🚽', name: 'デュシャンの泉' },
-    { emoji: '🪧', name: 'マグリットのパイプ' },
-    { emoji: '🦈', name: 'ダミアン・ハーストのサメ' },
+    { emoji: '🖼', name: 'モナリザ',               fragId: 'a060', link: 'https://ja.wikipedia.org/wiki/モナ・リザ' },
+    { emoji: '😱', name: '叫び',                   fragId: 'f_scream',   link: 'https://ja.wikipedia.org/wiki/叫び_(エドヴァルド・ムンク)' },
+    { emoji: '🤔', name: '考える人',               fragId: 'f_thinker',   link: 'https://ja.wikipedia.org/wiki/考える人' },
+    { emoji: '👂', name: '真珠の耳飾りの少女',     fragId: 'a070', link: 'https://ja.wikipedia.org/wiki/真珠の耳飾りの少女' },
+    { emoji: '🔴', name: '草間彌生の水玉',         fragId: 'a033',   link: 'https://ja.wikipedia.org/wiki/草間彌生' },
+    { emoji: '🚽', name: 'デュシャンの泉',         fragId: 'f_fountain',   link: 'https://ja.wikipedia.org/wiki/泉_(デュシャン)' },
+    { emoji: '🪧', name: 'マグリットのパイプ',     fragId: 'f_pipe',   link: 'https://ja.wikipedia.org/wiki/これはパイプではない' },
+    { emoji: '🦈', name: 'ダミアン・ハーストのサメ', fragId: 'f_shark', link: 'https://ja.wikipedia.org/wiki/ダミアン・ハースト' },
   ];
 
   function launchFallingArt(scrollEl) {
@@ -5655,9 +5732,15 @@
     items.forEach(function(item, i) {
       const wrapper = document.createElement('div');
       const leftPct = 10 + Math.random() * 60;
-      wrapper.style.cssText = 'position:absolute;top:-80px;left:'+leftPct+'%;z-index:20;pointer-events:none;text-align:center;';
+      wrapper.style.cssText = 'position:absolute;top:-80px;left:'+leftPct+'%;z-index:20;pointer-events:auto;text-align:center;cursor:pointer;';
       wrapper.innerHTML = '<div style="font-size:36px;line-height:1;">'+item.emoji+'</div>'
         + '<div style="font-size:8px;letter-spacing:0.12em;color:#888;margin-top:4px;white-space:nowrap;">'+item.name+'</div>';
+      // タップでモーダルまたはWikiへ
+      if (item.fragId) {
+        wrapper.onclick = function() { openArtModal(item.fragId); };
+      } else if (item.link) {
+        wrapper.onclick = function() { window.open(item.link, '_blank', 'noopener'); };
+      }
       scrollEl.style.position = 'relative';
       scrollEl.appendChild(wrapper);
       const delay = i * 500 + Math.random() * 300;
