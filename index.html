@@ -4796,7 +4796,10 @@
         ? '<div style="font-size:10px;letter-spacing:0.04em;color:#888;line-height:1.7;">'+e.questionText.slice(0,30)+(e.questionText.length>30?'…':'')+'</div>'
         : '';
       const date = new Date(e.updatedAt).toLocaleDateString('ja-JP',{month:'numeric',day:'numeric'});
-      card.innerHTML = name+q+'<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;"><div style="font-size:8px;letter-spacing:0.14em;color:#ccc;">'+date+'</div></div>';
+      const questBadge = e.quest
+        ? '<div style="font-size:9px;letter-spacing:0.04em;color:#888;line-height:1.6;margin-top:6px;padding:6px 10px;background:#f5f4f0;border-radius:8px;">🎯 '+e.quest+'</div>'
+        : '';
+      card.innerHTML = name+q+questBadge+'<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;"><div style="font-size:8px;letter-spacing:0.14em;color:#ccc;">'+date+'</div><div style="display:flex;gap:6px;"><button onclick="event.stopPropagation();viewBeingForEntry(\''+e.id+'\')" style="font-size:9px;letter-spacing:0.1em;color:#888;background:none;border:1px solid #e0e0da;border-radius:20px;padding:3px 10px;cursor:pointer;font-family:inherit;">存在</button><button onclick="event.stopPropagation();openShareModal(\''+e.id+'\')" style="font-size:9px;letter-spacing:0.12em;color:#aaa;background:none;border:1px solid #e0e0da;border-radius:20px;padding:3px 10px;cursor:pointer;font-family:inherit;">シェア</button></div></div>';
       container.appendChild(card);
     });
     } catch(err) { console.error('renderDepthList error:', err.message, err.stack); }
