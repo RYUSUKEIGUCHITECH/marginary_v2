@@ -1076,6 +1076,15 @@
         justify-items:center;
       "></div>
 
+      <!-- 知的な深みへの動線 -->
+      <div style="margin-top:28px;text-align:center;">
+        <button onclick="openDepthFromCharaSelect()" style="
+          background:none;border:1px solid #ddd;border-radius:12px;
+          font-family:inherit;font-size:9px;letter-spacing:0.22em;color:#888;
+          cursor:pointer;padding:10px 24px;width:100%;
+        ">知的な深みを編集する</button>
+      </div>
+
     </div>
   </div>
 
@@ -1369,6 +1378,24 @@
           <!-- 削除 -->
           <div id="depth-delete-area" style="display:none;">
             <button onclick="deleteCurrentDepthEntry()" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:20px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.18em;color:#ccc;cursor:pointer;">このエントリを削除する</button>
+          </div>
+
+          <!-- 文章の書き出しを作る -->
+          <div style="margin-top:16px;margin-bottom:16px;">
+            <button onclick="generateWritingStarter()" id="writing-starter-btn" style="
+              width:100%;padding:12px;border:1px solid #ddd;border-radius:20px;
+              background:none;font-family:inherit;font-size:10px;letter-spacing:0.18em;
+              color:#888;cursor:pointer;
+            ">文章の書き出しを作る</button>
+            <div id="writing-starter-output" style="display:none;margin-top:12px;background:#f9f8f5;border-radius:16px;padding:16px;">
+              <div style="font-size:8px;letter-spacing:0.24em;color:#bbb;margin-bottom:10px;">書き出し</div>
+              <div id="writing-starter-text" style="font-size:13px;letter-spacing:0.05em;color:#222;line-height:2.0;"></div>
+              <button onclick="copyWritingStarter()" style="
+                margin-top:12px;padding:7px 16px;border:1px solid #ddd;border-radius:20px;
+                background:none;font-family:inherit;font-size:9px;letter-spacing:0.16em;
+                color:#aaa;cursor:pointer;
+              ">コピーする</button>
+            </div>
           </div>
         </div>
 
@@ -4709,7 +4736,18 @@
   }
 
   // --- 画面: 一覧 ---
+  function openDepthFromCharaSelect() {
+    if (!currentChara) {
+      currentChara = 'majimaji';
+      applyCharaConfig('majimaji');
+      updateAllCharaSVG('majimaji');
+    }
+    try { renderDepthList(); } catch(e) { console.error(e); }
+    goTo('screen-depth-list');
+  }
+
   function renderDepthList() {
+    try {
     const charaEl = document.getElementById('depth-list-chara');
     if (charaEl) {
       charaEl.dataset.chara = currentChara || 'majimaji';
@@ -4720,7 +4758,7 @@
     if (!container) return;
     const entries = getDepthEntries();
     if (entries.length === 0) {
-      container.innerHTML = `<div style="grid-column:1/-1;font-size:12px;letter-spacing:0.1em;color:#bbb;padding:16px 0;line-height:2.2;">まだ問いがない。<br>「新しい問いと概念を作る」から始める。</div>`;
+      container.innerHTML = '<div style="grid-column:1/-1;font-size:12px;letter-spacing:0.1em;color:#bbb;padding:16px 0;line-height:2.2;">まだ問いがない。<br>「新しい問いと概念を作る」から始める。</div>';
       return;
     }
     container.innerHTML = '';
@@ -4731,18 +4769,16 @@
       card.addEventListener('touchstart', () => card.style.transform='scale(0.97)');
       card.addEventListener('touchend',   () => card.style.transform='scale(1)');
       const name = e.originalConceptName
-        ? `<div style="font-size:13px;font-weight:600;letter-spacing:0.04em;color:#222;margin-bottom:4px;line-height:1.4;">${e.originalConceptName}</div>`
-        : `<div style="font-size:11px;color:#ccc;margin-bottom:4px;">概念名なし</div>`;
+        ? '<div style="font-size:13px;font-weight:600;letter-spacing:0.04em;color:#222;margin-bottom:4px;line-height:1.4;">'+e.originalConceptName+'</div>'
+        : '<div style="font-size:11px;color:#ccc;margin-bottom:4px;">概念名なし</div>';
       const q = e.questionText
-        ? `<div style="font-size:10px;letter-spacing:0.04em;color:#888;line-height:1.7;">${e.questionText.slice(0,30)}${e.questionText.length>30?'…':''}</div>`
+        ? '<div style="font-size:10px;letter-spacing:0.04em;color:#888;line-height:1.7;">'+e.questionText.slice(0,30)+(e.questionText.length>30?'…':'')+'</div>'
         : '';
       const date = new Date(e.updatedAt).toLocaleDateString('ja-JP',{month:'numeric',day:'numeric'});
-      const questBadge = e.quest
-        ? `<div style="font-size:9px;letter-spacing:0.04em;color:#888;line-height:1.6;margin-top:6px;padding:6px 10px;background:#f5f4f0;border-radius:8px;">🎯 ${e.quest}</div>`
-        : '';
-      card.innerHTML = `${name}${q}${questBadge}<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;"><div style="font-size:8px;letter-spacing:0.14em;color:#ccc;">${date}</div><div style="display:flex;gap:6px;"><button onclick="event.stopPropagation();viewBeingForEntry('${e.id}')" style="font-size:9px;letter-spacing:0.1em;color:#888;background:none;border:1px solid #e0e0da;border-radius:20px;padding:3px 10px;cursor:pointer;font-family:inherit;">存在</button><button onclick="event.stopPropagation();openShareModal('${e.id}')" style="font-size:9px;letter-spacing:0.12em;color:#aaa;background:none;border:1px solid #e0e0da;border-radius:20px;padding:3px 10px;cursor:pointer;font-family:inherit;">シェア</button></div></div>`;
+      card.innerHTML = name+q+'<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;"><div style="font-size:8px;letter-spacing:0.14em;color:#ccc;">'+date+'</div></div>';
       container.appendChild(card);
     });
+    } catch(err) { console.error('renderDepthList error:', err.message, err.stack); }
   }
 
   // --- 画面: 編集を開く ---
@@ -5635,6 +5671,82 @@
       }, delay);
     });
   }
+  // ================================================================
+  // ================================================================
+  // ===== 文章の書き出しを作る =====
+  // ================================================================
+  async function generateWritingStarter() {
+    const btn = document.getElementById('writing-starter-btn');
+    const output = document.getElementById('writing-starter-output');
+    const textEl = document.getElementById('writing-starter-text');
+    if (!btn || !textEl) return;
+
+    const qEl = document.getElementById('depth-question');
+    const cEl = document.getElementById('depth-concept-name');
+    const mEl = document.getElementById('depth-memo');
+    const question = (qEl ? qEl.value : '').trim();
+    const concept  = (cEl ? cEl.value : '').trim();
+    const memo     = (mEl ? mEl.value : '').trim();
+
+    if (!question && !concept) {
+      btn.textContent = '問いか概念名を入力してから試してください';
+      setTimeout(() => { btn.textContent = '文章の書き出しを作る'; }, 2000);
+      return;
+    }
+
+    btn.textContent = '考えてる…';
+    btn.disabled = true;
+
+    const prompt = '「' + (question || concept || 'テスト') + '」という問いから始まるnote記事の書き出しを1文だけ書いてください。';
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 200, messages: [{ role: 'user', content: prompt }] }),
+      });
+      const raw = await res.text();
+      if (!res.ok) {
+        textEl.textContent = 'HTTP ' + res.status + ': ' + raw.slice(0, 100);
+        output.style.display = 'block';
+        btn.textContent = 'もう一度作る'; btn.disabled = false;
+        return;
+      }
+      let data;
+      try { data = JSON.parse(raw); } catch(pe) {
+        textEl.textContent = 'Parse error: ' + raw.slice(0, 100);
+        output.style.display = 'block';
+        btn.textContent = 'もう一度作る'; btn.disabled = false;
+        return;
+      }
+      if (data.error) {
+        textEl.textContent = 'APIエラー: ' + data.error.message;
+      } else {
+        const text = (Array.isArray(data.content) ? data.content.filter(c => c.type === 'text').map(c => c.text).join('') : '').trim();
+        if (text) textEl.textContent = text;
+      }
+      output.style.display = 'block';
+    } catch(e) {
+      textEl.textContent = 'fetch失敗: ' + e.message;
+      output.style.display = 'block';
+    }
+    btn.textContent = 'もう一度作る';
+    btn.disabled = false;
+  }
+
+  function copyWritingStarter() {
+    const text = document.getElementById('writing-starter-text')?.textContent || '';
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+      const copyBtn = document.querySelector('[onclick="copyWritingStarter()"]');
+      if (copyBtn) { copyBtn.textContent = 'コピーしました'; setTimeout(() => { copyBtn.textContent = 'コピーする'; }, 1500); }
+    });
+  }
+
   // ================================================================
   const CHARA_DIALOGUES = [
     // [charaA, lineA, charaB, lineB]
