@@ -5675,7 +5675,7 @@
   // ================================================================
   // ===== 文章の書き出しを作る =====
   // ================================================================
-  async function generateWritingStarter() {
+  function generateWritingStarter() {
     const btn = document.getElementById('writing-starter-btn');
     const output = document.getElementById('writing-starter-output');
     const textEl = document.getElementById('writing-starter-text');
@@ -5697,43 +5697,24 @@
     btn.textContent = '考えてる…';
     btn.disabled = true;
 
-    const prompt = '「' + (question || concept || 'テスト') + '」という問いから始まるnote記事の書き出しを1文だけ書いてください。';
+    const templates = [
+      q => q ? '「' + q + '」という問いを、ずっと持ち歩いている。' : null,
+      q => q ? 'なんとなく気になっていた。' + q.slice(-1) === '？' ? q.slice(0,-1) + 'のことを、少し書いてみようと思う。' : q + 'ということを、少し書いてみようと思う。' : null,
+      (q,c) => c ? c + 'という言葉に出会ってから、少し見え方が変わった。' : null,
+      (q,c) => c ? 'うまく言葉にできなかったものに、' + c + 'という名前をつけてみた。' : null,
+      q => q ? 'ずっと答えが出ないまま、それでも' + q.replace('？','').replace('?','') + 'という問いだけが残っている。' : null,
+      (q,c) => q && c ? c + 'について考えていたら、' + q.replace('？','').replace('?','') + 'という問いに行き着いた。' : null,
+      q => q ? '誰かに話したわけじゃないけど、' + q.replace('？','').replace('?','') + 'ということが、ずっと引っかかっている。' : null,
+      (q,c) => c ? c + 'という感覚を、もう少し丁寧に追いかけてみたい。' : null,
+    ];
 
-    try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true',
-        },
-        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 200, messages: [{ role: 'user', content: prompt }] }),
-      });
-      const raw = await res.text();
-      if (!res.ok) {
-        textEl.textContent = 'HTTP ' + res.status + ': ' + raw.slice(0, 100);
-        output.style.display = 'block';
-        btn.textContent = 'もう一度作る'; btn.disabled = false;
-        return;
-      }
-      let data;
-      try { data = JSON.parse(raw); } catch(pe) {
-        textEl.textContent = 'Parse error: ' + raw.slice(0, 100);
-        output.style.display = 'block';
-        btn.textContent = 'もう一度作る'; btn.disabled = false;
-        return;
-      }
-      if (data.error) {
-        textEl.textContent = 'APIエラー: ' + data.error.message;
-      } else {
-        const text = (Array.isArray(data.content) ? data.content.filter(c => c.type === 'text').map(c => c.text).join('') : '').trim();
-        if (text) textEl.textContent = text;
-      }
-      output.style.display = 'block';
-    } catch(e) {
-      textEl.textContent = 'fetch失敗: ' + e.message;
-      output.style.display = 'block';
-    }
+    const valid = templates.map(fn => fn(question, concept)).filter(Boolean);
+    const picked = valid[Math.floor(Math.random() * valid.length)] || '気になっていることを、少しだけ書いてみようと思う。';
+
+    textEl.textContent = picked;
+    output.style.display = 'block';
+    btn.textContent = 'もう一度作る';
+    btn.disabled = false;
     btn.textContent = 'もう一度作る';
     btn.disabled = false;
   }
