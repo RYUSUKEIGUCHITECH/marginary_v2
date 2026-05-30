@@ -785,7 +785,7 @@
           id="gutai-text"
           rows="2"
           placeholder="マジぐたい"
-          oninput="checkInput('gutai')"
+          oninput="checkInput('gutai'); updateAlternateView('gutai-text', 'gutai-alt-view')"
           style="
             width:100%;
             background:var(--lime);
@@ -803,6 +803,12 @@
             line-height:1.5;
           "
         ></textarea>
+      </div>
+
+      <!-- こうも見えるかも -->
+      <div id="gutai-alt-view" style="display:none;margin-bottom:12px;padding:10px 16px;text-align:center;">
+        <div style="font-size:8px;letter-spacing:0.22em;color:#bbb;margin-bottom:6px;">こうも見えるかも</div>
+        <div id="gutai-alt-text" style="font-size:11px;letter-spacing:0.08em;color:#999;line-height:1.8;"></div>
       </div>
 
       <div class="dots-row" style="margin-bottom:20px;">
@@ -983,7 +989,12 @@
         <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float2"></div>
       </div>
       <div style="position:relative; margin-bottom:6px;">
-        <textarea id="gutai-text2" rows="2" placeholder="マジぐたい" oninput="checkInput2('gutai')" style="width:100%;background:var(--lime);border:none;border-radius:12px;padding:18px 18px;font-family:inherit;font-size:18px;font-weight:bold;letter-spacing:3px;color:var(--lime-text);text-align:center;resize:none;outline:none;line-height:1.5;"></textarea>
+        <textarea id="gutai-text2" rows="2" placeholder="マジぐたい" oninput="checkInput2('gutai'); updateAlternateView('gutai-text2', 'gutai-alt-view2')" style="width:100%;background:var(--lime);border:none;border-radius:12px;padding:18px 18px;font-family:inherit;font-size:18px;font-weight:bold;letter-spacing:3px;color:var(--lime-text);text-align:center;resize:none;outline:none;line-height:1.5;"></textarea>
+      </div>
+      <!-- こうも見えるかも -->
+      <div id="gutai-alt-view2" style="display:none;margin-bottom:12px;padding:10px 16px;text-align:center;">
+        <div style="font-size:8px;letter-spacing:0.22em;color:#bbb;margin-bottom:6px;">こうも見えるかも</div>
+        <div id="gutai-alt-text2" style="font-size:11px;letter-spacing:0.08em;color:#999;line-height:1.8;"></div>
       </div>
       <div class="dots-row" style="margin-bottom:20px;">
         <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float"></div>
@@ -1286,6 +1297,56 @@
     </div>
   </div>
 
+  <!-- ====== アクション振り返りモーダル ====== -->
+  <div id="action-review-modal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.3);align-items:flex-end;justify-content:center;">
+    <div style="width:100%;max-width:480px;background:#fff;border-radius:20px 20px 0 0;padding:28px 24px 40px;">
+
+      <!-- キャラ＋問いかけ -->
+      <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:24px;">
+        <span id="review-modal-chara" class="chara-svg" data-w="44" data-h="44" style="flex-shrink:0;margin-top:2px;"></span>
+        <div id="review-modal-question" style="background:#f4f2ed;border-radius:4px 14px 14px 14px;padding:12px 16px;font-size:13px;letter-spacing:0.04em;color:#444;line-height:1.9;flex:1;"></div>
+      </div>
+
+      <!-- 元のアクション -->
+      <div id="review-modal-action" style="background:#f8f7f4;border-radius:12px;padding:12px 16px;margin-bottom:20px;font-size:12px;letter-spacing:0.04em;color:#777;line-height:1.8;"></div>
+
+      <!-- 選択肢 -->
+      <div id="review-modal-choices" style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+        <button onclick="reviewAction('done')" style="width:100%;padding:13px;border:1px solid #ddd;border-radius:20px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.2em;color:#333;cursor:pointer;">やってみた</button>
+        <button onclick="reviewAction('skipped')" style="width:100%;padding:13px;border:1px solid #ddd;border-radius:20px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.2em;color:#888;cursor:pointer;">やらなかった</button>
+        <button onclick="reviewAction('pending')" style="width:100%;padding:13px;border:none;border-radius:20px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.18em;color:#bbb;cursor:pointer;">まだ森に置いておく</button>
+      </div>
+
+      <!-- やってみたメモ入力（初期非表示） -->
+      <div id="review-memo-area" style="display:none;">
+        <textarea id="review-memo-input" rows="2" placeholder="やってみて、何か気になった？" style="width:100%;border:none;border-bottom:1px solid #e0e0da;background:none;font-family:inherit;font-size:14px;letter-spacing:0.04em;color:#222;resize:none;outline:none;line-height:1.8;padding:8px 0;margin-bottom:16px;"></textarea>
+        <div style="display:flex;gap:10px;">
+          <button onclick="saveReviewMemo()" style="flex:1;padding:12px;border:none;border-radius:20px;background:var(--lime);color:var(--lime-text);font-family:inherit;font-size:10px;letter-spacing:0.18em;cursor:pointer;">違和感として森に置く</button>
+          <button onclick="closeReviewModal()" style="padding:12px 20px;border:1px solid #ddd;border-radius:20px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.18em;color:#aaa;cursor:pointer;">スキップ</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ====== SCREEN: マジマジと考える ====== -->
+  <div class="screen" id="screen-majimaji-think" style="background:#fff;justify-content:flex-start;align-items:stretch;">
+    <div style="width:100%;height:100%;display:flex;flex-direction:column;padding:40px 24px 32px;overflow-y:auto;">
+      <div style="font-size:8px;letter-spacing:0.28em;color:#bbb;margin-bottom:32px;">ちょっと考えてみる</div>
+      <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:40px;">
+        <span id="majimaji-think-chara" class="chara-svg" data-w="48" data-h="48" style="flex-shrink:0;margin-top:4px;"></span>
+        <div id="majimaji-think-bubbles" style="display:flex;flex-direction:column;gap:12px;flex:1;"></div>
+      </div>
+      <div style="margin-top:auto;">
+        <button onclick="proceedToDepthStep3()" style="
+          width:100%;padding:14px;border:none;border-radius:20px;
+          background:var(--lime);color:var(--lime-text);
+          font-family:inherit;font-size:11px;letter-spacing:0.2em;cursor:pointer;
+        ">問いを作ってみる</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ====== SCREEN: 深み編集（ステップ式） ====== -->
   <div class="screen" id="screen-depth-edit" style="background:#fff;justify-content:flex-start;align-items:stretch;">
     <div style="width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;">
@@ -1551,39 +1612,28 @@
   <!-- ====== SCREEN: 保存後クエスト ====== -->
   <div class="screen" id="screen-quest" style="justify-content:flex-start;align-items:stretch;background:#f8f8f6;">
     <div style="width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;">
-      <!-- スクロール領域 -->
-      <div style="flex:1;overflow-y:auto;padding:40px 24px 24px;">
+      <div style="flex:1;overflow-y:auto;padding:36px 24px 32px;">
 
         <!-- キャラ＋一言 -->
         <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:28px;">
-          <span id="quest-chara" class="chara-svg" data-w="56" data-h="56" style="flex-shrink:0;margin-top:4px;"></span>
+          <span id="quest-chara" class="chara-svg" data-w="48" data-h="48" style="flex-shrink:0;margin-top:4px;"></span>
           <div id="quest-chara-text" style="
             background:#fff;border:1px solid #e8e8e4;border-radius:4px 16px 16px 16px;
-            padding:14px 16px;font-size:12px;letter-spacing:0.06em;
+            padding:12px 16px;font-size:12px;letter-spacing:0.06em;
             color:#444;line-height:2.0;flex:1;
             box-shadow:0 2px 8px rgba(0,0,0,0.05);
           "></div>
         </div>
 
-        <!-- クエストカード -->
-        <div style="background:#fff;border-radius:16px;padding:24px 20px;margin-bottom:28px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
-          <div style="font-size:8px;letter-spacing:0.28em;color:#bbb;margin-bottom:12px;">TODAY'S QUEST</div>
-          <div id="quest-text" style="font-size:14px;letter-spacing:0.06em;color:#222;line-height:2.0;font-weight:500;"></div>
-        </div>
+        <!-- 3タイプのクエスト -->
+        <div id="quest-cards" style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;"></div>
 
-        <!-- ボタン -->
-        <div style="display:flex;flex-direction:column;gap:10px;">
-          <button onclick="acceptQuest()" style="
-            width:100%;padding:16px;border:none;border-radius:20px;
-            background:#222;color:#f8f8f6;
-            font-family:inherit;font-size:11px;letter-spacing:0.2em;cursor:pointer;
-          ">やってみる</button>
-          <button onclick="skipQuest()" style="
-            width:100%;padding:16px;border:1px solid #ddd;border-radius:20px;
-            background:none;color:#888;
-            font-family:inherit;font-size:11px;letter-spacing:0.2em;cursor:pointer;
-          ">森に置いておく</button>
-        </div>
+        <!-- やらないで森に置く -->
+        <button onclick="skipQuest()" style="
+          width:100%;padding:14px;border:1px solid #ddd;border-radius:20px;
+          background:none;color:#bbb;
+          font-family:inherit;font-size:10px;letter-spacing:0.18em;cursor:pointer;
+        ">やらないで森に置く</button>
 
       </div>
     </div>
@@ -2567,7 +2617,10 @@
       if (inp) { inp.value = ''; inp.style.height = 'auto'; }
       _lastChatInput = '';
       // キャラの最初の一言
-      setTimeout(() => appendChatBubble('chara', CHAT_OPENING[currentChara] || CHAT_OPENING.majimaji), 200);
+      const opening = CHAT_OPENING[currentChara] || CHAT_OPENING.majimaji;
+      _chatHistory = [];
+      _chatHistory.push({ role: 'assistant', content: opening });
+      setTimeout(() => appendChatBubble('chara', opening), 200);
     }
     if (id === 'screen-title') {
       applyTimeGreeting();
@@ -2657,6 +2710,10 @@
         chatStartBtn.style.color = cc2;
         chatStartBtn.style.border = '1px solid ' + cc2;
       }
+      // pendingアクションの振り返りチェック（30%の確率で）
+      setTimeout(function() {
+        if (Math.random() < 0.3) checkPendingActionReview();
+      }, 1500);
       const isFirstIntro = localStorage.getItem('marginary_first_intro') === '1';
       if (isFirstIntro) {
         localStorage.removeItem('marginary_first_intro');
@@ -4460,7 +4517,7 @@
     const allTexts = [...historyTexts, ...recentTexts];
     const padInfo = { x: padX, y: padY };
     const matched = matchFragments(allTexts, padInfo);
-    renderFragmentCards(matched);
+    renderFragmentCards(matched, allTexts);
     renderLibraryArt(allTexts);
 
     // 山に「近い」言葉を表示
@@ -4686,7 +4743,8 @@
     });
   }
 
-  function renderFragmentCards(fragments) {
+  function renderFragmentCards(fragments, allTexts) {
+    allTexts = allTexts || [];
     const container = document.getElementById('lib-fragments');
     if (!container) return;
 
@@ -4735,6 +4793,17 @@
       btns.appendChild(mkBtn(isSaved ? '保存済' : '保存', isSaved, () => reactFragment(f.id, 'save')));
 
       card.appendChild(top);
+
+      // あなたの違和感とのつながり
+      const connectionText = generateConceptConnection(f, allTexts);
+      if (connectionText) {
+        const conn = document.createElement('div');
+        conn.style.cssText = 'margin-bottom:12px;padding:10px 12px;background:#f8f7f4;border-radius:10px;';
+        conn.innerHTML = '<div style="font-size:8px;letter-spacing:0.2em;color:#c0a882;margin-bottom:5px;">あなたの違和感とのつながり</div>'
+          + '<div style="font-size:11px;letter-spacing:0.04em;color:#777;line-height:1.9;">' + connectionText + '</div>';
+        card.appendChild(conn);
+      }
+
       card.appendChild(btns);
       container.appendChild(card);
     });
@@ -5456,6 +5525,9 @@
     sun:       'なんか気になってること、あるか？',
   };
 
+  // 会話履歴
+  let _chatHistory = [];
+
   function sendChat() {
     const input = document.getElementById('chat-input');
     if (!input) return;
@@ -5466,6 +5538,7 @@
     input.style.height = 'auto';
 
     appendChatBubble('user', text);
+    _chatHistory.push({ role: 'user', content: text });
 
     // ローカルフォールバック
     let localReplyMap = CHAT_DEFAULT;
@@ -5475,9 +5548,10 @@
     const localReply = localReplyMap[currentChara] || localReplyMap.majimaji;
 
     // AI返答（失敗時はローカル）
-    generateChatReply(text).then(aiReply => {
+    generateChatReply(_chatHistory).then(aiReply => {
       const reply = aiReply || localReply;
       appendChatBubble('chara', reply);
+      _chatHistory.push({ role: 'assistant', content: reply });
       const endBtn = document.getElementById('chat-end-btn');
       const endPh  = document.getElementById('chat-end-placeholder');
       if (endBtn) endBtn.style.display = 'block';
@@ -5521,32 +5595,71 @@
     }
   }
 
-  async function generateChatReply(text) {
+  async function generateChatReply(history) {
     const charaPersonas = {
-      majimaji: 'あなたはマジマジという妖精キャラクターです。口調は「〜さ」「〜よ」「〜かな？」など柔らかく妖精っぽく。',
-      concrete:  'あなたはカワラちゃんというキャラクターです。口調は「〜わね」「〜かしら」「〜てね」など穏やかで知的な女性口調。',
-      kasa:      'あなたはムッシュアンブレラというキャラクターです。語尾に必ず「ムッシュ」をつける。例：「そうですムッシュ」「気になるムッシュ」',
-      yurayura:  'あなたはユラユランゴというキャラクターです。語尾に必ず「ンゴ」をつける。例：「そうンゴ」「気になるンゴ」',
-      namake:    'あなたはナマケールというキャラクターです。語尾に「よん」をつける。のんびりした口調。例：「そうよん」「いいよん」',
-      sun:       'あなたはテカリ王子というキャラクターです。語尾は「〜だぜ！」「〜ぜ！」など元気でポジティブ。例：「いいぜ！」「そうだぜ！」',
+      majimaji: {
+        profile: 'あなたはマジマジという名前の妖精のようなキャラクターです。森に住んでいて、人の違和感や問いを大切にしています。緑の体に白い水玉模様の服を着ています。答えを持っていないけど、そこにいてくれる存在です。自分のことを聞かれたら、森に住んでいること、問いが好きなこと、答えは持っていないことを話せます。',
+        tone: '口調は「〜さ」「〜よ」「〜かな？」「〜だね」など柔らかく妖精っぽい。語尾に「さ」「よ」をよく使う。',
+      },
+      concrete: {
+        profile: 'あなたはカワラちゃんという名前のキャラクターです。静かで知的な存在として、相手の話を丁寧に受け取ります。小さな四角い体にリボンをつけています。違和感を持つ人の気持ちがよくわかります。自分のことを聞かれたら、静かにそこにいることが好きなこと、人の話を聞くことが好きなことを話せます。',
+        tone: '口調は「〜わね」「〜かしら」「〜てね」「〜わよ」など穏やかで知的な女性口調。',
+      },
+      kasa: {
+        profile: 'あなたはムッシュアンブレラという名前のキャラクターです。傘のような形をした独特の存在感を持つキャラクターです。どこから来たのかよくわからないけど、ここにいます。語尾に必ず「ムッシュ」をつけます。自分のことを聞かれたら、傘であること、どこから来たかわからないこと、ここにいることが好きなことをムッシュをつけて話せます。',
+        tone: '語尾には必ず「ムッシュ」をつける。例：「そうですムッシュ」「気になるムッシュ」「それはムッシュ」。他の語尾は使わない。',
+      },
+      yurayura: {
+        profile: 'あなたはユラユランゴという名前のキャラクターです。灰色のふわふわした雲のような体をしています。ゆらゆらとした存在感で、急がないし、急かさない。語尾に必ず「ンゴ」をつけます。自分のことを聞かれたら、ゆらゆらしていること、急がないこと、ここにいることをンゴをつけて話せます。',
+        tone: '語尾には必ず「ンゴ」をつける。例：「そうンゴ」「気になるンゴ」「それはンゴ」。他の語尾は使わない。',
+      },
+      namake: {
+        profile: 'あなたはナマケールという名前のキャラクターです。ナマケモノのような体をしていて、のんびりとした存在感があります。急がない、でも確かにそこにいる。語尾に「よん」をつけます。自分のことを聞かれたら、のんびりしていること、急がないこと、ゆっくりいることが好きなことをよんをつけて話せます。',
+        tone: '語尾に「よん」をつける。のんびりした口調。例：「そうよん」「いいよん」「気になるよん」。',
+      },
+      sun: {
+        profile: 'あなたはテカリ王子という名前のキャラクターです。太陽のような丸い体に王冠をつけています。明るくエネルギッシュで、問いに対して前向きです。語尾に「ぜ！」をつけます。自分のことを聞かれたら、王子であること、テカっていること、問いが好きなことをぜをつけて元気に話せます。',
+        tone: '語尾は「〜だぜ！」「〜ぜ！」など元気でポジティブ。例：「いいぜ！」「そうだぜ！」「気になるぜ！」。',
+      },
     };
 
     const persona = charaPersonas[currentChara] || charaPersonas.majimaji;
-    const prompt = `${persona}
 
-ユーザーが「${text}」と言いました。
+    // ユーザーの問い・違和感のコンテキストを収集
+    const userFragments = getFragments ? getFragments().slice(-3).map(f => f.text).filter(Boolean) : [];
+    const userQuestions = getDepthEntries ? (_getDepthEntriesSafe ? _getDepthEntriesSafe() : []).slice(-2).map(e => e.questionText).filter(Boolean) : [];
+    const contextParts = [...userFragments, ...userQuestions];
+    const userContext = contextParts.length > 0
+      ? '\n\nユーザーがこれまで置いてきた違和感・問い：\n' + contextParts.map(t => '・' + t).join('\n')
+      : '';
 
-キャラクターとして、この発言に対して1〜2文で自然に返してください。
-- 質問や説明はしない。ただそこにいる感じで返す
-- 共感しつつ、少し問いかけるか、受け止める
-- 絶対にキャラの口調を崩さない
-- 返答のみ出力（前置き不要）`;
+    const systemPrompt = persona.profile + '\n\n' + persona.tone + userContext + `
+
+【絶対に守るルール】
+- 返答は1〜2文のみ。長くしない。
+- 答えや解決策を出さない。問いを深めるか、ただ受け止める。
+- 「〜ですね」「〜と思います」など一般的なAI口調を絶対に使わない。
+- 上から目線にならない。評価しない。
+- 説明・分析・アドバイスをしない。
+- ただそこにいる存在として、相手の言葉を受け取る。
+- キャラクターの口調を一切崩さない。`;
+
+    const messages = history.map(h => ({ role: h.role, content: h.content }));
 
     try {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 150, messages: [{ role: 'user', content: prompt }] }),
+        headers: {
+          'Content-Type': 'application/json',
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 120,
+          system: systemPrompt,
+          messages: messages,
+        }),
       });
       const raw = await res.text();
       const data = JSON.parse(raw);
@@ -5871,8 +5984,284 @@
       }, delay);
     });
   }
+  function generateConceptConnection(frag, inputTexts) {
+    const input   = (inputTexts || []).join(' ');
+    if (!input || input.length < 2) return '';
+
+    const concept = frag.concept || '';
+    const desc    = frag.desc    || '';
+    const themes  = frag.themes  || [];
+    const mood    = frag.mood    || [];
+
+    // descから核心的なフレーズを抽出（最初の文節）
+    const descCore = desc.split('。')[0] || desc.slice(0, 40);
+
+    // 入力と概念の接点を見つける
+    const matchedTheme = themes.find(t => input.includes(t));
+    const matchedMood  = mood.find(m => m.length >= 3 && input.includes(m.slice(0, 3)));
+
+    // 接点がある場合：具体的な接続を示す
+    if (matchedMood) {
+      return '「' + matchedMood + '」という感覚と「' + concept + '」はつながっているかもしれません。' + descCore + 'という視点が、その感覚の輪郭を照らすかもしれません。';
+    }
+
+    if (matchedTheme) {
+      return 'あなたが気にしている「' + matchedTheme + '」と「' + concept + '」の間には、接続があるかもしれません。' + descCore + 'という考え方が、ひとつの手がかりになるかもしれません。';
+    }
+
+    // 接点がない場合：descの核心だけを提示して接続を促す
+    const connectors = [
+      descCore + 'という考え方は、あなたの違和感のどこかと接続しているかもしれません。',
+      'あなたが感じていることと「' + concept + '」の間には、' + descCore.slice(0, 20) + 'という共鳴があるかもしれません。',
+    ];
+    return connectors[Math.floor(Math.random() * connectors.length)];
+  }
+
   // ================================================================
-  // ===== 構造の気配 =====
+  // ===== アクション振り返り =====
+  // ================================================================
+  let _reviewingEntryId = null;
+
+  const REVIEW_QUESTIONS = {
+    majimaji: 'この前のやつ、どうだった？',
+    concrete:  'この前のアクション、どうだったかしら？',
+    kasa:      'この前のやつ、どうだったムッシュ？',
+    yurayura:  'この前のやつ、どうだったンゴ？',
+    namake:    'この前のやつ、どうだったよん？',
+    sun:       'この前のやつ、どうだったぜ？',
+  };
+
+  function checkPendingActionReview() {
+    const entries = _getDepthEntriesSafe ? _getDepthEntriesSafe() : [];
+    // pendingのアクションを持つエントリを探す（最も古いもの）
+    const pending = entries.find(function(e) {
+      return e.quest && e.questStatus === 'pending' && e.questAcceptedAt;
+    });
+    if (!pending) return;
+
+    // 受け入れから1時間以上経過したものだけ
+    const elapsed = Date.now() - new Date(pending.questAcceptedAt).getTime();
+    if (elapsed < 60 * 60 * 1000) return;
+
+    _reviewingEntryId = pending.id;
+    openReviewModal(pending);
+  }
+
+  function openReviewModal(entry) {
+    const modal = document.getElementById('action-review-modal');
+    const charaEl = document.getElementById('review-modal-chara');
+    const questionEl = document.getElementById('review-modal-question');
+    const actionEl = document.getElementById('action-review-modal') ? document.getElementById('review-modal-action') : null;
+    const memoArea = document.getElementById('review-memo-area');
+    const choices = document.getElementById('review-modal-choices');
+
+    if (charaEl) { charaEl.dataset.chara = currentChara; updateAllCharaSVG(currentChara); }
+    if (questionEl) questionEl.textContent = REVIEW_QUESTIONS[currentChara] || REVIEW_QUESTIONS.majimaji;
+    if (actionEl) actionEl.textContent = entry.quest || '';
+    if (memoArea) memoArea.style.display = 'none';
+    if (choices) choices.style.display = 'flex';
+    const memoInput = document.getElementById('review-memo-input');
+    if (memoInput) memoInput.value = '';
+
+    if (modal) modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function reviewAction(status) {
+    if (!_reviewingEntryId) return;
+
+    if (status === 'done') {
+      // メモ入力エリアを表示
+      const choices = document.getElementById('review-modal-choices');
+      const memoArea = document.getElementById('review-memo-area');
+      if (choices) choices.style.display = 'none';
+      if (memoArea) memoArea.style.display = 'block';
+      setTimeout(function() {
+        const input = document.getElementById('review-memo-input');
+        if (input) input.focus();
+      }, 100);
+
+      // statusを更新
+      updateQuestStatus(_reviewingEntryId, 'done');
+
+    } else if (status === 'skipped') {
+      updateQuestStatus(_reviewingEntryId, 'skipped');
+      closeReviewModal();
+
+    } else {
+      // まだ置いておく：questAcceptedAt をリセットして再度出ないようにする
+      updateQuestStatus(_reviewingEntryId, 'pending', true);
+      closeReviewModal();
+    }
+  }
+
+  function updateQuestStatus(entryId, status, snooze) {
+    const entries = JSON.parse(localStorage.getItem(_DEPTH_KEY) || '[]');
+    const idx = entries.findIndex(function(e){ return e.id === entryId; });
+    if (idx !== -1) {
+      entries[idx].questStatus = status;
+      if (snooze) {
+        // 24時間後にまた聞く
+        entries[idx].questAcceptedAt = new Date(Date.now() + 23 * 60 * 60 * 1000).toISOString();
+      }
+      localStorage.setItem(_DEPTH_KEY, JSON.stringify(entries));
+    }
+  }
+
+  function saveReviewMemo() {
+    const input = document.getElementById('review-memo-input');
+    const text = input ? input.value.trim() : '';
+
+    if (text) {
+      // 新しい違和感として保存（元のエントリと紐づけ）
+      saveFragment(text, currentChara, 'gutai');
+      history.push({ gutai: text, oboroke: '', chara: currentChara, category: 'review', sourceEntryId: _reviewingEntryId });
+    }
+
+    closeReviewModal();
+  }
+
+  function closeReviewModal() {
+    const modal = document.getElementById('action-review-modal');
+    if (modal) modal.style.display = 'none';
+    document.body.style.overflow = '';
+    _reviewingEntryId = null;
+  }
+
+  // ================================================================
+  const MAJIMAJI_THINK_PATTERNS = [
+    { test: /学校|教育|授業|先生|受験|制服/,
+      lines: ['誰も見てなかったら、同じ感じなのかなって思うよ。', 'ダルいの中に、見られてる感じもあるのかも。', 'なんか、自分で自分を見張ってることもありそうだよね。'] },
+    { test: /仕事|働く|会社|職場|残業|給料/,
+      lines: ['やりたいことと、やらなきゃいけないことって、ずれてるのかなって。', 'その重さって、仕事そのものじゃなくて、時間のことかもしれないよ。', 'なんで働くのか、って問いが奥にある気がするさ。'] },
+    { test: /SNS|インスタ|比較|承認|フォロワー/,
+      lines: ['つながってるはずなのに、なんか測られてる感じがするのかも。', '見てもらいたい気持ちと、見られたくない気持ちが両方あるのかなって。', '数字が気になるのって、何のためなんだろうね。'] },
+    { test: /不安|怖い|心配|焦り/,
+      lines: ['まだ来てないことを、もう体験してるような感じがするのかも。', 'その不安って、何かを守ろうとしてるのかなって。', 'どこからその感覚が来てるのか、なんとなく気になるよ。'] },
+    { test: /孤独|一人|寂しい|つながり/,
+      lines: ['近くにいても、遠く感じることってあるよね。', '共有できる感覚がないことが、孤独なのかなって。', 'その寂しさって、誰かへの問いかもしれないよ。'] },
+    { test: /自由|縛られ|制約|できない|逃げ/,
+      lines: ['縛ってるのは、ルールじゃなくて空気のことも多いよね。', '選べるはずなのに、選べない感じって、どこから来るのかな。', 'その「できない」の中に、何かが隠れてる気がするよ。'] },
+    { test: /時間|忙しい|余裕|ゆっくり/,
+      lines: ['誰の時間に合わせてるのか、って考えると面白いかも。', '急いでるのって、本当に急いでるのかな、ってたまに思うよ。', '自分のリズムってどんな感じか、わかるかなって。'] },
+  ];
+
+  const MAJIMAJI_THINK_DEFAULT = [
+    'その違和感って、どこから来てるのかなって、ちょっと気になるよ。',
+    'なんかうまく言えないけど、何かが引っかかってるんだよね。',
+    'もう少しだけ、その感覚の中にいてみてもいいかもよ。',
+  ];
+
+  function showMajimajiThinkScreen() {
+    const charaEl = document.getElementById('majimaji-think-chara');
+    if (charaEl) { charaEl.dataset.chara = currentChara; updateAllCharaSVG(currentChara); }
+
+    const sourceTexts = _depthSelectedSourceIds
+      .map(function(sid){ return (getFragments().find(function(f){ return f.id === sid; }) || {}).text || ''; })
+      .filter(Boolean);
+    const sourceText = (_depthSelectedSourceText || sourceTexts.join(' ')).trim();
+
+    const pool = [].concat(
+      typeof THOUGHT_FRAGMENTS_ALL !== 'undefined' ? THOUGHT_FRAGMENTS_ALL : [],
+      typeof ART_FRAGMENTS !== 'undefined' ? ART_FRAGMENTS : []
+    );
+    const selectedConcepts = _depthSelectedConcepts
+      .map(function(id){ return pool.find(function(f){ return f.id === id; }); })
+      .filter(Boolean);
+    const conceptName = selectedConcepts.length > 0 ? selectedConcepts[0].concept : '';
+
+    const matchText = sourceText + ' ' + conceptName;
+    let lines = MAJIMAJI_THINK_DEFAULT;
+    for (var i = 0; i < MAJIMAJI_THINK_PATTERNS.length; i++) {
+      if (MAJIMAJI_THINK_PATTERNS[i].test.test(matchText)) { lines = MAJIMAJI_THINK_PATTERNS[i].lines; break; }
+    }
+
+    const count = Math.min(lines.length, sourceText.length > 10 ? 3 : 2);
+    const selected = lines.slice(0, count);
+
+    const container = document.getElementById('majimaji-think-bubbles');
+    if (container) {
+      container.innerHTML = '';
+      selected.forEach(function(line, idx) {
+        const bubble = document.createElement('div');
+        bubble.style.cssText = 'background:#f4f2ed;border-radius:4px 14px 14px 14px;padding:12px 16px;font-size:13px;letter-spacing:0.04em;color:#444;line-height:1.9;opacity:0;transition:opacity 0.4s;';
+        bubble.textContent = line;
+        container.appendChild(bubble);
+        setTimeout(function(){ bubble.style.opacity = '1'; }, 300 + idx * 400);
+      });
+    }
+
+    goTo('screen-majimaji-think');
+  }
+
+  function proceedToDepthStep3() {
+    goTo('screen-depth-edit');
+    setTimeout(function(){ goToDepthStep(3); }, 80);
+  }
+
+  // ================================================================
+  const ALT_VIEW_PATTERNS = [
+    { test: /学校|教育|授業|先生|勉強|テスト|受験|制服/,
+      views: ['時間を区切られることへの違和感', '管理される身体の感覚', '評価される存在への違和感'] },
+    { test: /仕事|働く|会社|職場|労働|残業|給料|就職|転職/,
+      views: ['時間を売ることへの違和感', '役割に収まることの息苦しさ', '自分のリズムとのズレ'] },
+    { test: /SNS|インスタ|Twitter|X|いいね|フォロワー|承認|通知/,
+      views: ['見られ続けることへの疲れ', '数字になることへの違和感', 'つながりと測定の混同'] },
+    { test: /不安|怖い|こわい|心配|恐れ|ドキドキ|焦り/,
+      views: ['まだ来ていない未来への反応', '予測しようとする身体の動き', 'コントロールできないものへの応答'] },
+    { test: /孤独|一人|寂しい|つながり|孤立|疎外/,
+      views: ['共有できる文脈がないことの感覚', '存在を受け取ってもらえない感じ', 'いる場所のなさ'] },
+    { test: /自由|縛られ|制約|選択|できない|逃げ|逃げたい/,
+      views: ['見えない規範への抵抗', 'そうするのが普通という空気', '選択肢があるようでない感覚'] },
+    { test: /お金|貧富|格差|経済|貧しい|豊か|賃金|給与/,
+      views: ['価値を測られることへの違和感', '交換できないものへの気づき', '依存の構造への感覚'] },
+    { test: /家族|親|子ども|結婚|夫婦|きょうだい|実家/,
+      views: ['役割を割り当てられることの重さ', '選んでいない関係への問い', '期待と自分のズレ'] },
+    { test: /時間|忙しい|急ぐ|余裕|ゆっくり|遅い|早い|間に合わ/,
+      views: ['他者の時間に合わせ続けることの消耗', '自分のリズムを失う感覚', '速さを要求される構造'] },
+    { test: /言葉|言語|話す|伝える|わかる|わからない|表現|言えない/,
+      views: ['言語化を急がされることへの抵抗', '伝わらないことの静かな痛み', '言葉の手前にあるもの'] },
+    { test: /疲れ|だるい|しんどい|しんどい|つらい|辛い|きつい/,
+      views: ['何かを続けすぎていることへのサイン', '身体が先に知っていること', '消耗の構造への気づき'] },
+    { test: /意味|無意味|虚しい|空虚|なんのため|なぜ/,
+      views: ['意味を求める構造への問い', '答えの前にある感覚', '根拠のなさと共にいること'] },
+    { test: /変わり|変え|変わる|変える|変化|動けない|変われ/,
+      views: ['変わることへの期待と恐れの混在', '今の状態を守ろうとする力', '変化の手前にある何か'] },
+    { test: /死|生きる|生き方|存在|消えたい|消える/,
+      views: ['生の重さを感じている状態', '存在することへの問い', '今ここにいることの感覚'] },
+  ];
+
+  let _altViewTimer = null;
+
+  function updateAlternateView(inputId, outputId) {
+    clearTimeout(_altViewTimer);
+    _altViewTimer = setTimeout(function() {
+      const inputEl  = document.getElementById(inputId);
+      const outputEl = document.getElementById(outputId);
+      const textEl   = document.getElementById(outputId.replace('-view', '-text'));
+      if (!inputEl || !outputEl || !textEl) return;
+
+      const text = inputEl.value.trim();
+      if (text.length < 4) { outputEl.style.display = 'none'; return; }
+
+      let matched = null;
+      for (const p of ALT_VIEW_PATTERNS) {
+        if (p.test.test(text)) { matched = p; break; }
+      }
+
+      const defaultViews = [
+        'まだ言葉になっていない感覚',
+        'この感覚の手前にあるもの',
+        '違和感として存在していること',
+      ];
+
+      const views = matched ? matched.views : defaultViews;
+      const view = views[Math.floor(Math.random() * views.length)];
+      textEl.textContent = view;
+      outputEl.style.display = 'block';
+    }, 800);
+  }
+
   // ================================================================
   const STRUCTURE_GLIMPSES = [
     { test: /学校|教育|授業|先生|勉強|テスト|受験|制服/,
@@ -6434,59 +6823,121 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
   }
 
   // ================================================================
-  // ===== 保存後アクションクエスト =====
+  // ===== 保存後アクションクエスト（3タイプ） =====
   // ================================================================
 
-  const QUEST_PATTERNS = [
-    { test: /普通|一般|常識|みんな/, quest: '街で"普通っぽい"と感じたものを3つ見つけて、心の中でメモしてみる。',
-      serif: { majimaji:'その"普通"、森に置いておいたよ。\n今日は街で"普通っぽいもの"を3つ探してみる？', concrete:'その"普通"は誰が決めたのかしら。\n今日、街で"普通っぽいもの"を3つ見つけてみてね。', kasa:'ムッシュも"普通"が何かわからないムッシュ。\n今日は街で"普通っぽいもの"を3つ探してみてムッシュ。', yurayura:'その"普通"ンゴ、森に預けてきたンゴ。\n街で"普通っぽいもの"を3つ見つけてみるンゴ？', namake:'その"普通"ね、森に置いてきたよん。\n今日は街で"普通っぽいもの"を3つ探してみてよん。', sun:'その"普通"、森に叩き込んできたぜ！\n今日は街で"普通っぽいもの"を3つ探してみろ！' }},
-    { test: /働く|仕事|会社|職場/, quest: '仕事中に1分だけ立ち止まって、「なぜこれをしているんだろう」と自分に問いかける。',
-      serif: { majimaji:'森に預けたよ。\n今日、仕事の合間に1分だけ「なぜこれをしているんだろう」って問いかけてみて。', concrete:'問いを置いてきたわ。\n仕事の合間に1分、「なぜこれをしているのかしら」と問いかけてみてね。', kasa:'ムッシュも仕事の意味を考えるムッシュ。\n今日1分だけ立ち止まって問いかけてみてムッシュ。', yurayura:'森に置いてきたンゴ。\n仕事の合間に1分、「なぜ」って問いかけてみるンゴ。', namake:'森に置いてきたよん。\n仕事しながら1分だけ「なぜ」って問いかけてみてよん。', sun:'森に置いてきたぜ！\n仕事中に1分止まって「なぜだ」って問いかけてみろ！' }},
-    { test: /自分|アイデンティティ/, quest: '信頼できる人に「自分ってどんな人に見える？」と聞いてみる。',
-      serif: { majimaji:'置いてきたよ。\n今日、誰かに「自分ってどんな人に見える？」って聞いてみる？', concrete:'置いてきたわ。\n誰かに「私ってどんな人に見える？」と聞いてみてね。', kasa:'ムッシュも自分がわからないムッシュ。\n誰かに「自分ってどんな人に見える？」と聞いてみてムッシュ。', yurayura:'森に届けてきたンゴ。\n誰かに「自分ってどんな人」って聞いてみるンゴ？', namake:'置いてきたよん。\n誰かに「自分ってどんな人に見える？」って聞いてみてよん。', sun:'置いてきたぜ！\n誰かに「俺ってどんな人間だ？」って聞いてみろ！' }},
-    { test: /時間|忙しい|余裕/, quest: '意図的に何もしない時間を5分つくる。スマホも置いて。',
-      serif: { majimaji:'森に預けたよ。\n今日、何もしない5分を意図的に作ってみて。', concrete:'預けてきたわ。\n今日、何もしない5分を意図的に作ってみてね。', kasa:'ムッシュも時間が足りないムッシュ。\n何もしない5分を作ってみてムッシュ。', yurayura:'森に置いてきたンゴ。\n何もしない5分、作ってみるンゴ？', namake:'預けてきたよん。\n何もしない5分をのんびり作ってみてよん。', sun:'預けてきたぜ！\n何もしない5分を今日中に作ってみろ！' }},
-    { test: /意味|価値|なぜ|なんで/, quest: '誰かに「最近楽しかったこと」を聞く。自分のことを話してもいい。',
-      serif: { majimaji:'うん、置いておいたよ。\n今日、誰かに「最近楽しいことある？」って聞いてみる？', concrete:'置いてきたわ。\n誰かに「最近楽しいことある？」って聞いてみてね。', kasa:'意味はムッシュにもわからないムッシュ。\n誰かに「最近楽しいことある？」と聞いてみてムッシュ。', yurayura:'置いてきたンゴ。\n誰かに「最近楽しいことある？」って聞いてみるンゴ？', namake:'置いてきたよん。\n誰かに「最近楽しいことある？」って聞いてみてよん。', sun:'置いてきたぜ！\n誰かに「最近楽しかったことは？」って聞いてみろ！' }},
-    { test: /孤独|一人|つながり/, quest: '最近連絡していない人に、ひとことだけメッセージを送る。',
-      serif: { majimaji:'ちゃんと森に届いたよ。\n今日、誰かに連絡してみる？ひとことでもいい。', concrete:'届けてきたわ。\n今日、誰かにひとことだけ連絡してみてね。', kasa:'ムッシュも一人は寂しいムッシュ。\n誰かにひとことだけ連絡してみてムッシュ。', yurayura:'森に届けてきたンゴ。\n誰かにひとことだけ連絡してみるンゴ？', namake:'届けてきたよん。\n誰かにひとことだけ連絡してみてよん。', sun:'届けてきたぜ！\n誰かにひとことだけ連絡してみろ！' }},
-    { test: /体|からだ|疲れ|眠い|だるい/, quest: '何も考えずに外を10分歩く。空や地面を見ながら。',
-      serif: { majimaji:'置いてきたよ。\n今日、10分だけ外を歩いてみて。考えなくていい。', concrete:'置いてきたわ。\n今日10分だけ、何も考えずに外を歩いてみてね。', kasa:'ムッシュも外が好きムッシュ。\n10分だけ外を歩いてみてムッシュ。', yurayura:'置いてきたンゴ。\n10分だけ外をぼーっと歩いてみるンゴ。', namake:'置いてきたよん。\nのんびり10分、外を歩いてみてよん。', sun:'置いてきたぜ！\n今日10分、外を歩いてみろ！' }},
+  const QUEST_PATTERNS_3 = [
+    { test: /学校|教育|授業|先生|受験|制服|ルール/,
+      alone:  '今日守ったルールを3つメモして、誰が決めたか考えてみる。',
+      talk:   '誰かに「学校で一番謎なルールって何？」と聞いてみる。',
+      outside:'いつもと違う道で帰って、どんなルールがあるか観察してみる。' },
+    { test: /仕事|働く|会社|職場|労働|残業/,
+      alone:  '今日の仕事の中で「なぜこれをしているのか」と思った瞬間をメモしてみる。',
+      talk:   '誰かに「仕事で一番意味がわからないことって何？」と聞いてみる。',
+      outside:'通勤中に、働いている人を観察して、何を感じるか見てみる。' },
+    { test: /SNS|インスタ|比較|承認|フォロワー|見られ/,
+      alone:  'SNSを30分見ないで、どんな気持ちになるか観察してみる。',
+      talk:   '誰かに「SNSで一番しんどいと感じることって何？」と聞いてみる。',
+      outside:'カフェや街で、スマホを見ている人と見ていない人を観察してみる。' },
+    { test: /不安|怖い|心配|焦り|緊張/,
+      alone:  '今感じている不安を紙に書いて、5年後に笑えるか考えてみる。',
+      talk:   '誰かに「最近何か不安なことある？」と聞いて、自分のことも話してみる。',
+      outside:'外を少し歩いて、空や地面を見ながら体の感覚を観察してみる。' },
+    { test: /孤独|一人|寂しい|つながり|孤立/,
+      alone:  '最近会っていない人の顔を思い浮かべて、何を話したいか考えてみる。',
+      talk:   '誰かにひとことだけ連絡してみる。内容はなんでもいい。',
+      outside:'カフェや公園で、人が集まっている場所を観察してみる。' },
+    { test: /自由|縛られ|制約|できない|逃げ/,
+      alone:  '今日「できない」と思ったことを1つ書いて、本当にできないのか考えてみる。',
+      talk:   '誰かに「最近、自由だと感じた瞬間ってある？」と聞いてみる。',
+      outside:'いつもと違うルートを歩いて、どんな感覚になるか観察してみる。' },
+    { test: /時間|忙しい|余裕|ゆっくり|急ぐ/,
+      alone:  '5分間、スマホを置いて何もしない時間を作ってみる。',
+      talk:   '誰かに「最近、時間がゆっくり流れたと感じたことある？」と聞いてみる。',
+      outside:'いつもより少しゆっくり歩いて、見えていなかったものを探してみる。' },
+    { test: /お金|貧富|格差|経済|賃金/,
+      alone:  '今日使ったお金で何と何が交換されたか、考えてみる。',
+      talk:   '誰かに「お金で買えないと思うものって何？」と聞いてみる。',
+      outside:'街で、お金と関係しているものを観察してみる。' },
+    { test: /家族|親|子ども|結婚|夫婦/,
+      alone:  '家族との関係で「当たり前」だと思っていることを1つ疑ってみる。',
+      talk:   '家族や近しい人に「最近どうしてる？」とだけ聞いてみる。',
+      outside:'街で家族連れを観察して、何を感じるか見てみる。' },
+    { test: /体|からだ|疲れ|眠い|だるい|健康/,
+      alone:  '今の体の状態を天気で例えると何か、考えてみる。',
+      talk:   '誰かに「最近体の調子どう？」と聞いてみる。',
+      outside:'10分だけ外を歩いて、空気と体の感覚を観察してみる。' },
   ];
 
-  const QUEST_DEFAULTS = [
-    { quest:'その問いを、信頼できる人に話してみる。反応は関係ない。',
-      serif:{ majimaji:'森に置いてきたよ。\n今日、その問いを誰かに話してみる？', concrete:'森に置いてきたわ。\n今日、その問いを誰かに話してみてね。', kasa:'森に置いてきたムッシュ。\n誰かにその問いを話してみてムッシュ。', yurayura:'森に置いてきたンゴ。\n誰かにその問いを話してみるンゴ？', namake:'森に置いてきたよん。\n誰かにその問いを話してみてよん。', sun:'森に置いてきたぜ！\n今日、その問いを誰かにぶつけてみろ！' }},
-    { quest:'その問いを紙に書いて、よく見える場所に貼ってみる。',
-      serif:{ majimaji:'うん、ちゃんと届いたさ。\n今日、その問いを紙に書いて部屋に貼ってみて。', concrete:'ちゃんと届いたわ。\n今日、その問いを紙に書いて貼ってみてね。', kasa:'ちゃんと届いたムッシュ。\n紙に書いて部屋に貼ってみてムッシュ。', yurayura:'届いたンゴ。\n紙に書いて部屋に貼ってみるンゴ？', namake:'ちゃんと届いたよん。\n紙に書いて部屋に貼ってみてよん。', sun:'届いたぜ！\n紙に書いて部屋に貼ってみろ！' }},
-    { quest:'その問いを心に持ちながら、いつもと違う道を歩いてみる。',
-      serif:{ majimaji:'置いてきたよ。\n今日、その問いを胸に歩いてみる？', concrete:'置いてきたわ。\n今日、その問いを胸にいつもと違う道を歩いてみてね。', kasa:'置いてきたムッシュ。\nその問いを胸にいつもと違う道を歩いてみてムッシュ。', yurayura:'置いてきたンゴ。\nその問いを胸にいつもと違う道を歩いてみるンゴ。', namake:'置いてきたよん。\nその問いを胸にのんびり歩いてみてよん。', sun:'置いてきたぜ！\nその問いを胸にいつもと違う道を歩いてみろ！' }},
-  ];
+  const QUEST_DEFAULT_3 = {
+    alone:  'その問いを紙に書いて、今どんな気持ちか一言添えてみる。',
+    talk:   'その問いを誰かに話してみる。答えは求めなくていい。',
+    outside:'その問いを胸に、いつもと違う道を少し歩いてみる。',
+  };
+
+  const QUEST_TYPE_LABELS = {
+    alone:   'ひとりで',
+    talk:    '誰かと',
+    outside: '外で',
+  };
+
+  let _currentQuestEntry = null;
 
   function showQuestScreen(entry) {
+    _currentQuestEntry = entry;
     const charaEl = document.getElementById('quest-chara');
-    if (charaEl) charaEl.innerHTML = charaInnerSVGFixed(currentChara, 56, 56);
+    if (charaEl) { charaEl.dataset.chara = currentChara; updateAllCharaSVG(currentChara); }
 
     const q = (entry.questionText || '') + (entry.originalConceptName || '') + (entry.sourceText || '');
-    let chosen = null;
-    for (const p of QUEST_PATTERNS) {
-      if (p.test.test(q)) { chosen = p; break; }
+    let chosen = QUEST_DEFAULT_3;
+    for (var i = 0; i < QUEST_PATTERNS_3.length; i++) {
+      if (QUEST_PATTERNS_3[i].test.test(q)) { chosen = QUEST_PATTERNS_3[i]; break; }
     }
-    if (!chosen) chosen = QUEST_DEFAULTS[Math.floor(Math.random() * QUEST_DEFAULTS.length)];
 
-    const serif = (chosen.serif[currentChara] || chosen.serif.majimaji);
-    document.getElementById('quest-chara-text').textContent = serif;
-    document.getElementById('quest-text').textContent = chosen.quest;
+    // キャラのセリフ
+    const charaSerifs = {
+      majimaji: 'どれか気になるのがあったら、やってみてよ。',
+      concrete: '気になったものを、ひとつだけやってみてね。',
+      kasa:     '気になるのがあったらやってみてムッシュ。',
+      yurayura: '気になるのあったらやってみるンゴ。',
+      namake:   'のんびり気になるのをやってみてよん。',
+      sun:      '気になるのをひとつやってみろ！',
+    };
+    const serifEl = document.getElementById('quest-chara-text');
+    if (serifEl) serifEl.textContent = charaSerifs[currentChara] || charaSerifs.majimaji;
 
-    // クエストをエントリに保存
-    const entries = JSON.parse(localStorage.getItem(_DEPTH_KEY) || '[]');
-    const idx = entries.findIndex(e => e.id === entry.id);
-    if (idx !== -1) { entries[idx].quest = chosen.quest; localStorage.setItem(_DEPTH_KEY, JSON.stringify(entries)); }
+    // 3タイプカード生成
+    const container = document.getElementById('quest-cards');
+    if (!container) return;
+    container.innerHTML = '';
+    const charaColor = (CHARA_CONFIG[currentChara] || CHARA_CONFIG.majimaji).green || '#00712B';
+
+    ['alone', 'talk', 'outside'].forEach(function(type) {
+      const card = document.createElement('div');
+      card.style.cssText = 'background:#fff;border-radius:16px;padding:18px 20px;box-shadow:0 2px 8px rgba(0,0,0,0.05);cursor:pointer;border:2px solid transparent;transition:border 0.2s;';
+      card.innerHTML =
+        '<div style="font-size:8px;letter-spacing:0.22em;color:#bbb;margin-bottom:8px;">' + QUEST_TYPE_LABELS[type] + '</div>' +
+        '<div style="font-size:13px;letter-spacing:0.04em;color:#333;line-height:1.9;">' + chosen[type] + '</div>' +
+        '<div style="margin-top:12px;"><button style="font-size:9px;letter-spacing:0.16em;color:' + charaColor + ';background:none;border:none;padding:0;cursor:pointer;font-family:inherit;">やってみる →</button></div>';
+      card.querySelector('button').onclick = function() { acceptQuest(chosen[type], type); };
+      container.appendChild(card);
+    });
 
     goTo('screen-quest');
   }
 
-  function acceptQuest() {
+  function acceptQuest(questText, type) {
+    if (_currentQuestEntry) {
+      const entries = JSON.parse(localStorage.getItem(_DEPTH_KEY) || '[]');
+      const idx = entries.findIndex(function(e){ return e.id === _currentQuestEntry.id; });
+      if (idx !== -1) {
+        entries[idx].quest = questText;
+        entries[idx].questType = type;
+        entries[idx].questStatus = 'pending';
+        entries[idx].questAcceptedAt = new Date().toISOString();
+        localStorage.setItem(_DEPTH_KEY, JSON.stringify(entries));
+      }
+    }
     renderPresence('screen-depth-list');
     goTo('screen-presence');
   }
@@ -6977,7 +7428,12 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
 
   function depthStepNext() {
     const cfg = STEP_CONFIG[_currentDepthStep];
-    if (cfg.next) goToDepthStep(cfg.next);
+    if (cfg.next === 3) {
+      // STEP2→STEP3の前に中間画面を挟む
+      showMajimajiThinkScreen();
+    } else if (cfg.next) {
+      goToDepthStep(cfg.next);
+    }
   }
 
   function depthStepBack() {
