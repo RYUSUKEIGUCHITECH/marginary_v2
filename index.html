@@ -1322,12 +1322,6 @@
           <div id="detail-source-list" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
         </div>
 
-        <!-- 選択した概念 -->
-        <div id="detail-concepts-section" style="display:none;margin-bottom:16px;">
-          <div style="font-size:8px;letter-spacing:0.22em;color:#bbb;margin-bottom:8px;">選択した概念</div>
-          <div id="detail-concepts-list" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
-        </div>
-
         <!-- メモ -->
         <div id="detail-memo-section" style="display:none;margin-bottom:16px;">
           <div style="font-size:8px;letter-spacing:0.22em;color:#bbb;margin-bottom:8px;">メモ</div>
@@ -1474,10 +1468,12 @@
           <div style="font-size:11px;letter-spacing:0.08em;color:#aaa;margin-bottom:16px;line-height:1.8;">タップで定義を確認、＋で選択。</div>
           <!-- タブ -->
           <div style="display:flex;border-bottom:1px solid #ddd;margin-bottom:16px;">
-            <button id="tab-btn-concepts" onclick="switchDepthTab('concepts')" style="flex:1;padding:10px 4px;border:none;background:none;font-family:inherit;font-size:9px;letter-spacing:0.2em;color:#222;cursor:pointer;border-bottom:2px solid #222;">保存した概念・アート</button>
-            <button id="tab-btn-fragments" onclick="switchDepthTab('fragments')" style="flex:1;padding:10px 4px;border:none;background:none;font-family:inherit;font-size:9px;letter-spacing:0.2em;color:#aaa;cursor:pointer;border-bottom:2px solid transparent;">概念・アートの断片</button>
+            <button id="tab-btn-concepts" onclick="switchDepthTab('concepts')" style="flex:1;padding:10px 4px;border:none;background:none;font-family:inherit;font-size:9px;letter-spacing:0.2em;color:#222;cursor:pointer;border-bottom:2px solid #222;">概念・アート</button>
+            <button id="tab-btn-forest" onclick="switchDepthTab('forest')" style="flex:1;padding:10px 4px;border:none;background:none;font-family:inherit;font-size:9px;letter-spacing:0.2em;color:#aaa;cursor:pointer;border-bottom:2px solid transparent;">森で拾った</button>
+            <button id="tab-btn-fragments" onclick="switchDepthTab('fragments')" style="flex:1;padding:10px 4px;border:none;background:none;font-family:inherit;font-size:9px;letter-spacing:0.2em;color:#aaa;cursor:pointer;border-bottom:2px solid transparent;">断片</button>
           </div>
           <div id="tab-panel-concepts"><div id="depth-concepts-list" style="display:flex;flex-direction:column;gap:8px;"></div></div>
+          <div id="tab-panel-forest" style="display:none;"><div id="depth-forest-picks-list" style="display:flex;flex-direction:column;gap:8px;"></div></div>
           <div id="tab-panel-fragments" style="display:none;"><div id="depth-fragments-list" style="display:flex;flex-direction:column;gap:8px;"></div></div>
         </div>
 
@@ -5119,20 +5115,11 @@
     // 選択した概念
     const conSection = document.getElementById('detail-concepts-section');
     const conList    = document.getElementById('detail-concepts-list');
-    const pool = [].concat(
-      typeof THOUGHT_FRAGMENTS_ALL !== 'undefined' ? THOUGHT_FRAGMENTS_ALL : [],
-      typeof ART_FRAGMENTS !== 'undefined' ? ART_FRAGMENTS : []
-    );
-    const selectedIds = entry.selectedConcepts || [];
-    const concepts = selectedIds.map(function(id){
-      // frag_ プレフィックスがある場合は除去して検索
-      const cleanId = id.replace(/^frag_/, '');
-      return pool.find(function(f){ return f.id === id || f.id === cleanId; });
-    }).filter(Boolean);
+    const names = entry.conceptNames || [];
     if (conSection && conList) {
-      if (concepts.length > 0) {
-        conList.innerHTML = concepts.map(function(c){
-          return '<div style="background:#f0ece4;border-radius:10px;padding:8px 12px;margin-bottom:6px;"><div style="font-size:11px;font-weight:600;letter-spacing:0.04em;color:#8B7355;margin-bottom:2px;">'+c.concept+'</div><div style="font-size:10px;letter-spacing:0.03em;color:#aaa;line-height:1.6;">'+(c.desc||'').slice(0,50)+'…</div></div>';
+      if (names.length > 0) {
+        conList.innerHTML = names.map(function(name){
+          return '<span style="display:inline-block;background:#f0ece4;border-radius:20px;padding:4px 12px;font-size:10px;letter-spacing:0.06em;color:#8B7355;margin:2px;">'+name+'</span>';
         }).join('');
         conSection.style.display = 'block';
       } else { conSection.style.display = 'none'; }
@@ -5301,20 +5288,71 @@
   function switchDepthTab(tab) {
     const btnC = document.getElementById('tab-btn-concepts');
     const btnF = document.getElementById('tab-btn-fragments');
-    const btnA = document.getElementById('tab-btn-art');
+    const btnFo = document.getElementById('tab-btn-forest');
     const panC = document.getElementById('tab-panel-concepts');
     const panF = document.getElementById('tab-panel-fragments');
-    const panA = document.getElementById('tab-panel-art');
+    const panFo = document.getElementById('tab-panel-forest');
     const all = [
-      [btnC, panC, tab === 'concepts'],
-      [btnF, panF, tab === 'fragments'],
-      [btnA, panA, tab === 'art'],
+      [btnC,  panC,  tab === 'concepts'],
+      [btnF,  panF,  tab === 'fragments'],
+      [btnFo, panFo, tab === 'forest'],
     ];
-    all.forEach(([btn, pan, active]) => {
+    all.forEach(function(item) {
+      const btn = item[0], pan = item[1], active = item[2];
       if (btn) { btn.style.color = active ? '#222' : '#aaa'; btn.style.borderBottom = active ? '2px solid #222' : '2px solid transparent'; }
       if (pan) pan.style.display = active ? 'block' : 'none';
     });
-    if (tab === 'art') renderDepthArtList(_depthSelectedConcepts);
+    if (tab === 'forest') renderForestPicksList();
+  }
+
+  function renderForestPicksList() {
+    const container = document.getElementById('depth-forest-picks-list');
+    if (!container) return;
+
+    const picks = JSON.parse(localStorage.getItem('marginary_forest_picks') || '[]');
+    const pool = [].concat(
+      typeof THOUGHT_FRAGMENTS_ALL !== 'undefined' ? THOUGHT_FRAGMENTS_ALL : [],
+      typeof ART_FRAGMENTS !== 'undefined' ? ART_FRAGMENTS : []
+    );
+
+    if (picks.length === 0) {
+      container.innerHTML = '<div style="font-size:11px;letter-spacing:0.08em;color:#ccc;padding:16px 0;line-height:2.0;">まだ森で概念を拾っていない。<br>森を歩くと概念が落ちてくるよ。</div>';
+      return;
+    }
+
+    container.innerHTML = '';
+    picks.slice().reverse().forEach(function(pick) {
+      const frag = pool.find(function(f){ return f.id === pick.id; });
+      if (!frag) return;
+
+      const isSelected = _depthSelectedConcepts.includes(frag.id);
+      const card = document.createElement('div');
+      card.style.cssText = 'background:#fff;border-radius:14px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px;';
+
+      const info = document.createElement('div');
+      info.style.cssText = 'flex:1;cursor:pointer;';
+      info.innerHTML =
+        '<div style="font-size:13px;font-weight:600;letter-spacing:0.04em;color:#222;margin-bottom:4px;">' + frag.concept + '</div>' +
+        '<div style="font-size:11px;letter-spacing:0.04em;color:#888;line-height:1.7;">' + (frag.desc||'').slice(0,50) + '…</div>';
+      info.onclick = function() { openConceptDefPopup(frag); };
+
+      const btn = document.createElement('button');
+      btn.style.cssText = 'flex-shrink:0;width:28px;height:28px;border-radius:50%;border:none;background:' + (isSelected ? '#222' : '#f0f0ec') + ';color:' + (isSelected ? '#fff' : '#888') + ';font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;';
+      btn.textContent = isSelected ? '✓' : '+';
+      btn.onclick = function() {
+        if (_depthSelectedConcepts.includes(frag.id)) {
+          _depthSelectedConcepts = _depthSelectedConcepts.filter(function(id){ return id !== frag.id; });
+        } else {
+          _depthSelectedConcepts.push(frag.id);
+        }
+        renderForestPicksList();
+        renderDepthConceptsList(_depthSelectedConcepts);
+      };
+
+      card.appendChild(info);
+      card.appendChild(btn);
+      container.appendChild(card);
+    });
   }
 
   // ================================================================
@@ -6000,6 +6038,13 @@
         if (_pickedConcepts.includes(frag.fragId)) return;
         _pickedConcepts.push(frag.fragId);
         if (!_depthSelectedConcepts.includes('frag_'+frag.fragId)) _depthSelectedConcepts.push('frag_'+frag.fragId);
+
+        // localStorageに保存
+        const picks = JSON.parse(localStorage.getItem('marginary_forest_picks') || '[]');
+        if (!picks.find(function(p){ return p.id === frag.fragId; })) {
+          picks.push({ id: frag.fragId, title: frag.title, text: frag.text, author: frag.author, pickedAt: new Date().toISOString() });
+          localStorage.setItem('marginary_forest_picks', JSON.stringify(picks));
+        }
         pickBtn.textContent = '拾った ✓'; pickBtn.style.color = charaColor;
         inner.style.borderLeftColor = charaColor;
       };
@@ -6505,10 +6550,21 @@
     const count = Math.min(lines.length, sourceText.length > 10 ? 3 : 2);
     const selected = lines.slice(0, count);
 
+    // キャラ口調に変換
+    const charaLineMap = {
+      kasa:     function(l){ return l.replace('だよ。','ムッシュ。').replace('だよね。','ムッシュ。').replace('かも。','かもムッシュ。').replace('かな。','かなムッシュ。').replace('よ。','ムッシュ。'); },
+      yurayura: function(l){ return l.replace('だよ。','ンゴ。').replace('だよね。','ンゴ。').replace('かも。','かもンゴ。').replace('かな。','かなンゴ。').replace('よ。','ンゴ。'); },
+      namake:   function(l){ return l.replace('だよ。','よん。').replace('だよね。','よん。').replace('かも。','かもよん。').replace('かな。','かなよん。').replace('よ。','よん。'); },
+      sun:      function(l){ return l.replace('だよ。','ぜ！').replace('だよね。','ぜ！').replace('かも。','かもぜ！').replace('かな。','かなぜ！').replace('よ。','ぜ！'); },
+      concrete: function(l){ return l.replace('だよ。','わよ。').replace('だよね。','わよね。').replace('かも。','かもしれないわ。').replace('かな。','かしら。').replace('よ。','わよ。'); },
+    };
+    const transformLine = charaLineMap[currentChara] || function(l){ return l; };
+    const charaLines = selected.map(transformLine);
+
     const container = document.getElementById('majimaji-think-bubbles');
     if (container) {
       container.innerHTML = '';
-      selected.forEach(function(line, idx) {
+      charaLines.forEach(function(line, idx) {
         const bubble = document.createElement('div');
         bubble.style.cssText = 'background:#f4f2ed;border-radius:4px 14px 14px 14px;padding:12px 16px;font-size:13px;letter-spacing:0.04em;color:#444;line-height:1.9;opacity:0;transition:opacity 0.4s;';
         bubble.textContent = line;
@@ -8029,11 +8085,31 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
   function saveDepthEntry() {
     const now = new Date().toISOString();
     const existing = currentDepthId ? getDepthEntryById(currentDepthId) : null;
+
+    // 概念名テキストを保存時に解決して保存
+    const savedFrags = getSavedFragments ? getSavedFragments() : [];
+    const closeWords = getCloseWords ? getCloseWords() : [];
+    const savedWords = getSavedWords ? getSavedWords() : [];
+    const allFrags = typeof THOUGHT_FRAGMENTS !== 'undefined' ? THOUGHT_FRAGMENTS : [];
+    const conceptNames = _depthSelectedConcepts.map(function(id) {
+      if (id.startsWith('close_')) {
+        const w = closeWords[parseInt(id.replace('close_', ''))];
+        return w ? w.split(/[―—]/)[0].trim() : null;
+      }
+      if (id.startsWith('saved_')) {
+        const w = savedWords[parseInt(id.replace('saved_', ''))];
+        return w ? w.split(/[―—]/)[0].trim() : null;
+      }
+      const f = savedFrags.find(function(f){ return f.id === id; }) || allFrags.find(function(f){ return f.id === id; });
+      return f ? f.concept : null;
+    }).filter(Boolean);
+
     const entry = {
       id:                  currentDepthId || ('depth_' + Date.now()),
       sourceEntryIds:      _depthSelectedSourceIds.length ? _depthSelectedSourceIds : (existing ? (existing.sourceEntryIds || (existing.sourceEntryId ? [existing.sourceEntryId] : [])) : []),
-      sourceText:          _depthSelectedSourceText || (existing ? existing.sourceText : ''),
+      sourceText:          _depthSelectedSourceText || (document.getElementById('gutai-text') ? document.getElementById('gutai-text').value.trim() : '') || (document.getElementById('gutai-text2') ? document.getElementById('gutai-text2').value.trim() : '') || (existing ? existing.sourceText : ''),
       selectedConcepts:    _depthSelectedConcepts.length ? _depthSelectedConcepts : (existing ? existing.selectedConcepts : []),
+      conceptNames:        conceptNames.length ? conceptNames : (existing ? existing.conceptNames : []),
       savedFragments:      _depthSelectedFragments.length ? _depthSelectedFragments : (existing ? existing.savedFragments : []),
       questionText:        document.getElementById('depth-question')?.value.trim() || '',
       originalConceptName: document.getElementById('depth-concept-name')?.value.trim() || '',
