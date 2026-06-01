@@ -1277,7 +1277,7 @@
           cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;
         ">
           <span style="font-size:20px;line-height:1;">+</span>
-          <span>新しい問いと概念を作る</span>
+          <span>新しい問いをつくる</span>
         </button>
       </div>
 
@@ -1505,21 +1505,6 @@
               line-height:2.0;color:#222;resize:none;outline:none;padding:0;
               box-sizing:border-box;
             " oninput="onQuestionInput()"></textarea>
-          </div>
-
-          <!-- 概念名 -->
-          <div style="background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-              <div style="font-size:8px;letter-spacing:0.28em;color:#bbb;">概念名</div>
-              <div id="concept-aura-badge" style="display:none;font-size:8px;letter-spacing:0.12em;color:#888;background:#f5f4f0;border-radius:20px;padding:2px 10px;"></div>
-            </div>
-            <input id="depth-concept-name" type="text" placeholder="この感覚に名前をつけるなら..." style="
-              width:100%;border:none;background:transparent;
-              font-family:inherit;font-size:15px;font-weight:600;
-              letter-spacing:0.06em;color:#222;outline:none;padding:0;
-              box-sizing:border-box;
-            " oninput="onConceptNameInput()">
-          </div>
           </div>
 
           <!-- メモ -->
@@ -5062,7 +5047,7 @@
     if (!container) return;
     const entries = getDepthEntries();
     if (entries.length === 0) {
-      container.innerHTML = '<div style="grid-column:1/-1;font-size:12px;letter-spacing:0.1em;color:#bbb;padding:16px 0;line-height:2.2;">まだ問いがない。<br>「新しい問いと概念を作る」から始める。</div>';
+      container.innerHTML = '<div style="grid-column:1/-1;font-size:12px;letter-spacing:0.1em;color:#bbb;padding:16px 0;line-height:2.2;">まだ問いがない。<br>「新しい問いをつくる」から始める。</div>';
       return;
     }
     container.innerHTML = '';
@@ -5074,7 +5059,7 @@
       card.addEventListener('touchend',   () => card.style.transform='scale(1)');
       const name = e.originalConceptName
         ? '<div style="font-size:13px;font-weight:600;letter-spacing:0.04em;color:#222;margin-bottom:4px;line-height:1.4;">'+e.originalConceptName+'</div>'
-        : '<div style="font-size:11px;color:#ccc;margin-bottom:4px;">概念名なし</div>';
+        : '';
       const q = e.questionText
         ? '<div style="font-size:10px;letter-spacing:0.04em;color:#888;line-height:1.7;">'+e.questionText.slice(0,30)+(e.questionText.length>30?'…':'')+'</div>'
         : '';
@@ -5107,35 +5092,26 @@
   }
 
   function showDepthDetailModal(entry) {
-    console.log('entry keys:', Object.keys(entry));
-    console.log('sourceEntryIds:', entry.sourceEntryIds);
-    console.log('sourceText:', entry.sourceText);
-    console.log('selectedConcepts:', entry.selectedConcepts);
     // 概念名・問い
     const nameEl = document.getElementById('detail-concept-name');
     const qEl    = document.getElementById('detail-question');
-    if (nameEl) nameEl.textContent = entry.originalConceptName || '（概念名なし）';
-    if (qEl)    qEl.textContent    = entry.questionText || '';
+    if (nameEl) nameEl.textContent = entry.originalConceptName || entry.questionText || '';
+    if (qEl) {
+      if (entry.originalConceptName) {
+        qEl.textContent = entry.questionText || '';
+        qEl.style.display = '';
+      } else {
+        qEl.style.display = 'none';
+      }
+    }
 
     // 選択した違和感
     const srcSection = document.getElementById('detail-source-section');
     const srcList    = document.getElementById('detail-source-list');
     if (srcSection && srcList) {
-      const allFrags = getFragments ? getFragments() : [];
-      const ids = Array.isArray(entry.sourceEntryIds) ? entry.sourceEntryIds : [];
-      let texts = ids.map(function(sid){
-        return (allFrags.find(function(f){ return f.id === sid; }) || {}).text || '';
-      }).filter(Boolean);
-
-      // sourceTextから取れない場合、スペース区切りで分割して表示
-      if (texts.length === 0 && entry.sourceText) {
-        texts = entry.sourceText.split(' ').filter(function(t){ return t.length > 0; });
-      }
-
-      if (texts.length > 0) {
-        srcList.innerHTML = texts.map(function(t){
-          return '<span style="display:inline-block;background:#f0f0ec;border-radius:20px;padding:4px 12px;font-size:10px;letter-spacing:0.06em;color:#666;margin:2px;">'+t+'</span>';
-        }).join('');
+      const text = entry.sourceText || '';
+      if (text) {
+        srcList.innerHTML = '<span style="display:inline-block;background:#f0f0ec;border-radius:20px;padding:4px 12px;font-size:10px;letter-spacing:0.06em;color:#666;margin:2px;">'+text+'</span>';
         srcSection.style.display = 'block';
       } else { srcSection.style.display = 'none'; }
     }
@@ -5231,7 +5207,7 @@
     renderDepthFragmentsList(entry ? entry.savedFragments : []);
     // テキストフィールド
     document.getElementById('depth-question').value = entry ? (entry.questionText || '') : '';
-    document.getElementById('depth-concept-name').value = entry ? (entry.originalConceptName || '') : '';
+    const _cnEl = document.getElementById('depth-concept-name'); if (_cnEl) _cnEl.value = entry ? (entry.originalConceptName || '') : '';
     document.getElementById('depth-memo').value = entry ? (entry.memo || '') : '';
     // ソースラベル
     
@@ -7644,7 +7620,7 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
   const STEP_CONFIG = {
     1: { label: 'STEP 1 / 3', title: '違和感を選ぶ',   back: null,  next: 2 },
     2: { label: 'STEP 2 / 3', title: '違和感に関連する概念・アートを選ぶ',     back: 1,     next: 3 },
-    3: { label: 'STEP 3 / 3', title: '問いと概念を作る',   back: 2,     next: null },
+    3: { label: 'STEP 3 / 3', title: '問いをつくる',   back: 2,     next: null },
   };
 
   function goToDepthStep(step) {
@@ -8129,7 +8105,7 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
         const entry = getDepthEntryById(currentDepthId);
         if (entry) {
           const q = document.getElementById('depth-question');
-          const n = document.getElementById('depth-concept-name');
+          const n = document.getElementById('depth-concept-name') || {value:''};
           const m = document.getElementById('depth-memo');
           if (q) q.value = entry.questionText || '';
           if (n) n.value = entry.originalConceptName || '';
