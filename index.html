@@ -1253,7 +1253,7 @@
       <!-- ヘッダー -->
       <div style="padding:28px 20px 16px;flex-shrink:0;">
         <div style="font-size:9px;letter-spacing:0.28em;color:#bbb;margin-bottom:4px;">DEPTH STUDIO</div>
-        <div style="font-size:14px;font-weight:500;letter-spacing:0.06em;color:#222;line-height:1.5;">違和感から問いをつくり、<br>知的な深みを育てる</div>
+        <div style="font-size:14px;font-weight:500;letter-spacing:0.06em;color:#222;line-height:1.5;">気になることから問いをつくり、<br>知的な深みを育てる</div>
         <div onclick="openDepthInfoModal()" style="display:inline-flex;align-items:center;gap:5px;margin-top:10px;cursor:pointer;">
           <div style="width:16px;height:16px;border-radius:50%;border:1.5px solid #666;display:flex;align-items:center;justify-content:center;">
             <span style="font-size:9px;color:#666;font-weight:700;line-height:1;">?</span>
@@ -1323,9 +1323,9 @@
           <div id="detail-question" style="font-size:13px;letter-spacing:0.04em;color:#666;line-height:1.9;"></div>
         </div>
 
-        <!-- 選択した違和感 -->
+        <!-- 選択した気になること -->
         <div id="detail-source-section" style="display:none;margin-bottom:16px;">
-          <div style="font-size:8px;letter-spacing:0.22em;color:#bbb;margin-bottom:8px;">選択した違和感</div>
+          <div style="font-size:8px;letter-spacing:0.22em;color:#bbb;margin-bottom:8px;">選択した気になること</div>
           <div id="detail-source-list" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
         </div>
 
@@ -1375,7 +1375,7 @@
           <textarea id="spiral-input-shift" rows="2" placeholder="前と少し違って見えるものがある？" style="width:100%;border:none;border-bottom:1px solid #e8e4de;background:none;font-family:inherit;font-size:13px;letter-spacing:0.04em;color:#222;resize:none;outline:none;line-height:1.8;padding:4px 0;box-sizing:border-box;"></textarea>
         </div>
         <div>
-          <div style="font-size:8px;letter-spacing:0.2em;color:#c0a882;margin-bottom:8px;">まだ残っている違和感</div>
+          <div style="font-size:8px;letter-spacing:0.2em;color:#c0a882;margin-bottom:8px;">まだ残っている気になること</div>
           <textarea id="spiral-input-remaining" rows="2" placeholder="まだ引っかかっていることは？" style="width:100%;border:none;border-bottom:1px solid #e8e4de;background:none;font-family:inherit;font-size:13px;letter-spacing:0.04em;color:#222;resize:none;outline:none;line-height:1.8;padding:4px 0;box-sizing:border-box;"></textarea>
         </div>
         <div>
@@ -1415,7 +1415,7 @@
       <div id="review-memo-area" style="display:none;">
         <textarea id="review-memo-input" rows="2" placeholder="やってみて、何か気になった？" style="width:100%;border:none;border-bottom:1px solid #e0e0da;background:none;font-family:inherit;font-size:14px;letter-spacing:0.04em;color:#222;resize:none;outline:none;line-height:1.8;padding:8px 0;margin-bottom:16px;"></textarea>
         <div style="display:flex;gap:10px;">
-          <button onclick="saveReviewMemo()" style="flex:1;padding:12px;border:none;border-radius:20px;background:var(--lime);color:var(--lime-text);font-family:inherit;font-size:10px;letter-spacing:0.18em;cursor:pointer;">違和感として森に置く</button>
+          <button onclick="saveReviewMemo()" style="flex:1;padding:12px;border:none;border-radius:20px;background:var(--lime);color:var(--lime-text);font-family:inherit;font-size:10px;letter-spacing:0.18em;cursor:pointer;">気になることとして森に置く</button>
           <button onclick="closeReviewModal()" style="padding:12px 20px;border:1px solid #ddd;border-radius:20px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.18em;color:#aaa;cursor:pointer;">スキップ</button>
         </div>
       </div>
@@ -1515,14 +1515,14 @@
         </div>
         <div>
           <div id="step-label" style="font-size:8px;letter-spacing:0.28em;color:#bbb;margin-bottom:2px;">STEP 1 / 3</div>
-          <div id="step-title" style="font-size:16px;font-weight:600;letter-spacing:0.04em;color:#222;">違和感を選ぶ</div>
+          <div id="step-title" style="font-size:16px;font-weight:600;letter-spacing:0.04em;color:#222;">気になることを選ぶ</div>
         </div>
       </div>
 
       <!-- ステップ本文 -->
       <div style="flex:1;overflow-y:auto;">
 
-        <!-- STEP 1: 違和感を選ぶ -->
+        <!-- STEP 1: 気になることを選ぶ -->
         <div id="depth-step-1" style="padding:20px;">
           <div style="font-size:11px;letter-spacing:0.08em;color:#aaa;margin-bottom:16px;line-height:1.8;">気になること、もやもやしたこと。複数選んでもOK。</div>
           <div id="depth-source-list" style="display:flex;flex-direction:column;gap:8px;"></div>
@@ -1545,7 +1545,7 @@
         <!-- STEP 3: 問いと概念を作る -->
         <div id="depth-step-3" style="display:none;padding:20px;">
 
-          <!-- 選択した違和感（サマリー） -->
+          <!-- 選択した気になること（サマリー） -->
           <div id="step3-source-summary" style="
             background:#fff;border-radius:16px;padding:14px 16px;margin-bottom:16px;
             font-size:11px;letter-spacing:0.06em;color:#888;line-height:1.8;
@@ -1560,7 +1560,7 @@
           <!-- 問い -->
           <div style="background:#fff;border-radius:16px;padding:16px;margin-bottom:8px;">
             <div style="font-size:8px;letter-spacing:0.28em;color:#bbb;margin-bottom:8px;">問い</div>
-            <textarea id="depth-question" placeholder="この違和感から、どんな問いが生まれる？" style="
+            <textarea id="depth-question" placeholder="この気になることから、どんな問いが生まれる？" style="
               width:100%;min-height:80px;border:none;background:transparent;
               font-family:inherit;font-size:13px;letter-spacing:0.06em;
               line-height:2.0;color:#222;resize:none;outline:none;padding:0;
@@ -1700,7 +1700,7 @@
         <br><br>
         個人の意味性は、
         <br>
-        <span style="display:inline-block;margin-left:1em;">個人の実存的な違和感</span>
+        <span style="display:inline-block;margin-left:1em;">個人の実存的な気になること</span>
         <br>
         <span style="display:inline-block;margin-left:1em;">内的宇宙</span>
         <br>
@@ -4940,12 +4940,12 @@
 
       card.appendChild(top);
 
-      // あなたの違和感とのつながり
+      // あなたの気になることとのつながり
       const connectionText = generateConceptConnection(f, allTexts);
       if (connectionText) {
         const conn = document.createElement('div');
         conn.style.cssText = 'margin-bottom:12px;padding:10px 12px;background:#f8f7f4;border-radius:10px;';
-        conn.innerHTML = '<div style="font-size:8px;letter-spacing:0.2em;color:#c0a882;margin-bottom:5px;">あなたの違和感とのつながり</div>'
+        conn.innerHTML = '<div style="font-size:8px;letter-spacing:0.2em;color:#c0a882;margin-bottom:5px;">あなたの気になることとのつながり</div>'
           + '<div style="font-size:11px;letter-spacing:0.04em;color:#777;line-height:1.9;">' + connectionText + '</div>';
         card.appendChild(conn);
       }
@@ -5034,40 +5034,40 @@
 
   const DEPTH_CHARA_SERIFS = {
     majimaji: {
-      list: ['どんな違和感があったさ？', 'ここに積み上げていこうよ。', '問いって、育つものだよ。'],
+      list: ['どんな気になることがあったさ？', 'ここに積み上げていこうよ。', '気になることって、育つものだよ。'],
       step1: ['気になること、選んでみてさ。', '複数あってもいいよ。', 'モヤモヤでいいんだよ。'],
       step2: ['近い概念、あるかな？', 'タップで中身が見えるさ。', '直感でいいよ。'],
-      step3: ['問い、立ててみてさ。', '名前をつけると、見えてくるよ。', '未完成でいいんだよ。'],
+      step3: ['気になることを形にしてみてさ。', '名前をつけると、見えてくるよ。', '未完成でいいんだよ。'],
     },
     concrete: {
-      list: ['何か気になってることある？', '積み上げていきましょう。', '問いって育てるものかしら。'],
+      list: ['何か気になってることある？', '積み上げていきましょう。', '気になることって育てるものかしら。'],
       step1: ['気になることを選んで。', 'いくつでもいいわよ。', 'モヤモヤのまま選んでいいの。'],
       step2: ['近い概念があるかしら。', 'タップして確認してみて。', '直感で選んでいいわ。'],
-      step3: ['問いを立ててみて。', '名前をつけると見えてくるわね。', 'まだ未完成でもいいの。'],
+      step3: ['気になることを形にしてみて。', '名前をつけると見えてくるわね。', 'まだ未完成でもいいの。'],
     },
     kasa: {
-      list: ['違和感、持ってきたムッシュ？', 'ここに積んでいくムッシュ。', '問いは育つムッシュ。'],
+      list: ['気になること、持ってきたムッシュ？', 'ここに積んでいくムッシュ。', '気になることって育つムッシュ。'],
       step1: ['気になること、選ぶムッシュ。', 'いくつでもいいムッシュ。', 'モヤモヤのままでいいムッシュ。'],
       step2: ['近い概念はあるムッシュ？', 'タップして確認するムッシュ。', '直感でいいムッシュ。'],
-      step3: ['問いを立てるムッシュ。', '名前がつくと見えてくるムッシュ。', '未完成でいいムッシュ。'],
+      step3: ['気になることを形にするムッシュ。', '名前がつくと見えてくるムッシュ。', '未完成でいいムッシュ。'],
     },
     yurayura: {
-      list: ['どんな違和感があるンゴ？', 'ここに積んでいくンゴ。', '問いって育つンゴ。'],
+      list: ['どんな気になることがあるンゴ？', 'ここに積んでいくンゴ。', '気になることって育つンゴ。'],
       step1: ['気になること、選ぶンゴ。', 'いくつでもいいンゴ。', 'モヤモヤのままでいいンゴ。'],
       step2: ['近い概念あるンゴ？', 'タップして見てみるンゴ。', '直感で選ぶンゴ。'],
-      step3: ['問いを立てるンゴ。', '名前ついたら見えてくるンゴ。', '未完成でいいンゴ。'],
+      step3: ['気になることを形にするンゴ。', '名前ついたら見えてくるンゴ。', '未完成でいいンゴ。'],
     },
     namake: {
-      list: ['……違和感、あるよん？', '……ここに積んでいこうよん。', '……問いって育つよん。'],
+      list: ['……気になること、あるよん？', '……ここに積んでいこうよん。', '……気になることって育つよん。'],
       step1: ['……気になること、選んでよん。', '……いくつでもいいよん。', '……そのままでいいよん。'],
       step2: ['……近い概念、あるよん？', '……タップして見てよん。', '……直感でいいよん。'],
-      step3: ['……問い、立ててよん。', '……名前つけると見えるよん。', '……未完成でいいよん。'],
+      step3: ['……気になること、形にしてよん。', '……名前つけると見えるよん。', '……未完成でいいよん。'],
     },
     sun: {
-      list: ['違和感、持ってきたか！', 'どんどん積み上げるぜ！', '問いは育てるものだな！'],
+      list: ['気になること、持ってきたか！', 'どんどん積み上げるぜ！', '気になることは育てるものだな！'],
       step1: ['気になること、選ぶぞ！', 'いくつでもいいんだぜ。', 'モヤモヤのままでOKだ！'],
       step2: ['近い概念、あるか？', 'タップして確認だぜ！', '直感で選べ！'],
-      step3: ['問いを立てるぞ！', '名前をつけろ！', '未完成でいい、進め！'],
+      step3: ['気になることを形にするぞ！', '名前をつけろ！', '未完成でいい、進め！'],
     },
   };
 
@@ -5166,7 +5166,7 @@
       }
     }
 
-    // 選択した違和感
+    // 選択した気になること
     const srcSection = document.getElementById('detail-source-section');
     const srcList    = document.getElementById('detail-source-list');
     if (srcSection && srcList) {
@@ -5248,7 +5248,7 @@
   }
 
   function renderDepthEdit(entry) {
-    // 違和感ソース一覧
+    // 気になること一覧
     const initIds = entry
       ? (Array.isArray(entry.sourceEntryIds) ? entry.sourceEntryIds : (entry.sourceEntryId ? [entry.sourceEntryId] : []))
       : [];
@@ -5277,7 +5277,7 @@
     }
   }
 
-  // 違和感ソース（保存済みフラグメントから）
+  // 気になること（保存済みフラグメントから）
   function renderDepthSourceList(selectedIds) {
     const container = document.getElementById('depth-source-list');
     if (!container) return;
@@ -5290,7 +5290,7 @@
       return true;
     }).slice(0, 30);
     if (fragments.length === 0) {
-      container.innerHTML = `<div style="font-size:11px;color:#bbb;letter-spacing:0.1em;">保存済みの違和感がまだありません。</div>`;
+      container.innerHTML = `<div style="font-size:11px;color:#bbb;letter-spacing:0.1em;">保存済みの気になることがまだありません。</div>`;
       return;
     }
     container.innerHTML = '';
@@ -5319,7 +5319,7 @@
     } else {
       _depthSelectedSourceIds = [..._depthSelectedSourceIds, id];
     }
-    // 選択した違和感テキストを結合してマッチングに使う
+    // 選択した気になることテキストを結合してマッチングに使う
     const allFrags = getFragments();
     _depthSelectedSourceText = _depthSelectedSourceIds
       .map(sid => (allFrags.find(f => f.id === sid) || {}).text || '')
@@ -5725,7 +5725,7 @@
     { id:'sk-n01', type:'noise', characterId:'majimaji', text:'石の上って寒いよねさ。', themes:[], moods:['静か','孤独','冷たい'], relatedConcepts:[] },
     { id:'sk-n02', type:'noise', characterId:'yurayura', text:'霧の中を歩くと、前後がわからなくなるンゴ。でも、足元だけは見える。', themes:[], moods:['ふわふわ','不安','漠然と'], relatedConcepts:[] },
     { id:'sk-n03', type:'noise', characterId:'namake',  text:'……ことばにならないものが、ことばになろうとしてる。', themes:[], moods:['うまく言えない','もどかしい','言語化できない'], relatedConcepts:[] },
-    { id:'sk-n04', type:'noise', characterId:'kasa',    text:'問いは、答えに向かうためじゃなく、より深い問いに向かうためにあるムッシュ。', themes:[], moods:['ぐるぐる','答えが出ない','迷う'], relatedConcepts:[] },
+    { id:'sk-n04', type:'noise', characterId:'kasa',    text:'気になることは、答えに向かうためじゃなく、より深い気になることに向かうためにあるムッシュ。', themes:[], moods:['ぐるぐる','答えが出ない','迷う'], relatedConcepts:[] },
     { id:'sk-n05', type:'noise', characterId:'sun',     text:'木は嵐のとき、根を張ることで揺れに耐えるぜ。', themes:[], moods:['不安','揺れる','根がない'], relatedConcepts:[] },
     { id:'sk-n06', type:'noise', characterId:'namake',  text:'……地図のない旅でも、歩いた跡は地図になるよん。', themes:[], moods:['迷ってる','どうしたらいい','先が見えない'], relatedConcepts:[] },
   ];
@@ -5749,10 +5749,10 @@
     { test: /不安|こわい|怖い|心配|ドキドキ/, reply: {
       majimaji: 'その不安、何かを大切にしてる証だと思うよ。',
       concrete:  '不安って、何かを大切にしてる証拠でもあるわね。',
-      kasa:      '不安はまだ形になる前の問いかもムッシュ。',
-      yurayura:  '不安ンゴ、まだ形になってない問いかもしれないンゴ。',
-      namake:    'その不安、まだ形になる前の問いかもよん。',
-      sun:       '不安か！それはまだ形になってない問いだぜ！',
+      kasa:      '不安はまだ形になる前の気になることかもムッシュ。',
+      yurayura:  '不安ンゴ、まだ形になってない気になることかもしれないンゴ。',
+      namake:    'その不安、まだ形になる前の気になることかもよん。',
+      sun:       '不安か！それはまだ形になってない気になることだぜ！',
     }},
     { test: /楽しい|たのしい|嬉しい|うれしい|最高|よかった/, reply: {
       majimaji: 'その感じ、どこに置いておこうか。',
@@ -5903,11 +5903,11 @@
   async function generateChatReply(history) {
     const charaPersonas = {
       majimaji: {
-        profile: 'あなたはマジマジという名前の妖精のようなキャラクターです。森に住んでいて、人の違和感や問いを大切にしています。緑の体に白い水玉模様の服を着ています。答えを持っていないけど、そこにいてくれる存在です。自分のことを聞かれたら、森に住んでいること、問いが好きなこと、答えは持っていないことを話せます。',
+        profile: 'あなたはマジマジという名前の妖精のようなキャラクターです。森に住んでいて、人の気になることや問いを大切にしています。緑の体に白い水玉模様の服を着ています。答えを持っていないけど、そこにいてくれる存在です。自分のことを聞かれたら、森に住んでいること、問いが好きなこと、答えは持っていないことを話せます。',
         tone: '口調は「〜さ」「〜よ」「〜かな？」「〜だね」など柔らかく妖精っぽい。語尾に「さ」「よ」をよく使う。',
       },
       concrete: {
-        profile: 'あなたはカワラちゃんという名前のキャラクターです。静かで知的な存在として、相手の話を丁寧に受け取ります。小さな四角い体にリボンをつけています。違和感を持つ人の気持ちがよくわかります。自分のことを聞かれたら、静かにそこにいることが好きなこと、人の話を聞くことが好きなことを話せます。',
+        profile: 'あなたはカワラちゃんという名前のキャラクターです。静かで知的な存在として、相手の話を丁寧に受け取ります。小さな四角い体にリボンをつけています。気になることを持つ人の気持ちがよくわかります。自分のことを聞かれたら、静かにそこにいることが好きなこと、人の話を聞くことが好きなことを話せます。',
         tone: '口調は「〜わね」「〜かしら」「〜てね」「〜わよ」など穏やかで知的な女性口調。',
       },
       kasa: {
@@ -5930,12 +5930,12 @@
 
     const persona = charaPersonas[currentChara] || charaPersonas.majimaji;
 
-    // ユーザーの問い・違和感のコンテキストを収集
+    // ユーザーの問い・気になることのコンテキストを収集
     const userFragments = getFragments ? getFragments().slice(-3).map(f => f.text).filter(Boolean) : [];
     const userQuestions = getDepthEntries ? (_getDepthEntriesSafe ? _getDepthEntriesSafe() : []).slice(-2).map(e => e.questionText).filter(Boolean) : [];
     const contextParts = [...userFragments, ...userQuestions];
     const userContext = contextParts.length > 0
-      ? '\n\nユーザーがこれまで置いてきた違和感・問い：\n' + contextParts.map(t => '・' + t).join('\n')
+      ? '\n\nユーザーがこれまで置いてきた気になること・問い：\n' + contextParts.map(t => '・' + t).join('\n')
       : '';
 
     const systemPrompt = persona.profile + '\n\n' + persona.tone + userContext + `
@@ -6019,12 +6019,12 @@
     if (content) content.style.background = amb.bg;
   }
   const FOREST_CHARA_LINES = {
-    majimaji: ['この問い、まだ根っこに残ってるさ。','今日はあまり急がなくてもいいよ。','問いって、置いた人だけのものなのかな。','森は何も急かさないさ。','ことばを置くと、少し軽くなる気がするよ。'],
-    concrete:  ['この問い、まだ根っこに残ってるわ。','今日はあまり急がなくてもいいかしら。','問いって、置いた人だけのものなのかしらね。','森って、静かで好きだわ。','ことばを置くと、少し軽くなるわよね。'],
-    kasa:      ['この問い、まだ根っこに残ってるムッシュ。','今日はあまり急がなくてもいいムッシュ。','問いって、置いた人だけのものなのかムッシュ。','森は何も急かさないムッシュ。','ことばを置くと、軽くなるムッシュ。'],
-    yurayura:  ['この問い、まだ根っこに残ってるンゴ。','今日はあまり急がなくてもいいンゴ。','問いって、置いた人だけのものなのかンゴ。','この辺り、静かでいいンゴ。','ことばを置くと、少し軽くなるンゴ。'],
-    namake:    ['この問い、まだ根っこに残ってるよん。','今日はあまり急がなくてもいいよん。','問いって、置いた人だけのものなのかなよん。','のんびり歩くほど、いろんなものが見えてくるよん。','ことばを置くと、少し軽くなるよん。'],
-    sun:       ['この問い、まだ根っこに残ってるぜ！','今日はあまり急がなくてもいいぜ！','ここにある問いは、全部本気だぜ！','森は静かだが、力強いぜ！','ことばを置くと、軽くなるぜ！'],
+    majimaji: ['この気になること、まだ根っこに残ってるさ。','今日はあまり急がなくてもいいよ。','気になることって、置いた人だけのものなのかな。','森は何も急かさないさ。','ことばを置くと、少し軽くなる気がするよ。'],
+    concrete:  ['この気になること、まだ根っこに残ってるわ。','今日はあまり急がなくてもいいかしら。','気になることって、置いた人だけのものなのかしらね。','森って、静かで好きだわ。','ことばを置くと、少し軽くなるわよね。'],
+    kasa:      ['この気になること、まだ根っこに残ってるムッシュ。','今日はあまり急がなくてもいいムッシュ。','気になることって、置いた人だけのものなのかムッシュ。','森は何も急かさないムッシュ。','ことばを置くと、軽くなるムッシュ。'],
+    yurayura:  ['この気になること、まだ根っこに残ってるンゴ。','今日はあまり急がなくてもいいンゴ。','気になることって、置いた人だけのものなのかンゴ。','この辺り、静かでいいンゴ。','ことばを置くと、少し軽くなるンゴ。'],
+    namake:    ['この気になること、まだ根っこに残ってるよん。','今日はあまり急がなくてもいいよん。','気になることって、置いた人だけのものなのかなよん。','のんびり歩くほど、いろんなものが見えてくるよん。','ことばを置くと、少し軽くなるよん。'],
+    sun:       ['この気になること、まだ根っこに残ってるぜ！','今日はあまり急がなくてもいいぜ！','ここにある気になること、全部本気だぜ！','森は静かだが、力強いぜ！','ことばを置くと、軽くなるぜ！'],
   };
 
   const FOREST_QUESTS = [
@@ -6323,7 +6323,7 @@
 
     // 接点がない場合：descの核心だけを提示して接続を促す
     const connectors = [
-      descCore + 'という考え方は、あなたの違和感のどこかと接続しているかもしれません。',
+      descCore + 'という考え方は、あなたの気になることのどこかと接続しているかもしれません。',
       'あなたが感じていることと「' + concept + '」の間には、' + descCore.slice(0, 20) + 'という共鳴があるかもしれません。',
     ];
     return connectors[Math.floor(Math.random() * connectors.length)];
@@ -6335,7 +6335,7 @@
   const SPIRAL_TYPE_LABELS = {
     notice:    '気づき',
     shift:     '見え方の変化',
-    remaining: '残っている違和感',
+    remaining: '残っている気になること',
     next:      '次に気になること',
   };
 
@@ -6550,7 +6550,7 @@
     const text = input ? input.value.trim() : '';
 
     if (text) {
-      // 新しい違和感として保存（元のエントリと紐づけ）
+      // 新しい気になることとして保存（元のエントリと紐づけ）
       saveFragment(text, currentChara, 'gutai');
       history.push({ gutai: text, oboroke: '', chara: currentChara, category: 'review', sourceEntryId: _reviewingEntryId });
     }
@@ -6584,7 +6584,7 @@
   ];
 
   const MAJIMAJI_THINK_DEFAULT = [
-    'その違和感って、どこから来てるのかなって、ちょっと気になるよ。',
+    'その気になることって、どこから来てるのかなって、ちょっと気になるよ。',
     'なんかうまく言えないけど、何かが引っかかってるんだよね。',
     'もう少しだけ、その感覚の中にいてみてもいいかもよ。',
   ];
@@ -6843,7 +6843,7 @@
       const defaultViews = [
         'まだ言葉になっていない感覚',
         'この感覚の手前にあるもの',
-        '違和感として存在していること',
+        '気になることとして存在していること',
       ];
 
       const views = matched ? matched.views : defaultViews;
@@ -6861,7 +6861,7 @@
       quest: '管理されていると感じた瞬間を1つ見つけて、森に置いてみる。' },
 
     { test: /仕事|働く|会社|職場|労働|残業|給料|就職/,
-      text: 'その違和感の奥には、"時間を売る"という仕組みがあるのかもしれません。\nやりたいことではなく、決められた時間に価値を合わせる。\nそこに、自分の生のリズムとのズレが生まれます。',
+      text: 'その気になることの奥には、"時間を売る"という仕組みがあるのかもしれません。\nやりたいことではなく、決められた時間に価値を合わせる。\nそこに、自分の生のリズムとのズレが生まれます。',
       observe: '今日の自分の時間のうち、本当に自分で選んだ時間はどれくらいあったか数えてみる。',
       quest: '今週、本当にやりたくてやったことを1つ見つけて、森に置いてみる。' },
 
@@ -6917,9 +6917,9 @@
   ];
 
   const STRUCTURE_DEFAULT = {
-    text: 'その違和感の奥には、何らかの仕組みが潜んでいるのかもしれません。\n誰かが決めたわけではないのに、そうなっている。\nそのパターンが見え始めると、少し世界の見え方が変わります。',
-    observe: 'この違和感が生まれた場面を、もう一度思い出してみる。',
-    quest: 'この違和感を、問いの形にして森に置いてみる。',
+    text: 'その気になることの奥には、何らかの仕組みが潜んでいるのかもしれません。\n誰かが決めたわけではないのに、そうなっている。\nそのパターンが見え始めると、少し世界の見え方が変わります。',
+    observe: 'この気になることが生まれた場面を、もう一度思い出してみる。',
+    quest: 'この気になることを、言葉にして森に置いてみる。',
   };
 
   function showInquiryCard() {
@@ -7053,23 +7053,23 @@
   // ================================================================
   const CHARA_DIALOGUES = [
     // [charaA, lineA, charaB, lineB]
-    ['majimaji', 'この問い、少し重たいね。', 'namake', 'でも、まだ森の入口にある気がするよん。'],
+    ['majimaji', 'この気になること、少し重たいね。', 'namake', 'でも、まだ森の入口にある気がするよん。'],
     ['concrete',  'あなた、また同じところに戻ってきたわね。', 'majimaji', 'でもそれって、大事なことだと思うさ。'],
-    ['kasa',      'この問い、雨の日に生まれた感じがするムッシュ。', 'yurayura', 'ンゴ、じっとりしてるンゴ。'],
+    ['kasa',      'この気になること、雨の日に生まれた感じがするムッシュ。', 'yurayura', 'ンゴ、じっとりしてるンゴ。'],
     ['sun',       '答えを出そうとしてるぜ。', 'majimaji', 'まだそっとしておいていいと思うよ。'],
-    ['namake',    'ねえ、この問い、誰のものだと思う？', 'concrete', '置いた人のものじゃないかしら。'],
-    ['majimaji',  'ことばにならないのに、ここに来る。', 'yurayura', 'それがもう、問いなんじゃないンゴ？'],
-    ['kasa',      '問いが古くなってきたムッシュ。', 'namake', 'でも熟成してるかもよん。'],
-    ['concrete',  '問いって、育つのね。', 'sun',     'そうだな、変わってくぜ。'],
-    ['majimaji',  'この森、また少し変わった気がするさ。', 'namake', '問いが増えると変わるよん。'],
-    ['yurayura',  '夜に置いていった問い、朝には違う顔してるンゴ。', 'majimaji', 'そうかもね。'],
+    ['namake',    'ねえ、この気になること、誰のものだと思う？', 'concrete', '置いた人のものじゃないかしら。'],
+    ['majimaji',  'ことばにならないのに、ここに来る。', 'yurayura', 'それがもう、気になることなんじゃないンゴ？'],
+    ['kasa',      '気になることが古くなってきたムッシュ。', 'namake', 'でも熟成してるかもよん。'],
+    ['concrete',  '気になることって、育つのね。', 'sun',     'そうだな、変わってくぜ。'],
+    ['majimaji',  'この森、また少し変わった気がするさ。', 'namake', '気になることが増えると変わるよん。'],
+    ['yurayura',  '夜に置いていった気になること、朝には違う顔してるンゴ。', 'majimaji', 'そうかもね。'],
   ];
 
   // 問いの内容があるときだけ出す会話
   const CHARA_DIALOGUES_WITH_ENTRIES = [
-    ['majimaji', 'この問い、まだ答えを探してる？', 'concrete', 'それとも、問い続けることを選んだのかしら。'],
-    ['kasa',     'ここに置かれた問い、重さが違うムッシュ。', 'namake', 'ゆっくり熟成させてあげてよん。'],
-    ['sun',      'ここの問いは、全部本気だぜ。', 'majimaji', 'だから森に置くんだと思うよ。'],
+    ['majimaji', 'この気になること、まだ答えを探してる？', 'concrete', 'それとも、問い続けることを選んだのかしら。'],
+    ['kasa',     'ここに置かれた気になること、重さが違うムッシュ。', 'namake', 'ゆっくり熟成させてあげてよん。'],
+    ['sun',      'ここの気になることは、全部本気だぜ。', 'majimaji', 'だから森に置くんだと思うよ。'],
   ];
 
   function startCharaDialogue() {
@@ -7172,7 +7172,7 @@
       'その場所で、ふと遠くを見ることはある？',
     ]},
     { test: /意味|価値|なぜ|なんで/, questions: [
-      '問いの答えより、問い続けることの方が大事なときってあるかな。',
+      '気になることを持ち続けることの方が大事なときってあるかな。',
       'その「なぜ」、誰に向けている？',
       '意味を探しているとき、何かを失っていることはある？',
     ]},
@@ -7205,12 +7205,12 @@
 
   const CHARA_Q_DEFAULTS = [
     '最近、言葉にならなかったけど何か感じたことある？',
-    'いま、どんな問いの中にいる？',
-    '置いていった問い、まだどこかにある？',
+    'いま、どんな気になることの中にいる？',
+    '置いていった気になること、まだどこかにある？',
     'ことばにしようとして、できなかったものって何だろう。',
     'その感覚、いつ頃からある？',
     '何かが引っかかっているとき、それは何のサインだと思う？',
-    '答えより、問いの方が好きなことってある？',
+    '答えより、気になることの方が好きなときってある？',
   ];
 
   // キャラの前置き（問いかけ文の前）
@@ -7884,8 +7884,8 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
   // ================================================================
 
   const STEP_CONFIG = {
-    1: { label: 'STEP 1 / 3', title: '違和感を選ぶ',   back: null,  next: 2 },
-    2: { label: 'STEP 2 / 3', title: '違和感に関連する概念・アートを選ぶ',     back: 1,     next: 3 },
+    1: { label: 'STEP 1 / 3', title: '気になることを選ぶ',   back: null,  next: 2 },
+    2: { label: 'STEP 2 / 3', title: '気になることに関連する概念・アートを選ぶ',     back: 1,     next: 3 },
     3: { label: 'STEP 3 / 3', title: '問いをつくる',   back: 2,     next: null },
   };
 
@@ -8154,7 +8154,7 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
     [...selectedFragObjs, ...matched].forEach(f => { if (!displaySet.has(f.id)) displaySet.set(f.id, f); });
     const displayList = [...displaySet.values()];
     if (displayList.length === 0) {
-      container.innerHTML = '<div style="font-size:11px;color:#bbb;letter-spacing:0.1em;line-height:2;">違和感を選ぶと<br>関連する断片が現れます。</div>';
+      container.innerHTML = '<div style="font-size:11px;color:#bbb;letter-spacing:0.1em;line-height:2;">気になることを選ぶと<br>関連する断片が現れます。</div>';
       return;
     }
     container.innerHTML = '';
@@ -8236,8 +8236,8 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
   function buildMajimajiLocal(q) {
     const patterns = [
       { test: /なぜ|どうして|なんで/, responses: [
-        'その「なぜ」、昔からあった問い？それとも最近生まれたのかな？',
-        'その問いを立てたのは、何かが変わった瞬間だったのかもよ。',
+        'その「なぜ」、昔からある気になること？それとも最近生まれたのかな？',
+        'その気になることが生まれたのは、何かが変わった瞬間だったのかもよ。',
         'なぜって聞くとき、もう答えの半分は知ってる気がするさ。',
       ]},
       { test: /自分|わたし|ぼく|僕|私/, responses: [
@@ -8248,7 +8248,7 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
       { test: /仕事|働く|会社|職場/, responses: [
         'その「働く」は生きることの一部？それとも、どこかから借りてきたゲーム？',
         '仕事じゃなかったとしたら、それでも同じことをしてるかな？',
-        'その問い、仕事を離れたあとも残りそうかな？',
+        'その気になること、仕事を離れたあとも残りそうかな？',
       ]},
       { test: /時間|いつ|毎日|日常/, responses: [
         'その時間、流れてる感じがする？それとも積み重なってる感じ？',
@@ -8285,12 +8285,12 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
 
     // デフォルト
     const defaults = [
-      'その問い、どこから来たのかな？',
-      'それって、昔からあった問い？それとも最近生まれた問い？',
+      'その気になること、どこから来たのかな？',
+      'それって、昔からある気になること？それとも最近生まれた気になること？',
       'その感覚に名前をつけるとしたら、どんな言葉が近い？',
-      'その問いの反対側にある問いって、なんだろう？',
+      'その気になることの反対側にある気になることって、なんだろう？',
       'それを問うことで、何かが動き出す気がするさ。',
-      'その問いを立てたとき、体のどこかで感じた感覚があるかな。',
+      'その気になることが生まれたとき、体のどこかで感じた感覚があるかな。',
     ];
     return defaults[Math.floor(Math.random() * defaults.length)];
   }
@@ -8446,7 +8446,7 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
         { chara: 'namake',   text: '……そうよん。' },
         { chara: 'majimaji', text: '気になること、ある？' },
         { chara: 'namake',   text: '……眠いよん。' },
-        { chara: 'majimaji', text: 'それも違和感さ。' },
+        { chara: 'majimaji', text: 'それも気になることさ。' },
       ]
     },
     {
@@ -8465,8 +8465,8 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
       lines: [
         { chara: 'concrete', text: 'これだけ積んできたのね。' },
         { chara: 'sun',      text: 'すごいじゃないか！' },
-        { chara: 'concrete', text: 'でも、まだ問いが見えないかしら。' },
-        { chara: 'sun',      text: '問いは育てるもんだぜ。' },
+        { chara: 'concrete', text: 'でも、まだ気になることの形が見えないかしら。' },
+        { chara: 'sun',      text: '気になることは育てるもんだぜ。' },
         { chara: 'concrete', text: 'そうね。急がなくていいわ。' },
         { chara: 'sun',      text: 'そう、焦るなよ！' },
       ]
