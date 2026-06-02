@@ -1280,12 +1280,19 @@
           <span>新しい問いをつくる</span>
         </button>
       </div>
+      <div style="padding:0 20px 8px;flex-shrink:0;">
+        <button onclick="goTo('screen-graft');renderGraftList()" style="
+          width:100%;padding:12px;border:1px solid #ddd;border-radius:20px;
+          background:none;font-family:inherit;font-size:10px;letter-spacing:0.2em;
+          color:#aaa;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+        ">🌱 問いを接ぎ木する</button>
+      </div>
 
       <!-- 戻る -->
       <div onclick="goTo('screen-chara-select')" style="flex-shrink:0;padding:12px 20px;font-size:10px;letter-spacing:0.2em;color:#333;cursor:pointer;border-top:1px solid #e8e8e4;">← キャラ選択に戻る</div>
 
       <!-- キャラ（左下に絶対配置） -->
-      <div style="position:absolute;bottom:96px;left:16px;display:flex;align-items:flex-end;gap:8px;pointer-events:none;z-index:10;">
+      <div style="position:absolute;bottom:148px;left:16px;display:flex;align-items:flex-end;gap:8px;pointer-events:none;z-index:10;">
         <span id="depth-list-chara" class="chara-svg" data-w="52" data-h="52" style="flex-shrink:0;"></span>
         <div id="depth-list-chara-serif" style="
           background:#fff;border:1px solid #e8e8e4;border-radius:12px;
@@ -1320,6 +1327,12 @@
         <div id="detail-source-section" style="display:none;margin-bottom:16px;">
           <div style="font-size:8px;letter-spacing:0.22em;color:#bbb;margin-bottom:8px;">選択した違和感</div>
           <div id="detail-source-list" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+        </div>
+
+        <!-- 選択した概念 -->
+        <div id="detail-concepts-section" style="display:none;margin-bottom:16px;">
+          <div style="font-size:8px;letter-spacing:0.22em;color:#bbb;margin-bottom:8px;">選択した概念</div>
+          <div id="detail-concepts-list" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
         </div>
 
         <!-- メモ -->
@@ -1424,6 +1437,58 @@
           background:var(--lime);color:var(--lime-text);
           font-family:inherit;font-size:11px;letter-spacing:0.2em;cursor:pointer;
         ">問いを作ってみる</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN: 問いの接ぎ木 ====== -->
+  <div class="screen" id="screen-graft" style="background:#fff;justify-content:flex-start;align-items:stretch;">
+    <div style="width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;">
+
+      <!-- ヘッダー -->
+      <div style="padding:24px 20px 16px;flex-shrink:0;border-bottom:1px solid #f0f0ec;">
+        <div style="font-size:8px;letter-spacing:0.28em;color:#bbb;margin-bottom:4px;">QUESTION GRAFTING</div>
+        <div style="font-size:16px;font-weight:600;letter-spacing:0.04em;color:#222;">問いの接ぎ木</div>
+        <div style="font-size:10px;letter-spacing:0.06em;color:#aaa;margin-top:6px;">2つの問いを選んで、新しい問いを育てる。</div>
+      </div>
+
+      <!-- 問い一覧 -->
+      <div style="flex:1;overflow-y:auto;padding:16px 20px 120px;">
+        <div id="graft-question-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+
+      <!-- 下部固定 -->
+      <div style="position:absolute;bottom:0;left:0;right:0;padding:16px 20px 32px;background:#fff;border-top:1px solid #f0f0ec;">
+
+        <!-- 選択中 -->
+        <div id="graft-selected-preview" style="display:none;margin-bottom:12px;">
+          <div style="font-size:8px;letter-spacing:0.2em;color:#bbb;margin-bottom:6px;">選択中</div>
+          <div id="graft-selected-texts" style="font-size:11px;letter-spacing:0.04em;color:#555;line-height:1.8;"></div>
+        </div>
+
+        <div style="display:flex;gap:10px;">
+          <button onclick="goTo('screen-depth-list')" style="padding:13px 20px;border:1px solid #ddd;border-radius:20px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.18em;color:#aaa;cursor:pointer;">戻る</button>
+          <button id="graft-btn" onclick="startGrafting()" disabled style="flex:1;padding:13px;border:none;border-radius:20px;background:#e0e0dc;color:#aaa;font-family:inherit;font-size:10px;letter-spacing:0.2em;cursor:not-allowed;transition:all 0.2s;">🌱 接ぎ木する</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ====== 接ぎ木結果モーダル ====== -->
+  <div id="graft-result-modal" style="display:none;position:fixed;inset:0;z-index:600;background:rgba(0,0,0,0.4);align-items:flex-end;justify-content:center;">
+    <div style="width:100%;max-width:480px;background:#fff;border-radius:20px 20px 0 0;max-height:80vh;display:flex;flex-direction:column;">
+      <div style="padding:24px 24px 16px;flex-shrink:0;">
+        <!-- キャラ＋セリフ -->
+        <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:20px;">
+          <span id="graft-result-chara" class="chara-svg" data-w="44" data-h="44" style="flex-shrink:0;margin-top:2px;"></span>
+          <div style="background:#f4f2ed;border-radius:4px 14px 14px 14px;padding:10px 14px;font-size:12px;letter-spacing:0.04em;color:#444;line-height:1.8;flex:1;">こんなのが生えてきたよ。</div>
+        </div>
+        <div style="font-size:8px;letter-spacing:0.22em;color:#bbb;margin-bottom:12px;">生まれた問い</div>
+      </div>
+      <div id="graft-results-list" style="flex:1;overflow-y:auto;padding:0 24px 24px;display:flex;flex-direction:column;gap:10px;"></div>
+      <div style="padding:16px 24px 40px;border-top:1px solid #f0f0ec;flex-shrink:0;">
+        <button onclick="closeGraftModal()" style="width:100%;padding:13px;border:1px solid #ddd;border-radius:20px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.18em;color:#aaa;cursor:pointer;">閉じる</button>
       </div>
     </div>
   </div>
@@ -5245,6 +5310,7 @@
   let _depthSelectedSourceIds = [];
   let _depthSelectedSourceText = '';
   let _depthSelectedConcepts = [];
+  let _depthSelectedConceptNames = [];
   let _depthSelectedFragments = [];
 
   function toggleDepthSource(id, text) {
@@ -6523,6 +6589,149 @@
     'もう少しだけ、その感覚の中にいてみてもいいかもよ。',
   ];
 
+  // ================================================================
+  // ===== 問いの接ぎ木 =====
+  // ================================================================
+  let _graftSelected = [];
+
+  function renderGraftList() {
+    _graftSelected = [];
+    updateGraftBtn();
+    const container = document.getElementById('graft-question-list');
+    if (!container) return;
+    const entries = _getDepthEntriesSafe ? _getDepthEntriesSafe() : [];
+    const questions = entries.filter(function(e){ return e.questionText; });
+    if (questions.length < 2) {
+      container.innerHTML = '<div style="font-size:12px;letter-spacing:0.08em;color:#bbb;line-height:2.2;padding:20px 0;">問いが2つ以上ないと<br>接ぎ木できないよ。</div>';
+      return;
+    }
+    container.innerHTML = '';
+    questions.forEach(function(e) {
+      const card = document.createElement('div');
+      card.style.cssText = 'padding:14px 16px;border:1px solid #e8e8e4;border-radius:16px;cursor:pointer;transition:all 0.15s;background:#fff;';
+      card.innerHTML = '<div style="font-size:13px;letter-spacing:0.04em;color:#333;line-height:1.8;">' + e.questionText + '</div>';
+      card.dataset.id = e.id;
+      card.onclick = function() { toggleGraftSelect(e.id, e.questionText, card); };
+      container.appendChild(card);
+    });
+  }
+
+  function toggleGraftSelect(id, text, cardEl) {
+    const idx = _graftSelected.findIndex(function(s){ return s.id === id; });
+    if (idx !== -1) {
+      _graftSelected.splice(idx, 1);
+      cardEl.style.border = '1px solid #e8e8e4';
+      cardEl.style.background = '#fff';
+    } else {
+      if (_graftSelected.length >= 2) return;
+      _graftSelected.push({ id: id, text: text });
+      cardEl.style.border = '1px solid #222';
+      cardEl.style.background = '#f8f8f6';
+    }
+    updateGraftBtn();
+  }
+
+  function updateGraftBtn() {
+    const btn = document.getElementById('graft-btn');
+    const preview = document.getElementById('graft-selected-preview');
+    const texts = document.getElementById('graft-selected-texts');
+    if (!btn) return;
+    if (_graftSelected.length === 2) {
+      btn.disabled = false;
+      btn.style.background = '#222';
+      btn.style.color = '#fff';
+      btn.style.cursor = 'pointer';
+      if (preview) preview.style.display = 'block';
+      if (texts) texts.innerHTML = _graftSelected.map(function(s){ return '<div>・' + s.text + '</div>'; }).join('');
+    } else {
+      btn.disabled = true;
+      btn.style.background = '#e0e0dc';
+      btn.style.color = '#aaa';
+      btn.style.cursor = 'not-allowed';
+      if (preview) preview.style.display = 'none';
+    }
+  }
+
+  async function startGrafting() {
+    if (_graftSelected.length !== 2) return;
+    const btn = document.getElementById('graft-btn');
+    if (btn) { btn.textContent = '🌱 育てている…'; btn.disabled = true; }
+
+    const qA = _graftSelected[0].text;
+    const qB = _graftSelected[1].text;
+    const charaEl = document.getElementById('graft-result-chara');
+    if (charaEl) { charaEl.dataset.chara = currentChara; updateAllCharaSVG(currentChara); }
+
+    const prompt = '以下の2つの問いから、新しい問いを3つ生成してください。\n\n条件：\n- 答えを与えない\n- 問いとして成立している\n- 少し詩的でよい\n- 抽象すぎない\n- 思考が続く余白を残す\n- 元の問いのテーマを両方含む\n\n問いA: ' + qA + '\n問いB: ' + qB + '\n\nJSON配列のみ出力してください。["問い1","問い2","問い3"]';
+
+    let qs = [];
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 400, messages: [{ role: 'user', content: prompt }] }),
+      });
+      const raw = await res.text();
+      const data = JSON.parse(raw);
+      const text = (Array.isArray(data.content) ? data.content.filter(function(c){ return c.type === 'text'; }).map(function(c){ return c.text; }).join('') : '').trim();
+      const match = text.match(/\[[\s\S]*\]/);
+      if (match) qs = JSON.parse(match[0]);
+    } catch(e) {
+      qs = [
+        qA.replace('？','') + 'ことと、' + qB.replace('なぜ','').replace('？','') + 'ことは、どこかで繋がっているのだろうか？',
+        'もし' + qA.replace('なぜ','').replace('？','') + 'ことをやめたら、' + qB.replace('なぜ','').replace('？','') + 'ことも変わるのだろうか？',
+        qA.replace('？','') + 'という問いの奥に、' + qB.replace('？','') + 'という問いが隠れているのかもしれない。',
+      ];
+    }
+
+    const list = document.getElementById('graft-results-list');
+    if (list) {
+      list.innerHTML = '';
+      const parentIds = [_graftSelected[0].id, _graftSelected[1].id];
+      qs.forEach(function(q) {
+        const pIdsStr = JSON.stringify(parentIds).replace(/"/g, '&quot;');
+        const card = document.createElement('div');
+        card.style.cssText = 'background:#f8f7f4;border-radius:14px;padding:16px;';
+        const safeQ = q.replace(/'/g, '&#39;');
+        card.innerHTML =
+          '<div style="font-size:13px;letter-spacing:0.04em;color:#222;line-height:1.9;margin-bottom:12px;">' + q + '</div>' +
+          '<button onclick="saveGraftedQuestion(this)" data-q="' + safeQ + '" data-parents="' + pIdsStr + '" style="font-size:9px;letter-spacing:0.16em;color:#888;background:none;border:1px solid #ddd;border-radius:20px;padding:6px 14px;cursor:pointer;font-family:inherit;">知的な深みに置く</button>';
+        list.appendChild(card);
+      });
+    }
+
+    if (btn) { btn.textContent = '🌱 接ぎ木する'; btn.disabled = false; }
+    const modal = document.getElementById('graft-result-modal');
+    if (modal) modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function saveGraftedQuestion(btnEl) {
+    const q = btnEl.dataset.q;
+    let parentIds = [];
+    try { parentIds = JSON.parse(btnEl.dataset.parents); } catch(e) {}
+    const now = new Date().toISOString();
+    const entry = {
+      id: 'depth_' + Date.now(),
+      sourceText: '', sourceEntryIds: [], selectedConcepts: [],
+      conceptNames: [], savedFragments: [],
+      questionText: q, originalConceptName: '',
+      memo: '', parentQuestionIds: parentIds,
+      sourceType: 'generated', createdAt: now, updatedAt: now,
+    };
+    upsertDepthEntry(entry);
+    btnEl.textContent = '保存しました ✓';
+    btnEl.disabled = true;
+    renderDepthList();
+  }
+
+  function closeGraftModal() {
+    const modal = document.getElementById('graft-result-modal');
+    if (modal) modal.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  // ================================================================
   function showMajimajiThinkScreen() {
     const charaEl = document.getElementById('majimaji-think-chara');
     if (charaEl) { charaEl.dataset.chara = currentChara; updateAllCharaSVG(currentChara); }
@@ -7106,6 +7315,7 @@
     _depthSelectedSourceIds  = [];
     _depthSelectedSourceText = _charaQCurrentText;
     _depthSelectedConcepts   = [];
+    _depthSelectedConceptNames = [];
     _depthSelectedFragments  = [];
     goTo('screen-depth-edit');
     setTimeout(() => {
@@ -7836,11 +8046,14 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
     if (el) el.style.display = 'none';
   }
 
-  function toggleDepthConcept(id) {
+  function toggleDepthConcept(id, label) {
     if (_depthSelectedConcepts.includes(id)) {
+      const idx = _depthSelectedConcepts.indexOf(id);
       _depthSelectedConcepts = _depthSelectedConcepts.filter(c => c !== id);
+      _depthSelectedConceptNames = _depthSelectedConceptNames.filter((_, i) => i !== idx);
     } else {
       _depthSelectedConcepts = [..._depthSelectedConcepts, id];
+      _depthSelectedConceptNames = [..._depthSelectedConceptNames, label || id];
     }
     renderDepthConceptsList(_depthSelectedConcepts);
   }
@@ -7915,7 +8128,7 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
       btn.textContent = isSel ? '✓' : '+';
       btn.style.cssText = 'flex-shrink:0;width:28px;height:28px;border:1px solid '+(isSel?'var(--lime)':'#ccc')+';border-radius:50%;background:'+(isSel?'var(--lime)':'transparent')+';color:'+(isSel?(currentChara==="namake"?"#333":"#fff"):"#aaa")+';font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;transition:all 0.15s;';
       const itemId = item.id;
-      btn.addEventListener('click', function(e) { e.stopPropagation(); toggleDepthConcept(itemId); });
+      btn.addEventListener('click', function(e) { e.stopPropagation(); toggleDepthConcept(itemId, item.label); });
       row.appendChild(info);
       row.appendChild(btn);
       container.appendChild(row);
@@ -8109,7 +8322,7 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
       sourceEntryIds:      _depthSelectedSourceIds.length ? _depthSelectedSourceIds : (existing ? (existing.sourceEntryIds || (existing.sourceEntryId ? [existing.sourceEntryId] : [])) : []),
       sourceText:          _depthSelectedSourceText || (document.getElementById('gutai-text') ? document.getElementById('gutai-text').value.trim() : '') || (document.getElementById('gutai-text2') ? document.getElementById('gutai-text2').value.trim() : '') || (existing ? existing.sourceText : ''),
       selectedConcepts:    _depthSelectedConcepts.length ? _depthSelectedConcepts : (existing ? existing.selectedConcepts : []),
-      conceptNames:        conceptNames.length ? conceptNames : (existing ? existing.conceptNames : []),
+      conceptNames:        _depthSelectedConceptNames.length ? _depthSelectedConceptNames : (existing ? existing.conceptNames : []),
       savedFragments:      _depthSelectedFragments.length ? _depthSelectedFragments : (existing ? existing.savedFragments : []),
       questionText:        document.getElementById('depth-question')?.value.trim() || '',
       originalConceptName: document.getElementById('depth-concept-name')?.value.trim() || '',
