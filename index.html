@@ -28,11 +28,24 @@
     --text: #333;
     --white: #ffffff;
     --bg: #111111;
-    /* キャラごとのおぼろげドット色 */
     --oboroke-dot: #00712B;
-    /* ぐたい丸色：全キャラ茶色 */
     --gutai-dot: #8C6239;
+    --forest-bg:      #f5f8f4;
+    --forest-card:    #ffffff;
+    --forest-accent:  #4a8c5c;
+    --forest-muted:   #8aab90;
+    --forest-glow:    rgba(100,180,120,0.08);
+    --forest-text:    #2a3d2e;
+    --forest-soil:    #B8956A;
   }
+
+  /* 春 */
+
+  /* 夏 */
+
+  /* 秋 */
+
+  /* 冬 */
 
   body {
     font-family: 'Inter', sans-serif;
@@ -492,13 +505,15 @@
 
   <!-- ====== SCREEN: 森を歩く ====== -->
   <div class="screen" id="screen-forest" style="justify-content:flex-start;align-items:stretch;">
-    <div id="forest-wrapper" style="width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;transition:background 1.5s;">
+    <div id="forest-wrapper" style="width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;background:var(--forest-bg);transition:background 1.5s;">
       <!-- ヘッダー -->
       <div id="forest-header" style="flex-shrink:0;padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;transition:background 1.5s;">
         <button onclick="goTo('screen-title')" id="forest-back-btn" style="background:none;border:none;font-family:inherit;font-size:9px;letter-spacing:0.18em;color:#aaa;cursor:pointer;padding:0;">← 戻る</button>
         <div id="forest-title" style="font-size:9px;letter-spacing:0.28em;color:#aaa;">FOREST WALK</div>
         <button onclick="forestStartChat()" id="forest-chat-btn" style="background:none;border:none;font-family:inherit;font-size:9px;letter-spacing:0.18em;color:#aaa;cursor:pointer;padding:0;">話しかける</button>
       </div>
+      <!-- 環境テキスト -->
+      <div id="forest-env-text" style="padding:4px 20px 12px;font-size:9px;letter-spacing:0.18em;color:var(--forest-muted);opacity:0.8;font-style:italic;"></div>
       <!-- スクロール本体 -->
       <div id="forest-scroll" style="flex:1;overflow-y:auto;padding:8px 0 60px;">
         <div id="forest-content" style="display:flex;flex-direction:column;"></div>
@@ -538,7 +553,7 @@
     </div>
   </div>
 
-  <div class="screen tap-screen" id="screen-intro-first">
+  <div class="screen tap-screen" id="screen-intro-first" style="background:var(--forest-bg,#f5f8f4);">
     <div class="card" style="position:relative; min-height:320px;" onclick="goTo('screen-intro')">
       <div class="tap-hint">タップで次へ</div>
       <svg width="100" height="160" style="position:absolute;top:0;left:0;" viewBox="0 0 100 160" xmlns="http://www.w3.org/2000/svg">
@@ -1041,25 +1056,25 @@
 
   <!-- ====== SCREEN 9: 貯まったねー ====== -->
   <div class="screen" id="screen-tamatta">
-    <div style="position:relative;width:100%;height:100%;display:flex;flex-direction:column;background:#fff;overflow:hidden;">
+    <div style="position:relative;width:100%;height:100%;display:flex;flex-direction:column;background:var(--forest-bg,#fff);overflow:hidden;">
       <!-- ヘッダー -->
       <div style="display:flex;align-items:center;gap:10px;padding:16px 20px 0;flex-shrink:0;position:relative;z-index:2;">
         <span class="chara-svg" data-w="43" data-h="50"></span>
         <div style="font-size:11px;letter-spacing:3px;color:#333;font-weight:700;" data-serif="serif-tamatta">貯 ま っ た ね ー</div>
       </div>
       <!-- 木エリア（白背景） -->
-      <div id="tamatta-tree" style="position:relative;flex:1;overflow:hidden;background:#fff;"></div>
+      <div id="tamatta-tree" style="position:relative;flex:1;overflow:hidden;background:var(--forest-card,#fff);"></div>
       <!-- 地面の線 -->
       <div style="height:1px;background:#A0845A;flex-shrink:0;position:relative;z-index:2;"></div>
       <!-- 地層エリア（木くず地面） -->
-      <div id="tamatta-strata" style="position:relative;height:38%;flex-shrink:0;background:#B8956A;overflow:hidden;"></div>
+      <div id="tamatta-strata" style="position:relative;height:38%;flex-shrink:0;background:var(--forest-soil,#B8956A);overflow:hidden;"></div>
       <!-- タップで次へ -->
-      <div onclick="onTamattaTap()" style="text-align:center;padding:10px;color:#ffffff;font-size:13px;letter-spacing:0.2em;flex-shrink:0;font-weight:700;cursor:pointer;background:#A07848;">タップで次へ</div>
+      <div onclick="onTamattaTap()" style="text-align:center;padding:10px;color:#ffffff;font-size:13px;letter-spacing:0.2em;flex-shrink:0;font-weight:700;cursor:pointer;background:var(--forest-soil,#A07848);">タップで次へ</div>
     </div>
   </div>
 
   <!-- ====== SCREEN: 育てた木（タイトル後） ====== -->
-  <div class="screen" id="screen-tree-intro">
+  <div class="screen" id="screen-tree-intro" style="background:var(--forest-bg,#f5f8f4);">
     <div style="position:relative;width:100%;height:100%;display:flex;flex-direction:column;background:#fff;overflow:hidden;">
       <div style="padding:16px 20px 0;flex-shrink:0;position:relative;z-index:2;">
         <div id="tree-intro-label" style="font-size:13px;letter-spacing:0.5em;color:#444;font-weight:500;font-family:'Inter',sans-serif;line-height:1.9;">育 っ て る ね</div>
@@ -1090,7 +1105,7 @@
   </div>
 
   <!-- ====== SCREEN: キャラ選択 ====== -->
-  <div class="screen" id="screen-chara-select">
+  <div class="screen" id="screen-chara-select" style="background:var(--forest-bg,#f5f8f4);">
     <div style="width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:32px 24px;">
 
       <div style="font-size:14px;letter-spacing:0.3em;color:#333;margin-bottom:28px;font-weight:700;">
@@ -1247,7 +1262,7 @@
 
   <!-- ====== SCREEN: 深み一覧 ====== -->
   <!-- ====== SCREEN: 深み一覧 ====== -->
-  <div class="screen" id="screen-depth-list" style="background:#f2f2f2;">
+  <div class="screen" id="screen-depth-list" style="background:var(--forest-bg,#f2f2f2);">
     <div style="width:100%;height:100%;display:flex;flex-direction:column;position:relative;">
 
       <!-- ヘッダー -->
@@ -1424,7 +1439,7 @@
   </div>
 
   <!-- ====== SCREEN: マジマジと考える ====== -->
-  <div class="screen" id="screen-majimaji-think" style="background:#fff;justify-content:flex-start;align-items:stretch;">
+  <div class="screen" id="screen-majimaji-think" style="background:var(--forest-card,#fff);justify-content:flex-start;align-items:stretch;">
     <div style="width:100%;height:100%;display:flex;flex-direction:column;padding:40px 24px 32px;overflow-y:auto;">
       <div style="font-size:8px;letter-spacing:0.28em;color:#bbb;margin-bottom:32px;">ちょっと考えてみる</div>
       <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:40px;">
@@ -1442,7 +1457,7 @@
   </div>
 
   <!-- ====== SCREEN: 問いの接ぎ木 ====== -->
-  <div class="screen" id="screen-graft" style="background:#fff;justify-content:flex-start;align-items:stretch;">
+  <div class="screen" id="screen-graft" style="background:var(--forest-bg,#f5f8f4);justify-content:flex-start;align-items:stretch;">
     <div style="width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;">
 
       <!-- ヘッダー -->
@@ -1756,7 +1771,7 @@
   </div>
 
   <!-- ====== SCREEN: 保存後クエスト ====== -->
-  <div class="screen" id="screen-quest" style="justify-content:flex-start;align-items:stretch;background:#f8f8f6;">
+  <div class="screen" id="screen-quest" style="justify-content:flex-start;align-items:stretch;background:var(--forest-bg,#f8f8f6);">
     <div style="width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;">
       <div style="flex:1;overflow-y:auto;padding:36px 24px 32px;">
 
@@ -2235,6 +2250,7 @@
     updateAllCharaSVG('majimaji');
     applyCharaConfig('majimaji');
     applyTimeGreeting();
+    applyForestAtmosphere();
     setTimeout(() => startCharaDialogue(), 1200);
     showEchoCardIfReady();
     scheduleEchoQuestion();
@@ -2736,6 +2752,7 @@
     });
     // タイトルに戻ったとき：pending フラグがあれば問いかけ表示
     if (id === 'screen-forest') {
+      applyForestAtmosphere();
       setTimeout(() => renderForest(), 50);
       // 落下アート：初回のみリスナー登録
       const forestScroll = document.getElementById('forest-scroll');
@@ -6156,6 +6173,9 @@
     if (!content) return;
     content.innerHTML = '';
 
+    // マジマジの気になること
+    renderMajimajiCuriosityCard(content);
+
     // 時間帯・季節
     const period = getTimePeriod();
     const isNight = period==='night'||period==='midnight';
@@ -6590,7 +6610,230 @@
   ];
 
   // ================================================================
-  // ===== 問いの接ぎ木 =====
+  // ===== マジマジが置いた気になること =====
+  // ================================================================
+  const MAJIMAJI_CURIOSITIES = {
+    majimaji: [
+      'なんで雨の日って、音が遠くなるんだろう。',
+      '木って、空を支えようとしてるのかな。',
+      '昨日の風、ちょっと急いでたね。',
+      '夜の森って、考えごとを隠してくれる気がするさ。',
+      '石って、ずっと黙ってるけど疲れないのかな。',
+      'ことばにできないものって、どこに行くんだろうね。',
+      '誰も見てない時間って、ほんとうにあるのかな。',
+      '昔の気になることって、まだ森のどこかにいるのかな。',
+      'なんで夜は、昼より遠くに感じるんだろうよ。',
+      '朝って、なんで毎回ちゃんとやってくるんだろうさ。',
+    ],
+    concrete: [
+      'ことばにできないまま、消えていくものってあるわよね。',
+      '静かな場所って、何かを待ってる気がするわ。',
+      '影って、自分の形を知ってるのかしら。',
+      '水面の揺れって、何かが触れたあとなのよね。',
+      '誰かの声って、消えてもどこかに残ってるのかしら。',
+      '眠いときの世界って、少しやさしい気がするわ。',
+      'ゆっくり歩くと、見えるものが変わるのはなんでかしら。',
+      '川ってずっと流れてるけど、疲れないのかしら。',
+      '植物ってさ、何かを選んで育ってる気がするわ。',
+      'まだ名前のないものって、たくさんあるのかしら。',
+    ],
+    kasa: [
+      '傘って、雨を防ぐためだけにあるのかムッシュ。',
+      '知らない道って、なんで少しだけこわいんだろうムッシュ。',
+      '葉っぱは落ちるとき、どこに行くつもりなんだろうムッシュ。',
+      '空の青って、何層あるんだろうムッシュ。',
+      '夕暮れって、急いでいる感じがしないのはなんでだろうムッシュ。',
+      '石って、ずっと黙ってるけど疲れないのかムッシュ。',
+      '雲って、形を変えるたびに別の何かになってるのかムッシュ。',
+      'ひとりでいる時間って、何かと一緒にいるのかムッシュ。',
+      '昨日の風、ちょっと急いでたムッシュ。',
+      '夜の森って、考えごとを隠してくれる気がするムッシュ。',
+    ],
+    yurayura: [
+      'なんで雨の日って、音が遠くなるんだろうンゴ。',
+      '木って、空を支えようとしてるのかなンゴ。',
+      '揺れながら考えると、答えが出やすい気がするンゴ。',
+      '風って、どこから来てどこへ行くんだろうンゴ。',
+      '雲って、形を変えるたびに別の何かになってるのかなンゴ。',
+      '川ってずっと流れてるけど、疲れないのかなンゴ。',
+      '静かな場所って、何かを待ってる気がするンゴ。',
+      '眠いときの世界って、少しやさしい気がするンゴ。',
+      'ゆらゆらしてると、いつの間にか気になること変わってるンゴ。',
+      '朝って、なんで毎回ちゃんとやってくるんだろうンゴ。',
+    ],
+    namake: [
+      'ゆっくりしてると、いろんなことが見えてくるよん。',
+      '石って、ずっと黙ってるけど疲れないのかなよん。',
+      '眠いときの世界って、少しやさしい気がするよん。',
+      '葉っぱは落ちるとき、どこに行くつもりなんだろうよん。',
+      '川ってずっと流れてるけど、疲れないのかなよん。',
+      '誰も見てない時間って、ほんとうにあるのかなよん。',
+      '夜の森って、考えごとを隠してくれる気がするよん。',
+      '影って、自分の形を知ってるのかなよん。',
+      '昔の気になることって、まだ森のどこかにいるのかなよん。',
+      'ひとりでいる時間って、何かと一緒にいるのかなよん。',
+    ],
+    sun: [
+      '空の青って、何層あるんだぜ！',
+      '木って、空を支えようとしてるのかぜ！',
+      '昨日の風、ちょっと急いでたぜ！',
+      '雲って、形を変えるたびに別の何かになってるのかぜ！',
+      '誰も見てない時間って、ほんとうにあるのかぜ！',
+      '朝って、なんで毎回ちゃんとやってくるんだぜ！',
+      '知らない道って、なんで少しだけこわいんだぜ！',
+      '石って、ずっと黙ってるけど疲れないのかぜ！',
+      '植物ってさ、何かを選んで育ってる気がするぜ！',
+      '夜の森って、考えごとを隠してくれる気がするぜ！',
+    ],
+  };
+
+  const MAJIMAJI_CURIOSITY_KEY_DATE = 'majimajiCuriosityDate';
+  const MAJIMAJI_CURIOSITY_KEY_TEXT = 'majimajiCuriosityText';
+
+  function getMajimajiCuriosity() {
+    const chara = currentChara || 'majimaji';
+    const today = new Date().toLocaleDateString('ja-JP') + '_' + chara;
+    const savedDate = localStorage.getItem(MAJIMAJI_CURIOSITY_KEY_DATE);
+    const savedText = localStorage.getItem(MAJIMAJI_CURIOSITY_KEY_TEXT);
+
+    if (savedDate === today && savedText) return savedText;
+
+    const list = MAJIMAJI_CURIOSITIES[chara] || MAJIMAJI_CURIOSITIES.majimaji;
+    const text = list[Math.floor(Math.random() * list.length)];
+    localStorage.setItem(MAJIMAJI_CURIOSITY_KEY_DATE, today);
+    localStorage.setItem(MAJIMAJI_CURIOSITY_KEY_TEXT, text);
+    return text;
+  }
+
+  function renderMajimajiCuriosityCard(container) {
+    const text = getMajimajiCuriosity();
+
+    // すでに表示されている場合は追加しない
+    if (document.getElementById('majimaji-curiosity-card')) return;
+
+    const card = document.createElement('div');
+    card.id = 'majimaji-curiosity-card';
+    card.style.cssText = 'margin:16px 20px 4px;padding:14px 16px;background:rgba(255,255,255,0.7);border-radius:16px;border:1px solid rgba(0,0,0,0.06);backdrop-filter:blur(4px);';
+
+    const charaNames = { majimaji:'マジマジ', concrete:'カワラちゃん', kasa:'ムッシュ', yurayura:'ユラユランゴ', namake:'ナマケール', sun:'テカリ王子' };
+    const charaName = charaNames[currentChara || 'majimaji'] || 'マジマジ';
+
+    card.innerHTML =
+      '<div style="font-size:8px;letter-spacing:0.2em;color:#bbb;margin-bottom:8px;">' + charaName + 'の気になること</div>' +
+      '<div style="font-size:13px;letter-spacing:0.04em;color:#444;line-height:1.9;margin-bottom:12px;">' + text + '</div>' +
+      '<div style="display:flex;gap:8px;">' +
+        '<button id="majimaji-curiosity-save" onclick="saveMajimajiCuriosity()" style="flex:1;padding:9px;border:1px solid #ddd;border-radius:20px;background:none;font-family:inherit;font-size:9px;letter-spacing:0.16em;color:#888;cursor:pointer;">これ、気になる</button>' +
+        '<button onclick="dismissMajimajiCuriosity()" style="padding:9px 16px;border:none;background:none;font-family:inherit;font-size:9px;letter-spacing:0.14em;color:#ccc;cursor:pointer;">そっとしておく</button>' +
+      '</div>';
+
+    // forest-contentの先頭に挿入
+    if (container.firstChild) {
+      container.insertBefore(card, container.firstChild);
+    } else {
+      container.appendChild(card);
+    }
+  }
+
+  function saveMajimajiCuriosity() {
+    const text = getMajimajiCuriosity();
+    saveFragment(text, currentChara, 'gutai');
+    const card = document.getElementById('majimaji-curiosity-card');
+    if (card) {
+      const charaNames = { majimaji:'マジマジ', concrete:'カワラちゃん', kasa:'ムッシュ', yurayura:'ユラユランゴ', namake:'ナマケール', sun:'テカリ王子' };
+      const charaName = charaNames[currentChara || 'majimaji'] || 'マジマジ';
+      const confirms = {
+        majimaji: '気になることとして置いておいたよ。',
+        concrete:  '気になることとして置いておいたわ。',
+        kasa:      '気になることとして置いておいたムッシュ。',
+        yurayura:  '気になることとして置いておいたンゴ。',
+        namake:    '気になることとして置いておいたよん。',
+        sun:       '気になることとして置いておいたぜ！',
+      };
+      card.innerHTML =
+        '<div style="font-size:8px;letter-spacing:0.2em;color:#bbb;margin-bottom:6px;">' + charaName + 'の気になること</div>' +
+        '<div style="font-size:12px;letter-spacing:0.04em;color:#888;line-height:1.9;">' + text + '</div>' +
+        '<div style="font-size:9px;letter-spacing:0.14em;color:#c0a882;margin-top:8px;">' + (confirms[currentChara] || confirms.majimaji) + '</div>';
+    }
+  }
+
+  function dismissMajimajiCuriosity() {
+    const card = document.getElementById('majimaji-curiosity-card');
+    if (card) {
+      card.style.transition = 'opacity 0.3s';
+      card.style.opacity = '0';
+      setTimeout(function(){ card.remove(); }, 300);
+    }
+  }
+
+  // ================================================================
+  const FOREST_ENV_TEXTS = {
+    spring: {
+      morning: ['森が少し明るい。', '朝露が葉の上にある。', '鳥の声が、遠くから聞こえる。'],
+      day:     ['春の光が、やわらかく差している。', '風が、少しあたたかい。', '新しい葉が開いている。'],
+      evening: ['夕暮れの森は、橙色に染まっている。', '1日の終わりが、静かにやってくる。', '光が長く伸びている。'],
+      night:   ['春の夜は、少しひんやりしている。', '暗い中に、何かが芽吹く音がする。', '星が見えるかもしれない。'],
+    },
+    summer: {
+      morning: ['朝の森は、まだ涼しい。', '緑が濃い。', '今日も暑くなりそうだ。'],
+      day:     ['夏の森は、深く濃い。', '光が強く、影も濃い。', '熱気の中に、何かが潜んでいる。'],
+      evening: ['夕方、少し風が出てきた。', '空が燃えている。', '昼の熱が、ゆっくり冷めていく。'],
+      night:   ['深夜の森は、少し湿っている。', '虫の声が遠い。', '暗い森の中に、静かなものがある。'],
+    },
+    autumn: {
+      morning: ['秋の朝は、少し霞んでいる。', '落ち葉が積もり始めている。', '空気が澄んでいる。'],
+      day:     ['秋の光は、斜めに差し込む。', '木の葉が色を変えている。', '何かが終わろうとしている気がする。'],
+      evening: ['落ち葉の下に、前のことばが眠っている。', '夕日が赤く、長い。', '森が少し寂しくなってきた。'],
+      night:   ['秋の夜は、静かで深い。', '冷たい空気の中に、何かが残っている。', '木々が眠りに向かっている。'],
+    },
+    winter: {
+      morning: ['冬の朝、光が低い。', '霜が降りているかもしれない。', '森が静止している。'],
+      day:     ['冬の森は、枝だけが見える。', '葉が落ちた分、空が広い。', '何もないように見えて、根は生きている。'],
+      evening: ['日が短く、すぐに暗くなる。', '寒さの中に、静けさがある。', '今日も終わっていく。'],
+      night:   ['森は静かに、根を守っている。', '深い冬の夜、何かが眠っている。', '沈黙の中に、続きがある。'],
+    },
+  };
+
+  function getSeasonAndTime() {
+    const now = new Date();
+    const month = now.getMonth() + 1;
+    const hour  = now.getHours();
+
+    const season =
+      month >= 3 && month <= 5 ? 'spring' :
+      month >= 6 && month <= 8 ? 'summer' :
+      month >= 9 && month <= 11 ? 'autumn' : 'winter';
+
+    const time =
+      hour >= 5 && hour < 10  ? 'morning' :
+      hour >= 10 && hour < 17 ? 'day' :
+      hour >= 17 && hour < 20 ? 'evening' : 'night';
+
+    return { season, time };
+  }
+
+  function setForestDebug(season, time) {
+    document.body.setAttribute('data-season', season);
+    document.body.setAttribute('data-time', time);
+    const texts = (FOREST_ENV_TEXTS[season] || {})[time] || [];
+    const envEl = document.getElementById('forest-env-text');
+    if (envEl && texts.length > 0) {
+      envEl.textContent = texts[Math.floor(Math.random() * texts.length)];
+    }
+  }
+
+  function applyForestAtmosphere() {
+    const { season, time } = getSeasonAndTime();
+    document.body.setAttribute('data-season', season);
+    document.body.setAttribute('data-time', time);
+
+    // 環境テキスト
+    const texts = (FOREST_ENV_TEXTS[season] || {})[time] || [];
+    const envEl = document.getElementById('forest-env-text');
+    if (envEl && texts.length > 0) {
+      envEl.textContent = texts[Math.floor(Math.random() * texts.length)];
+    }
+  }
+
   // ================================================================
   let _graftSelected = [];
 
@@ -7056,8 +7299,8 @@
     ['majimaji', 'この気になること、少し重たいね。', 'namake', 'でも、まだ森の入口にある気がするよん。'],
     ['concrete',  'あなた、また同じところに戻ってきたわね。', 'majimaji', 'でもそれって、大事なことだと思うさ。'],
     ['kasa',      'この気になること、雨の日に生まれた感じがするムッシュ。', 'yurayura', 'ンゴ、じっとりしてるンゴ。'],
-    ['sun',       '答えを出そうとしてるぜ。', 'majimaji', 'まだそっとしておいていいと思うよ。'],
-    ['namake',    'ねえ、この気になること、誰のものだと思う？', 'concrete', '置いた人のものじゃないかしら。'],
+    ['sun',       '答えを出そうとしてるぜ！', 'majimaji', 'まだそっとしておいていいと思うよ。'],
+    ['namake',    'ねえ、この気になること、誰のものだと思うよん？', 'concrete', '置いた人のものじゃないかしら。'],
     ['majimaji',  'ことばにならないのに、ここに来る。', 'yurayura', 'それがもう、気になることなんじゃないンゴ？'],
     ['kasa',      '気になることが古くなってきたムッシュ。', 'namake', 'でも熟成してるかもよん。'],
     ['concrete',  '気になることって、育つのね。', 'sun',     'そうだな、変わってくぜ。'],
@@ -7067,7 +7310,7 @@
 
   // 問いの内容があるときだけ出す会話
   const CHARA_DIALOGUES_WITH_ENTRIES = [
-    ['majimaji', 'この気になること、まだ答えを探してる？', 'concrete', 'それとも、問い続けることを選んだのかしら。'],
+    ['majimaji', 'この気になること、まだ答えを探してる？', 'concrete', 'それとも、持ち続けることを選んだのかしら。'],
     ['kasa',     'ここに置かれた気になること、重さが違うムッシュ。', 'namake', 'ゆっくり熟成させてあげてよん。'],
     ['sun',      'ここの気になることは、全部本気だぜ。', 'majimaji', 'だから森に置くんだと思うよ。'],
   ];
@@ -7215,12 +7458,12 @@
 
   // キャラの前置き（問いかけ文の前）
   const CHARA_Q_PREFIX = {
-    majimaji: (name) => `マジマジが、前に置いていった問いを眺めているさ。`,
-    concrete:  (name) => `カワラちゃんが、あなたの問いをじっと見ているわ。`,
-    kasa:      (name) => `ムッシュアンブレラが、問いの森を歩いているムッシュ。`,
-    yurayura:  (name) => `ユラユランゴが、揺れながら問いを読んでいるンゴ。`,
-    namake:    (name) => `ナマケールが、ぼんやり問いを見ているよん。`,
-    sun:       (name) => `テカリ王子が、問いを見て黙り込んでいるぜ。`,
+    majimaji: (name) => `マジマジが、前に置いていった気になることを眺めているさ。`,
+    concrete:  (name) => `カワラちゃんが、あなたの気になることをじっと見ているわ。`,
+    kasa:      (name) => `ムッシュアンブレラが、気になることの森を歩いているムッシュ。`,
+    yurayura:  (name) => `ユラユランゴが、揺れながら気になることを読んでいるンゴ。`,
+    namake:    (name) => `ナマケールが、ぼんやり気になることを見ているよん。`,
+    sun:       (name) => `テカリ王子が、気になることを見て黙り込んでいるぜ。`,
   };
 
   let _charaQCurrentText = '';
