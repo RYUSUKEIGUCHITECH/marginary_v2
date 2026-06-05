@@ -482,6 +482,11 @@
           </div>
         </div>
       </div>
+
+      <!-- タップで次へ -->
+      <div id="title-tap-next" style="display:none;position:absolute;bottom:60px;left:0;right:0;text-align:center;pointer-events:none;">
+        <div style="font-size:12px;letter-spacing:0.28em;color:#333;">タップで次へ</div>
+      </div>
     </div>
   </div>
   <!-- ====== アート作品モーダル ====== -->
@@ -2791,6 +2796,13 @@
         localStorage.removeItem('marginary_pending_chara_q');
       } else {
         if (Math.random() < 0.5) setTimeout(() => startCharaDialogue(), 800);
+      }
+      // 会話後にタイトルへ戻ってきた場合、タップで次へを表示
+      const tapNext = document.getElementById('title-tap-next');
+      if (tapNext) {
+        if (localStorage.getItem('marginary_chat_done') === '1') {
+          tapNext.style.display = 'block';
+        }
       }
     }
     if (id === 'screen-gutai-input') {
@@ -5903,6 +5915,7 @@
       saveFragment(t, currentChara, 'gutai');
       history.push({ gutai: t, oboroke: '', chara: currentChara, category: 'chat' });
     });
+    localStorage.setItem('marginary_chat_done', '1');
     _fromChat = true;
     goTo('screen-tamatta');
   }
@@ -7339,7 +7352,12 @@
     scene.style.opacity = '0';
     scene.style.display = 'flex';
     setTimeout(() => { scene.style.opacity = '1'; }, 100);
-    setTimeout(() => { bubbleB.style.display = 'block'; }, 2000);
+    setTimeout(() => {
+      bubbleB.style.display = 'block';
+      // タップで次へを表示
+      const tapNext = document.getElementById('title-tap-next');
+      if (tapNext) tapNext.style.display = 'block';
+    }, 2000);
 
     // 8秒後にフェードアウト
     setTimeout(() => { scene.style.opacity = '0'; }, 8000);
