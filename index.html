@@ -1063,7 +1063,7 @@
   <div class="screen" id="screen-tamatta">
     <div style="position:relative;width:100%;height:100%;display:flex;flex-direction:column;background:var(--forest-bg,#fff);overflow:hidden;">
       <!-- ヘッダー -->
-      <div style="display:flex;align-items:center;gap:10px;padding:16px 20px 0;flex-shrink:0;position:relative;z-index:2;">
+      <div style="display:flex;align-items:center;gap:10px;padding:16px 20px 12px;flex-shrink:0;position:relative;z-index:2;background:#fff;">
         <span class="chara-svg" data-w="43" data-h="50"></span>
         <div style="font-size:11px;letter-spacing:3px;color:#333;font-weight:700;" data-serif="serif-tamatta">貯 ま っ た ね ー</div>
       </div>
@@ -1168,7 +1168,7 @@
       <!-- スクロールコンテンツ -->
       <div style="position:relative;flex:1;overflow-y:auto;z-index:1;display:flex;flex-direction:column;">
         <div style="padding:24px 20px 0;">
-          <div style="font-size:12px;letter-spacing:0.12em;color:#333;font-weight:400;">気になる概念・アートを選ぶ</div>
+          <div style="font-size:12px;letter-spacing:0.12em;color:#333;font-weight:400;">気になる見方を選ぶ</div>
         </div>
         <!-- タブ -->
         <div style="display:flex;border-bottom:1px solid #e8e8e4;margin:12px 20px 0;">
@@ -1550,7 +1550,7 @@
 
         <!-- STEP 2: 概念を選ぶ -->
         <div id="depth-step-2" style="display:none;padding:20px;">
-          <div style="font-size:11px;letter-spacing:0.08em;color:#aaa;margin-bottom:16px;line-height:1.8;">タップで定義を確認、＋で選択。</div>
+          <div style="font-size:11px;letter-spacing:0.08em;color:#aaa;margin-bottom:16px;line-height:1.8;">ピンときたものを、いくつか拾ってみて。</div>
           <!-- タブ -->
           <div style="display:flex;border-bottom:1px solid #ddd;margin-bottom:16px;">
             <button id="tab-btn-concepts" onclick="switchDepthTab('concepts')" style="flex:1;padding:10px 4px;border:none;background:none;font-family:inherit;font-size:9px;letter-spacing:0.2em;color:#222;cursor:pointer;border-bottom:2px solid #222;">概念・アート</button>
@@ -1560,6 +1560,11 @@
           <div id="tab-panel-concepts"><div id="depth-concepts-list" style="display:flex;flex-direction:column;gap:8px;"></div></div>
           <div id="tab-panel-forest" style="display:none;"><div id="depth-forest-picks-list" style="display:flex;flex-direction:column;gap:8px;"></div></div>
           <div id="tab-panel-fragments" style="display:none;"><div id="depth-fragments-list" style="display:flex;flex-direction:column;gap:8px;"></div></div>
+
+          <!-- マジマジの一言 -->
+          <div id="step2-majimaji-note" style="margin-top:16px;padding:14px 16px;text-align:center;">
+            <div style="font-size:11px;letter-spacing:0.06em;color:#bbb;line-height:2.0;" id="step2-majimaji-text"></div>
+          </div>
         </div>
 
         <!-- STEP 3: 問いと概念を作る -->
@@ -1805,6 +1810,51 @@
     </div>
   </div>
 
+  <!-- ====== SCREEN: 生物誕生 ====== -->
+  <div class="screen" id="screen-creature-birth" style="background:#fff;justify-content:flex-start;align-items:stretch;">
+    <div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 28px;overflow-y:auto;">
+
+      <!-- キャラ＋セリフ -->
+      <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:36px;width:100%;">
+        <span id="creature-birth-chara" class="chara-svg" data-w="48" data-h="48" style="flex-shrink:0;margin-top:4px;"></span>
+        <div id="creature-birth-serif" style="background:#f4f2ed;border-radius:4px 14px 14px 14px;padding:12px 16px;font-size:13px;letter-spacing:0.04em;color:#444;line-height:1.9;flex:1;"></div>
+      </div>
+
+      <!-- 生物表示 -->
+      <div id="creature-birth-display" style="margin-bottom:28px;display:flex;flex-direction:column;align-items:center;gap:10px;">
+        <div id="creature-birth-svg" style="width:120px;height:120px;"></div>
+        <div id="creature-birth-type" style="font-size:9px;letter-spacing:0.2em;color:#ccc;"></div>
+      </div>
+
+      <!-- 問いテキスト -->
+      <div id="creature-birth-question" style="font-size:12px;letter-spacing:0.06em;color:#999;line-height:1.8;text-align:center;margin-bottom:28px;padding:0 8px;"></div>
+
+      <!-- 名前入力 -->
+      <div style="width:100%;margin-bottom:24px;">
+        <div style="font-size:10px;letter-spacing:0.18em;color:#bbb;margin-bottom:10px;text-align:center;">この子に名前をつける？</div>
+        <input id="creature-name-input" type="text" placeholder="例：カンシくん" style="
+          width:100%;border:none;border-bottom:2px solid #e8e4de;background:none;
+          font-family:inherit;font-size:16px;letter-spacing:0.08em;color:#222;
+          outline:none;padding:8px 0;text-align:center;box-sizing:border-box;
+        ">
+      </div>
+
+      <!-- ボタン -->
+      <div style="display:flex;flex-direction:column;gap:10px;width:100%;">
+        <button onclick="releaseCreatureToForest()" style="
+          width:100%;padding:14px;border:none;border-radius:20px;
+          background:var(--lime);color:var(--lime-text);
+          font-family:inherit;font-size:11px;letter-spacing:0.2em;cursor:pointer;
+        ">森に放つ</button>
+        <button onclick="skipCreatureName()" style="
+          width:100%;padding:12px;border:none;background:none;
+          font-family:inherit;font-size:10px;letter-spacing:0.18em;color:#bbb;cursor:pointer;
+        ">名前はあとで</button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- ====== SCREEN: 存在の気配 ====== -->
   <div class="screen" id="screen-presence">
     <div class="card" style="min-height:380px;display:flex;flex-direction:column;align-items:center;padding:32px 28px;overflow-y:auto;">
@@ -1819,6 +1869,7 @@
       <!-- 紐づく概念・問い -->
       <div id="presence-entry-info" style="width:100%;margin-bottom:20px;display:none;">
         <div style="height:1px;background:#f0f0ec;margin-bottom:16px;"></div>
+        <div id="presence-creature-name" style="display:none;font-size:15px;font-weight:600;letter-spacing:0.04em;color:#222;margin-bottom:10px;"></div>
         <div id="presence-concept-name" style="font-size:13px;font-weight:600;letter-spacing:0.06em;color:#333;margin-bottom:6px;"></div>
         <div id="presence-question" style="font-size:11px;letter-spacing:0.04em;color:#888;line-height:1.9;"></div>
       </div>
@@ -4731,21 +4782,62 @@
 
     el.innerHTML = '';
     display.forEach(frag => {
+      const perspective = getMajimajiPerspectiveForArt(frag, inputTexts);
       const card = document.createElement('div');
       card.style.cssText = 'background:#fff;border-radius:16px;padding:20px 20px 16px;margin-bottom:12px;position:relative;overflow:hidden;';
+
       card.innerHTML =
-        '<div style="font-size:14px;font-weight:700;letter-spacing:0.06em;color:#333;margin-bottom:4px;">'+frag.concept+'</div>' +
-        '<div style="font-size:10px;letter-spacing:0.12em;color:#aaa;margin-bottom:10px;">— '+frag.author+'</div>' +
-        '<div style="font-size:12px;letter-spacing:0.04em;color:#555;line-height:1.8;margin-bottom:14px;">'+frag.desc+'</div>' +
+        // マジマジの視点（主役）
+        '<div style="font-size:13px;letter-spacing:0.04em;color:#333;line-height:2.0;margin-bottom:10px;">' + perspective + '</div>' +
+        // 作品名（補足・小さく）
+        '<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:6px;">' +
+          '<div style="font-size:10px;letter-spacing:0.1em;color:#bbb;">—</div>' +
+          '<div style="font-size:11px;font-weight:600;letter-spacing:0.06em;color:#aaa;">' + frag.concept + '</div>' +
+          '<div style="font-size:9px;letter-spacing:0.12em;color:#ccc;">' + frag.author + '</div>' +
+        '</div>' +
+        // 説明文
+        '<div style="font-size:11px;letter-spacing:0.04em;color:#888;line-height:1.8;margin-bottom:12px;">' + frag.desc + '</div>' +
         (frag.img ? '<div style="margin-bottom:10px;"><img src="'+frag.img+'" style="width:100%;border-radius:10px;cursor:pointer;" onclick="openArtModal(\''+frag.id+'\')" /></div>' : '') +
         '<div style="display:flex;gap:8px;">' +
-          '<button onclick="libArtAction(\'close\',\''+frag.id+'\',\''+frag.concept.replace(/'/g,"\\'")+'\')" style="flex:1;padding:11px 8px;border:1px solid #ddd;border-radius:12px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;color:#888;cursor:pointer;">近い</button>' +
-          '<button onclick="libArtAction(\'skip\',\''+frag.id+'\',\''+frag.concept.replace(/'/g,"\\'")+'\')" style="flex:1;padding:11px 8px;border:1px solid #ddd;border-radius:12px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;color:#888;cursor:pointer;">違う</button>' +
-          '<button id="lib-art-save-'+frag.id+'" onclick="libArtAction(\'save\',\''+frag.id+'\',\''+frag.concept.replace(/'/g,"\\'")+'\')" style="flex:1;padding:11px 8px;border:1px solid #ddd;border-radius:12px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;color:#888;cursor:pointer;">保存</button>' +
+          '<button onclick="libArtAction(\'close\',\''+frag.id+'\',\''+frag.concept.replace(/'/g,"\\'")+'\')" style="flex:1;padding:11px 8px;border:1px solid #ddd;border-radius:12px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;color:#888;cursor:pointer;">気になる</button>' +
+          '<button onclick="libArtAction(\'skip\',\''+frag.id+'\',\''+frag.concept.replace(/'/g,"\\'")+'\')" style="flex:1;padding:11px 8px;border:1px solid #ddd;border-radius:12px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;color:#888;cursor:pointer;">ちがうかも</button>' +
+          '<button id="lib-art-save-'+frag.id+'" onclick="libArtAction(\'save\',\''+frag.id+'\',\''+frag.concept.replace(/'/g,"\\'")+'\')" style="flex:1;padding:11px 8px;border:1px solid #ddd;border-radius:12px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;color:#888;cursor:pointer;">とっておく</button>' +
           (frag.img || frag.link ? '<button onclick="openArtModal(\''+frag.id+'\')" style="flex:1;padding:11px 8px;border:1px solid #ddd;border-radius:12px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;color:#888;cursor:pointer;">見る</button>' : '') +
         '</div>';
       el.appendChild(card);
     });
+  }
+
+  function getMajimajiPerspectiveForArt(frag, inputTexts) {
+    const desc = frag.desc || '';
+    const themes = (frag.themes || []).join(' ');
+    const matchText = themes + ' ' + desc;
+
+    const baseTexts = [
+      { test: /問い|定義|芸術とは|制度/, text: 'これって本当に何なのか、って問い自体がアートになることがある' },
+      { test: /見られ|視線|権力|監視/, text: '見ることと見られることって、同じ関係を作ってるのかもしれない' },
+      { test: /言語|言葉|イメージ|表象/, text: '「これは○○じゃない」って言われると、何が本物か分からなくなることってある' },
+      { test: /死|生|身体|時間/, text: '生きているものと死んでいるものの間って、思ったより近いのかもしれない' },
+      { test: /空間|場所|インスタ|展示/, text: '置かれる場所が変わると、ものの意味も変わることがある' },
+      { test: /光|影|色|形/, text: '見え方が少し変わるだけで、全然違うものに見えることってある' },
+      { test: /孤独|孤立|群衆|社会/, text: 'たくさんの人の中にいるほど、孤独を感じることってあるかもしれない' },
+      { test: /記憶|時間|歴史|過去/, text: 'ずっと残り続けるものと、すぐ消えるもの、どちらが本物かな' },
+      { test: /無意識|夢|潜在|象徴/, text: '意味がないように見えても、何かを感じさせるものってある' },
+      { test: /反抗|批判|社会|制度/, text: '当たり前だと思ってたことを、ひっくり返して見せてくれるものがある' },
+    ];
+
+    let base = null;
+    for (const p of baseTexts) {
+      if (p.test.test(matchText)) { base = p.text; break; }
+    }
+    if (!base) {
+      const descCore = desc.split('。')[0] || '';
+      base = descCore.length > 8
+        ? descCore.slice(0, 25) + '…そういう感じ、あるかもしれない'
+        : 'この作品、あなたの気になることのそばにある気がする';
+    }
+
+    return _applyCharaEnding(base);
   }
 
   function libArtAction(action, id, concept) {
@@ -4759,7 +4851,7 @@
         frags.push({ id, concept: art.concept, author: art.author, desc: art.desc, themes: art.themes || [], mood: art.mood || [] });
         localStorage.setItem('marginary_saved_fragments', JSON.stringify(frags));
       }
-      if (btn) { btn.textContent = '保存済'; btn.style.background = 'var(--lime)'; btn.style.color = '#fff'; btn.style.border = 'none'; }
+      if (btn) { btn.textContent = 'とっておいた'; btn.style.background = 'var(--lime)'; btn.style.color = '#fff'; btn.style.border = 'none'; }
     }
   }
 
@@ -4937,15 +5029,23 @@
       card.id = 'fragment-card-' + f.id;
       card.style.cssText = 'background:rgba(255,255,255,0.82);border:1px solid rgba(0,0,0,0.06);border-radius:14px;padding:16px;margin-bottom:12px;backdrop-filter:blur(4px);';
 
-      // 上部（タップで定義）
+      // 上部（マジマジの視点 → 概念名は小さく）
       const top = document.createElement('div');
       top.style.cssText = 'cursor:pointer;margin-bottom:12px;';
+
+      const perspective = getMajimajiPerspective(f, allTexts);
+      const charaColor = (CHARA_CONFIG[currentChara] || CHARA_CONFIG.majimaji).green || '#00712B';
+
       top.innerHTML =
-        '<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px;">' +
-          '<div style="font-family:\'Inter\',sans-serif;font-weight:700;font-size:15px;letter-spacing:0.06em;color:#333;">' + f.concept + '</div>' +
-          '<div style="font-family:\'Inter\',sans-serif;font-size:9px;letter-spacing:0.16em;color:#bbb;">― ' + f.author + '</div>' +
-        '</div>' +
-        '<div style="font-family:\'Inter\',sans-serif;font-weight:400;font-size:12px;letter-spacing:0.08em;line-height:1.9;color:#666;">' + f.desc + '</div>';
+        // マジマジの視点（主役）
+        '<div style="font-size:13px;letter-spacing:0.04em;color:#333;line-height:2.0;margin-bottom:10px;">' + perspective + '</div>' +
+        // 概念名（補足・小さく）
+        '<div style="display:flex;align-items:baseline;gap:6px;">' +
+          '<div style="font-size:10px;letter-spacing:0.1em;color:#bbb;">—</div>' +
+          '<div style="font-size:11px;font-weight:600;letter-spacing:0.06em;color:#aaa;">' + f.concept + '</div>' +
+          '<div style="font-size:9px;letter-spacing:0.12em;color:#ccc;">' + f.author + '</div>' +
+        '</div>';
+
       top.addEventListener('click', () => openConceptDefPopup({
         concept: f.concept, author: f.author, desc: f.desc,
         themes: f.themes || [], mood: f.mood || []
@@ -4963,9 +5063,9 @@
         return b;
       };
 
-      btns.appendChild(mkBtn('近い', false, () => reactFragment(f.id, 'close')));
-      btns.appendChild(mkBtn('違う', false, () => reactFragment(f.id, 'far')));
-      btns.appendChild(mkBtn(isSaved ? '保存済' : '保存', isSaved, () => reactFragment(f.id, 'save')));
+      btns.appendChild(mkBtn('気になる', false, () => reactFragment(f.id, 'close')));
+      btns.appendChild(mkBtn('ちがうかも', false, () => reactFragment(f.id, 'far')));
+      btns.appendChild(mkBtn(isSaved ? 'とっておいた' : 'とっておく', isSaved, () => reactFragment(f.id, 'save')));
 
       card.appendChild(top);
 
@@ -6337,29 +6437,19 @@
     const desc    = frag.desc    || '';
     const themes  = frag.themes  || [];
     const mood    = frag.mood    || [];
+    const descCore = desc.split('。')[0] || '';
 
-    // descから核心的なフレーズを抽出（最初の文節）
-    const descCore = desc.split('。')[0] || desc.slice(0, 40);
-
-    // 入力と概念の接点を見つける
     const matchedTheme = themes.find(t => input.includes(t));
     const matchedMood  = mood.find(m => m.length >= 3 && input.includes(m.slice(0, 3)));
 
-    // 接点がある場合：具体的な接続を示す
     if (matchedMood) {
-      return '「' + matchedMood + '」という感覚と「' + concept + '」はつながっているかもしれません。' + descCore + 'という視点が、その感覚の輪郭を照らすかもしれません。';
+      return 'その「' + matchedMood + '」は、\n' + descCore.slice(0, 22) + '…\nそういう感覚に近いのかもしれません。';
     }
-
     if (matchedTheme) {
-      return 'あなたが気にしている「' + matchedTheme + '」と「' + concept + '」の間には、接続があるかもしれません。' + descCore + 'という考え方が、ひとつの手がかりになるかもしれません。';
+      return 'その「' + matchedTheme + '」と「' + concept + '」は、\nどこかでつながっているのかもしれません。';
     }
 
-    // 接点がない場合：descの核心だけを提示して接続を促す
-    const connectors = [
-      descCore + 'という考え方は、あなたの気になることのどこかと接続しているかもしれません。',
-      'あなたが感じていることと「' + concept + '」の間には、' + descCore.slice(0, 20) + 'という共鳴があるかもしれません。',
-    ];
-    return connectors[Math.floor(Math.random() * connectors.length)];
+    return 'その気になることと「' + concept + '」、\nどこかで重なる部分があるのかもしれません。';
   }
 
   // ================================================================
@@ -6501,6 +6591,77 @@
     sun:       'この前のやつ、どうだったぜ？',
   };
 
+  // ================================================================
+  // ===== 生物誕生 =====
+  // ================================================================
+  const CREATURE_BIRTH_SERIFS = {
+    majimaji: 'あれ？ この問いから、なにか生まれたみたいよ。',
+    concrete:  'まあ……なにか生まれたわ。この問いから、静かに。',
+    kasa:      'これは……問いの気配ムッシュ。なにかいるムッシュ。',
+    yurayura:  'ゆら……なんか生まれたンゴ。この問いから、ンゴ。',
+    namake:    'なんか生まれたねー。ふわぁよん。',
+    sun:       'おお！ 光ってるじゃねえか！ こいつただ者じゃないぜ！',
+  };
+
+  const DEFAULT_CREATURE_NAMES = ['なぞの子', 'ちいさな問い', 'まだ名前のない子', 'あいまいなやつ', 'もやもや'];
+
+  let _currentCreatureEntry = null;
+
+  function showCreatureBirthScreen(entry) {
+    _currentCreatureEntry = entry;
+
+    const charaEl = document.getElementById('creature-birth-chara');
+    if (charaEl) { charaEl.dataset.chara = currentChara; updateAllCharaSVG(currentChara); }
+
+    const serifEl = document.getElementById('creature-birth-serif');
+    if (serifEl) serifEl.textContent = CREATURE_BIRTH_SERIFS[currentChara] || CREATURE_BIRTH_SERIFS.majimaji;
+
+    const qEl = document.getElementById('creature-birth-question');
+    if (qEl) qEl.textContent = entry.questionText || '';
+
+    const svgEl = document.getElementById('creature-birth-svg');
+    if (svgEl) {
+      try {
+        const presenceSVG = generatePresenceSVG(entry);
+        svgEl.innerHTML = presenceSVG;
+        const innerSvg = svgEl.querySelector('svg');
+        if (innerSvg) { innerSvg.style.width = '100%'; innerSvg.style.height = '100%'; }
+      } catch(e) {
+        svgEl.innerHTML = '<div style="font-size:56px;text-align:center;line-height:120px;">🌱</div>';
+      }
+    }
+
+    const typeEl = document.getElementById('creature-birth-type');
+    if (typeEl) typeEl.textContent = entry.originalConceptName ? '「' + entry.originalConceptName + '」から生まれた' : 'この問いから生まれた';
+
+    const nameInput = document.getElementById('creature-name-input');
+    if (nameInput) nameInput.value = '';
+
+    goTo('screen-creature-birth');
+  }
+
+  function releaseCreatureToForest() {
+    if (!_currentCreatureEntry) { goTo('screen-presence'); return; }
+
+    const nameInput = document.getElementById('creature-name-input');
+    const name = (nameInput ? nameInput.value.trim() : '') ||
+      DEFAULT_CREATURE_NAMES[Math.floor(Math.random() * DEFAULT_CREATURE_NAMES.length)];
+
+    const entries = JSON.parse(localStorage.getItem(_DEPTH_KEY) || '[]');
+    const idx = entries.findIndex(function(e){ return e.id === _currentCreatureEntry.id; });
+    if (idx !== -1) {
+      entries[idx].creatureName = name;
+      localStorage.setItem(_DEPTH_KEY, JSON.stringify(entries));
+    }
+
+    _presenceFromEntryId = _currentCreatureEntry.id;
+    renderPresence('screen-depth-list');
+    goTo('screen-presence');
+  }
+
+  function skipCreatureName() { releaseCreatureToForest(); }
+
+  // ================================================================
   function checkPendingActionReview() {
     const entries = _getDepthEntriesSafe ? _getDepthEntriesSafe() : [];
     // pendingのアクションを持つエントリを探す（最も古いもの）
@@ -7047,6 +7208,98 @@
   }
 
   // ================================================================
+  // ================================================================
+  // ===== マジマジの視点コメント生成 =====
+  // ================================================================
+  function _applyCharaEnding(base) {
+    const endings = {
+      majimaji: s => {
+        if (/ある$/.test(s)) return s.replace(/ある$/, 'あるよ。');
+        if (/ない$/.test(s)) return s.replace(/ない$/, 'ないよ。');
+        if (/かな$/.test(s)) return s.replace(/かな$/, 'かな。');
+        if (/かも$/.test(s)) return s.replace(/かも$/, 'かもよ。');
+        return s + 'よ。';
+      },
+      concrete: s => {
+        if (/ある$/.test(s)) return s.replace(/ある$/, 'あるわ。');
+        if (/ない$/.test(s)) return s.replace(/ない$/, 'ないわよ。');
+        if (/かな$/.test(s)) return s.replace(/かな$/, 'かしら。');
+        if (/かも$/.test(s)) return s.replace(/かも$/, 'かもしれないわ。');
+        return s + 'わ。';
+      },
+      kasa: s => {
+        if (/ある$/.test(s)) return s.replace(/ある$/, 'あるムッシュ。');
+        if (/ない$/.test(s)) return s.replace(/ない$/, 'ないムッシュ。');
+        if (/かな$/.test(s)) return s.replace(/かな$/, 'かなムッシュ。');
+        if (/かも$/.test(s)) return s.replace(/かも$/, 'かもムッシュ。');
+        return s + 'ムッシュ。';
+      },
+      yurayura: s => {
+        if (/ある$/.test(s)) return s.replace(/ある$/, 'あるンゴ。');
+        if (/ない$/.test(s)) return s.replace(/ない$/, 'ないンゴ。');
+        if (/かな$/.test(s)) return s.replace(/かな$/, 'かなンゴ。');
+        if (/かも$/.test(s)) return s.replace(/かも$/, 'かもンゴ。');
+        return s + 'ンゴ。';
+      },
+      namake: s => {
+        if (/ある$/.test(s)) return s.replace(/ある$/, 'あるよん。');
+        if (/ない$/.test(s)) return s.replace(/ない$/, 'ないよん。');
+        if (/かな$/.test(s)) return s.replace(/かな$/, 'かなよん。');
+        if (/かも$/.test(s)) return s.replace(/かも$/, 'かもよん。');
+        return s + 'よん。';
+      },
+      sun: s => {
+        if (/ある$/.test(s)) return s.replace(/ある$/, 'あるぜ！');
+        if (/ない$/.test(s)) return s.replace(/ない$/, 'ないぜ！');
+        if (/かな$/.test(s)) return s.replace(/かな$/, 'だぜ！');
+        if (/かも$/.test(s)) return s.replace(/かも$/, 'かもぜ！');
+        return s + 'ぜ！';
+      },
+    };
+    const fn = endings[currentChara] || endings.majimaji;
+    return fn(base);
+  }
+
+  function getMajimajiPerspective(frag, inputTexts) {
+    const concept = frag.concept || '';
+    const desc = frag.desc || '';
+    const themes = (frag.themes || []).join(' ');
+    const matchText = themes + ' ' + desc;
+
+    const baseTexts = [
+      { test: /管理|監視|見られ|従わ|支配/, text: '誰かに見られてる感じがすると、人は自分で自分を見張ることもある' },
+      { test: /隠れ|見えない|表面|裏|暗黙/, text: '表に見えていないルールが、実は動いていることがある' },
+      { test: /疎外|自分のもの|切り離|他人化/, text: '自分がやってることなのに、なんか自分のことじゃない感じになることってある' },
+      { test: /暴力|強制|圧力|従う|規律/, text: 'ルールって、やさしく見えても身体を動かしていることがある' },
+      { test: /格差|不平等|再生産|継承/, text: '生まれた場所や環境って、知らないうちにいろんなものを決めていることがある' },
+      { test: /比較|評価|測る|数値/, text: '数字で表れないものが、いちばん大事なことだったりするのかもしれない' },
+      { test: /時間|効率|速さ|ペース/, text: '誰かのペースに合わせ続けると、自分のリズムが分からなくなることがある' },
+      { test: /孤独|つながり|共同体|孤立/, text: 'そばにいるのに遠く感じることって、場所じゃなくて文脈のズレかもしれない' },
+      { test: /言語|言葉|語れ|名前/, text: '言葉にできないものって、消えたわけじゃなくて、まだ名前がないだけかも' },
+      { test: /自由|選択|縛ら|制約/, text: '選べるはずなのに選べない感じって、見えないところにルールがあるのかもしれない' },
+      { test: /身体|感覚|反応|存在/, text: '頭で考えるより先に、身体がもう知ってることってある' },
+      { test: /権力|制度|システム|構造/, text: '誰も決めてないのに、なぜかそうなってる、っていう仕組みってある' },
+      { test: /意味|価値|なぜ|目的/, text: '意味を探してる間も、探してること自体が何かを作ってることがある' },
+      { test: /変化|流れ|生成|創発/, text: '変わり続けることって、不安定なんじゃなくて、生きてる証拠なのかもしれない' },
+      { test: /記憶|過去|歴史|蓄積/, text: '忘れたと思ってても、身体や場所がまだ覚えていることってある' },
+      { test: /都市|空間|場所|建築/, text: '空間って、人の動き方をそっと決めていることがある' },
+      { test: /知識|学び|情報|認知/, text: '知ることで世界が広がるのと同時に、知る前には戻れなくなることもある' },
+    ];
+
+    let base = null;
+    for (const p of baseTexts) {
+      if (p.test.test(matchText)) { base = p.text; break; }
+    }
+    if (!base) {
+      const descCore = desc.split('。')[0] || '';
+      base = descCore.length > 8
+        ? '「' + concept + '」って、' + descCore.slice(0, 20) + '…そういう感じ、あるかもしれない'
+        : '「' + concept + '」が、その気になることのそばにあるかもしれない';
+    }
+
+    return _applyCharaEnding(base);
+  }
+
   const ALT_VIEW_PATTERNS = [
     { test: /学校|教育|授業|先生|勉強|テスト|受験|制服/,
       views: ['時間を区切られることへの違和感', '管理される身体の感覚', '評価される存在への違和感'] },
@@ -7791,13 +8044,13 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
         localStorage.setItem(_DEPTH_KEY, JSON.stringify(entries));
       }
     }
-    renderPresence('screen-depth-list');
-    goTo('screen-presence');
+    // 生物誕生画面へ
+    showCreatureBirthScreen(_currentQuestEntry || {});
   }
 
   function skipQuest() {
-    renderPresence('screen-depth-list');
-    goTo('screen-presence');
+    // クエストスキップ時も生物誕生へ
+    showCreatureBirthScreen(_currentQuestEntry || {});
   }
 
   // ================================================================
@@ -8330,6 +8583,18 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
 
   // 保存した概念リスト（タップ→定義、+ボタン→選択）
   function renderDepthConceptsList(selected) {
+    // マジマジの一言
+    const STEP2_NOTES = [
+      '直感でいいよ。',
+      'わからないままでも、置いておけるよ。',
+      '名前がつくと、見えてくることもあるよ。',
+      '近いかどうかより、気になるかどうかでいいよ。',
+      'ぴんとこなくても、眺めるだけでいいよ。',
+    ];
+    const noteEl = document.getElementById('step2-majimaji-text');
+    if (noteEl && !noteEl.textContent) {
+      noteEl.textContent = STEP2_NOTES[Math.floor(Math.random() * STEP2_NOTES.length)];
+    }
     _depthSelectedConcepts = selected || [];
     const container = document.getElementById('depth-concepts-list');
     if (!container) return;
@@ -8877,6 +9142,17 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
       if (infoEl) infoEl.style.display = 'block';
       if (conceptEl)  conceptEl.textContent  = entry.originalConceptName || '';
       if (questionEl) questionEl.textContent = entry.questionText        || '';
+
+      // 生物名を表示
+      const creatureNameEl = document.getElementById('presence-creature-name');
+      if (creatureNameEl) {
+        if (entry.creatureName) {
+          creatureNameEl.textContent = entry.creatureName + 'が、森にやってきた。';
+          creatureNameEl.style.display = 'block';
+        } else {
+          creatureNameEl.style.display = 'none';
+        }
+      }
     } else {
       if (infoEl) infoEl.style.display = 'none';
     }
