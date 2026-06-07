@@ -4733,6 +4733,37 @@
     if (panA) panA.style.display = !isConcepts ? 'block' : 'none';
   }
 
+  function generateArtVisual(frag) {
+    if (frag.img) return '<img src="' + frag.img + '" style="width:100%;height:140px;object-fit:cover;border-radius:10px;margin-bottom:12px;" />';
+
+    const themes = (frag.themes || []).join(' ') + ' ' + (frag.desc || '') + ' ' + (frag.concept || '');
+
+    const emojiMap = [
+      { test: /見る|視線|光|影|色|形/, emoji: '👁️' },
+      { test: /権力|制度|支配|監視/, emoji: '🏛️' },
+      { test: /自由|逃げ|開放|旅/, emoji: '🌬️' },
+      { test: /時間|記憶|過去|歴史/, emoji: '🕰️' },
+      { test: /身体|感覚|触れ|動き/, emoji: '🌿' },
+      { test: /孤独|静けさ|沈黙|ひとり/, emoji: '🌙' },
+      { test: /言語|言葉|物語|詩/, emoji: '🍃' },
+      { test: /社会|群衆|都市|群/, emoji: '🌆' },
+      { test: /自然|植物|生命|生き/, emoji: '🌱' },
+      { test: /海|水|流れ|川/, emoji: '🌊' },
+      { test: /夢|無意識|幻想/, emoji: '🫧' },
+      { test: /死|消滅|終わり|喪失/, emoji: '🍂' },
+      { test: /音|声|音楽|響き/, emoji: '🎵' },
+      { test: /建築|空間|場所|構造/, emoji: '🪨' },
+      { test: /火|熱|エネルギー|変化/, emoji: '🔥' },
+    ];
+
+    let emoji = '🌾';
+    for (const e of emojiMap) {
+      if (e.test.test(themes)) { emoji = e.emoji; break; }
+    }
+
+    return '<div style="text-align:center;padding:20px 0 16px;font-size:48px;background:#faf8f5;border-radius:10px;margin-bottom:12px;">' + emoji + '</div>';
+  }
+
   function renderLibraryArt(inputTexts) {
     const el = document.getElementById('lib-art-fragments');
     if (!el) return;
@@ -4755,20 +4786,19 @@
       card.style.cssText = 'background:#fff;border-radius:16px;padding:20px 20px 16px;margin-bottom:12px;position:relative;overflow:hidden;';
 
       card.innerHTML =
+        // ビジュアル（画像 or 抽象SVG）
+        generateArtVisual(frag) +
         // マジマジの視点（主役）
         '<div style="font-size:13px;letter-spacing:0.04em;color:#333;line-height:2.0;margin-bottom:10px;">' + perspective + '</div>' +
         // 作品名（補足・小さく）
-        '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">' +
+        '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;cursor:pointer;" class="art-name-row">' +
           '<div style="font-size:10px;letter-spacing:0.1em;color:#bbb;">—</div>' +
           '<div style="font-size:11px;font-weight:600;letter-spacing:0.06em;color:#aaa;">' + frag.concept + '</div>' +
           '<div style="font-size:9px;letter-spacing:0.12em;color:#ccc;">' + frag.author + '</div>' +
+          '<div style="font-size:9px;color:#ddd;margin-left:auto;">▼</div>' +
         '</div>' +
         // 詳細（折りたたみ）
-        '<div class="art-detail-toggle" style="font-size:9px;letter-spacing:0.14em;color:#c8b8a0;cursor:pointer;margin-bottom:8px;">もっと見る ↓</div>' +
-        '<div class="art-detail-body" style="display:none;margin-bottom:10px;">' +
-          (frag.img ? '<img src="'+frag.img+'" style="width:100%;border-radius:10px;margin-bottom:8px;" />' : '') +
-          '<div style="font-size:11px;letter-spacing:0.04em;color:#888;line-height:1.8;">' + frag.desc + '</div>' +
-        '</div>' +
+        '<div class="art-detail-body" style="display:none;margin-bottom:10px;font-size:11px;letter-spacing:0.04em;color:#888;line-height:1.8;">' + frag.desc + '</div>' +
         '<div style="display:flex;gap:8px;">' +
           '<button onclick="libArtAction(\'close\',\''+frag.id+'\',\''+frag.concept.replace(/'/g,"\\'")+'\')" style="flex:1;padding:11px 8px;border:1px solid #ddd;border-radius:12px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;color:#888;cursor:pointer;">気になる</button>' +
           '<button onclick="libArtAction(\'skip\',\''+frag.id+'\',\''+frag.concept.replace(/'/g,"\\'")+'\')" style="flex:1;padding:11px 8px;border:1px solid #ddd;border-radius:12px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;color:#888;cursor:pointer;">ちがうかも</button>' +
@@ -4776,14 +4806,15 @@
           (frag.link ? '<button onclick="openArtModal(\''+frag.id+'\')" style="flex:1;padding:11px 8px;border:1px solid #ddd;border-radius:12px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;color:#888;cursor:pointer;">見る</button>' : '') +
         '</div>';
 
-      // 折りたたみトグル
-      const toggle = card.querySelector('.art-detail-toggle');
-      const body   = card.querySelector('.art-detail-body');
-      if (toggle && body) {
-        toggle.addEventListener('click', function() {
+      // 名前行タップで詳細展開
+      const nameRow = card.querySelector('.art-name-row');
+      const body    = card.querySelector('.art-detail-body');
+      const arrow   = nameRow ? nameRow.querySelector('div:last-child') : null;
+      if (nameRow && body) {
+        nameRow.addEventListener('click', function() {
           const open = body.style.display !== 'none';
           body.style.display = open ? 'none' : 'block';
-          toggle.textContent = open ? 'もっと見る ↓' : '閉じる ↑';
+          if (arrow) arrow.textContent = open ? '▼' : '▲';
         });
       }
         (frag.img ? '<div style="margin-bottom:10px;"><img src="'+frag.img+'" style="width:100%;border-radius:10px;cursor:pointer;" onclick="openArtModal(\''+frag.id+'\')" /></div>' : '') +
@@ -8453,7 +8484,7 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
 
   const STEP_CONFIG = {
     1: { label: 'STEP 1 / 3', title: '気になることを選ぶ',   back: null,  next: 2 },
-    2: { label: 'STEP 2 / 3', title: '気になることに関連する概念・アートを選ぶ',     back: 1,     next: 3 },
+    2: { label: 'STEP 2 / 3', title: '気になる見方を選ぶ',     back: 1,     next: 3 },
     3: { label: 'STEP 3 / 3', title: '問いをつくる',   back: 2,     next: null },
   };
 
@@ -8754,29 +8785,41 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
       return;
     }
     container.innerHTML = '';
-    displayList.forEach(f => {
+    displayList.forEach(function(f) {
       const isSel = _depthSelectedFragments.includes(f.id);
-      const row = document.createElement('div');
-      row.style.cssText = 'padding:14px;border:1px solid '+(isSel?'#444':'#e0e0da')+';border-radius:3px;background:'+(isSel?'#f0f0ec':'transparent')+';transition:all 0.15s;';
-      // 内側レイアウト
-      const inner = document.createElement('div');
-      inner.style.cssText = 'display:flex;align-items:flex-start;gap:10px;';
-      // 左：テキスト（タップで定義）
-      const info = document.createElement('div');
-      info.style.cssText = 'flex:1;min-width:0;cursor:pointer;';
-      info.innerHTML = '<div style="font-size:13px;font-weight:500;letter-spacing:0.06em;color:#333;">'+f.concept+'</div><div style="font-size:9px;letter-spacing:0.1em;color:#aaa;margin-top:2px;">― '+f.author+'</div><div style="font-size:11px;letter-spacing:0.04em;color:#666;margin-top:6px;line-height:1.8;">'+f.desc+'</div>';
-      const defData = { concept: f.concept, author: f.author, desc: f.desc, themes: f.themes || [], mood: f.mood || [] };
-      info.addEventListener('click', function() { openConceptDefPopup(defData); });
-      // 右：+ボタン（選択）
-      const btn = document.createElement('button');
-      btn.textContent = isSel ? '✓' : '+';
-      btn.style.cssText = 'flex-shrink:0;width:28px;height:28px;border:1px solid '+(isSel?'var(--lime)':'#ccc')+';border-radius:50%;background:'+(isSel?'var(--lime)':'transparent')+';color:'+(isSel?(currentChara==="namake"?"#333":"#fff"):"#aaa")+';font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;transition:all 0.15s;margin-top:2px;';
-      const fId = f.id;
-      btn.addEventListener('click', function(e) { e.stopPropagation(); toggleDepthFragment(fId); });
-      inner.appendChild(info);
-      inner.appendChild(btn);
-      row.appendChild(inner);
-      container.appendChild(row);
+      const perspective = getMajimajiPerspective(f, [sourceText]);
+
+      const card = document.createElement('div');
+      card.style.cssText = 'background:#fff;border-radius:16px;padding:18px 16px 14px;border:1px solid ' + (isSel ? '#444' : '#f0f0ec') + ';';
+
+      card.innerHTML =
+        '<div style="font-size:13px;letter-spacing:0.04em;color:#333;line-height:2.0;margin-bottom:10px;">' + perspective + '</div>' +
+        '<div style="display:flex;align-items:center;gap:6px;cursor:pointer;" class="frag-name-row">' +
+          '<div style="font-size:10px;color:#bbb;">—</div>' +
+          '<div style="font-size:11px;font-weight:600;letter-spacing:0.06em;color:#aaa;">' + f.concept + '</div>' +
+          '<div style="font-size:9px;letter-spacing:0.12em;color:#ccc;">' + f.author + '</div>' +
+          '<div style="font-size:9px;color:#ddd;margin-left:auto;">▼</div>' +
+        '</div>' +
+        '<div class="frag-expand" style="display:none;margin-top:8px;padding:8px 10px;background:#f8f7f4;border-radius:8px;font-size:11px;letter-spacing:0.04em;color:#777;line-height:1.8;">' + (f.desc || '') + '</div>' +
+        '<div style="display:flex;gap:8px;margin-top:12px;">' +
+          '<button class="frag-select-btn" style="flex:1;padding:10px;border:1px solid ' + (isSel ? '#222' : '#ddd') + ';border-radius:12px;background:' + (isSel ? '#222' : 'none') + ';color:' + (isSel ? '#fff' : '#888') + ';font-family:inherit;font-size:10px;letter-spacing:0.14em;cursor:pointer;">' + (isSel ? 'とっておいた' : 'とっておく') + '</button>' +
+        '</div>';
+
+      // 展開
+      const nameRow = card.querySelector('.frag-name-row');
+      const expand  = card.querySelector('.frag-expand');
+      const arrow   = nameRow.querySelector('div:last-child');
+      nameRow.addEventListener('click', function() {
+        const open = expand.style.display !== 'none';
+        expand.style.display = open ? 'none' : 'block';
+        arrow.textContent = open ? '▼' : '▲';
+      });
+
+      // 選択ボタン
+      const selectBtn = card.querySelector('.frag-select-btn');
+      selectBtn.addEventListener('click', function() { toggleDepthFragment(f.id); });
+
+      container.appendChild(card);
     });
   }
 
