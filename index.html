@@ -175,12 +175,19 @@
 
   .tap-hint {
     position: absolute;
-    bottom: 14px;
-    right: 18px;
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    color: #333;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-block;
+    border: 1.5px solid rgba(255,255,255,0.7);
+    border-radius: 40px;
+    padding: 10px 40px;
+    font-size: 12px;
+    letter-spacing: 0.28em;
+    color: #fff;
+    font-weight: 500;
     pointer-events: none;
+    white-space: nowrap;
   }
 
   textarea {
@@ -485,7 +492,7 @@
 
       <!-- タップで次へ -->
       <div id="title-tap-next" style="display:none;position:absolute;bottom:60px;left:0;right:0;text-align:center;pointer-events:none;">
-        <div style="font-size:12px;letter-spacing:0.28em;color:#333;">タップで次へ</div>
+        <div style="display:inline-block;border:1.5px solid var(--lime,#00712B);border-radius:40px;padding:10px 32px;font-size:12px;letter-spacing:0.28em;color:var(--lime,#00712B);">タップで次へ</div>
       </div>
     </div>
   </div>
@@ -560,7 +567,7 @@
 
   <div class="screen tap-screen" id="screen-intro-first" style="background:#fff;">
     <div class="card" style="position:relative; min-height:320px;" onclick="goTo('screen-intro')">
-      <div class="tap-hint">タップで次へ</div>
+      <div style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:inline-block;border:1.5px solid var(--lime,#00712B);border-radius:40px;padding:10px 40px;font-size:12px;letter-spacing:0.28em;color:var(--lime,#00712B);font-weight:500;pointer-events:none;white-space:nowrap;">タップで次へ</div>
       <svg width="100" height="160" style="position:absolute;top:0;left:0;" viewBox="0 0 100 160" xmlns="http://www.w3.org/2000/svg">
         <rect x="0" y="0" width="45" height="70" class="gc"/>
         <rect x="45" y="0" width="20" height="160" fill="#8C6239"/>
@@ -639,8 +646,7 @@
         ">森を歩く</button>
       </div>
 
-      <!-- タップヒント -->
-      <div id="intro-tap-hint" class="tap-hint">タップで次へ</div>
+
     </div>
   </div>
 
@@ -941,7 +947,6 @@
   <!-- ====== SCREEN 5a: こっちはどない？ ====== -->
   <div class="screen tap-screen" id="screen-prompt-oboroke">
     <div class="card" style="position:relative; min-height:260px;" onclick="goTo('screen-oboroke-input2')">
-      <div class="tap-hint">タップで次へ</div>
       <div style="display:flex; align-items:center; gap:12px; margin-bottom:28px;">
         <span class="chara-svg" data-w="77" data-h="93"></span>
         <div style="font-size:14px; letter-spacing:3px; color:#333; line-height:1.8; font-weight:700;" data-serif="serif-prompt-o">こ っ ち は ど な い ？</div>
@@ -953,7 +958,6 @@
   <!-- ====== SCREEN 5b: こっちはどう？ ====== -->
   <div class="screen tap-screen" id="screen-prompt-gutai">
     <div class="card" style="position:relative; min-height:260px;" onclick="goTo('screen-gutai-input2')">
-      <div class="tap-hint">タップで次へ</div>
       <div style="display:flex; align-items:center; gap:12px; margin-bottom:28px;">
         <span class="chara-svg" data-w="77" data-h="93"></span>
         <div style="font-size:14px; letter-spacing:3px; color:#333; line-height:1.8; font-weight:700;" data-serif="serif-prompt-g">こ っ ち は ど う ？</div>
@@ -1074,7 +1078,9 @@
       <!-- 地層エリア（木くず地面） -->
       <div id="tamatta-strata" style="position:relative;height:38%;flex-shrink:0;background:var(--forest-soil,#B8956A);overflow:hidden;"></div>
       <!-- タップで次へ -->
-      <div onclick="onTamattaTap()" style="text-align:center;padding:10px;color:#ffffff;font-size:13px;letter-spacing:0.2em;flex-shrink:0;font-weight:700;cursor:pointer;background:var(--forest-soil,#A07848);">タップで次へ</div>
+      <div onclick="onTamattaTap()" style="text-align:center;padding:16px;flex-shrink:0;cursor:pointer;background:var(--forest-soil,#A07848);">
+        <div style="display:inline-block;border:1.5px solid rgba(255,255,255,0.7);border-radius:40px;padding:10px 40px;font-size:12px;letter-spacing:0.28em;color:#fff;font-weight:500;">タップで次へ</div>
+      </div>
     </div>
   </div>
 
@@ -1302,22 +1308,28 @@
 
   <!-- ====== SCREEN: 深み一覧 ====== -->
   <!-- ====== SCREEN: 深み一覧 ====== -->
-  <div class="screen" id="screen-depth-list" style="background:var(--forest-bg,#f2f2f2);">
+  <div class="screen" id="screen-depth-list" style="background:#fff;">
     <div style="width:100%;height:100%;display:flex;flex-direction:column;position:relative;">
 
-      <!-- ヘッダー -->
-      <div style="padding:28px 20px 16px;flex-shrink:0;">
-        <div style="font-size:9px;letter-spacing:0.28em;color:#bbb;margin-bottom:4px;">QUESTION STUDIO</div>
-        <div style="font-size:14px;font-weight:500;letter-spacing:0.06em;color:#222;line-height:1.5;">気になることから、<br>問いをつくる。</div>
+      <!-- キャラ＋セリフ（上部ヒーロー） -->
+      <div style="padding:32px 24px 20px;flex-shrink:0;display:flex;align-items:flex-start;gap:14px;">
+        <span id="depth-list-chara" class="chara-svg" data-w="64" data-h="64" style="flex-shrink:0;margin-top:4px;"></span>
+        <div style="flex:1;">
+          <div id="depth-list-chara-serif" style="
+            background:#f4f2ed;border-radius:4px 18px 18px 18px;
+            padding:14px 16px;font-size:13px;letter-spacing:0.04em;
+            color:#444;line-height:1.9;
+          "></div>
+        </div>
       </div>
 
-      <!-- エントリ一覧（丸いカードグリッド） -->
+      <!-- エントリ一覧 -->
       <div style="flex:1;overflow-y:auto;padding:0 20px 20px;">
         <div id="depth-list-container" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;"></div>
       </div>
 
-      <!-- 新規作成ボタン -->
-      <div style="padding:12px 20px 8px;flex-shrink:0;border-top:1px solid #e8e8e4;background:#f2f2f2;">
+      <!-- ボタン群 -->
+      <div style="padding:12px 20px 4px;flex-shrink:0;border-top:1px solid #f0f0ec;background:#fff;">
         <button onclick="startNewDepthEntry()" style="
           width:100%;padding:16px;
           border:1.5px solid #222;border-radius:40px;
@@ -1329,34 +1341,22 @@
           <span>新しい問いをつくる</span>
         </button>
       </div>
-      <div style="padding:0 20px 8px;flex-shrink:0;">
+      <div style="padding:6px 20px 4px;flex-shrink:0;">
         <button onclick="goTo('screen-graft');renderGraftList()" style="
-          width:100%;padding:12px;border:1px solid #ddd;border-radius:20px;
+          width:100%;padding:11px;border:1px solid #e8e8e4;border-radius:20px;
           background:none;font-family:inherit;font-size:10px;letter-spacing:0.2em;
-          color:#aaa;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+          color:#bbb;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
         ">🌱 問いを接ぎ木する</button>
       </div>
-      <div style="padding:0 20px 16px;flex-shrink:0;">
+      <div style="padding:4px 20px 8px;flex-shrink:0;">
         <button onclick="goTo('screen-library')" style="
-          width:100%;padding:12px;border:1px solid #ddd;border-radius:20px;
+          width:100%;padding:11px;border:1px solid #e8e8e4;border-radius:20px;
           background:none;font-family:inherit;font-size:10px;letter-spacing:0.2em;
-          color:#aaa;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+          color:#bbb;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
         ">📚 概念・アートを探す</button>
       </div>
+      <div onclick="goTo('screen-chara-select')" style="flex-shrink:0;padding:10px 20px 16px;font-size:10px;letter-spacing:0.2em;color:#ccc;cursor:pointer;text-align:center;">← キャラ選択に戻る</div>
 
-      <!-- 戻る -->
-      <div onclick="goTo('screen-chara-select')" style="flex-shrink:0;padding:12px 20px;font-size:10px;letter-spacing:0.2em;color:#333;cursor:pointer;border-top:1px solid #e8e8e4;">← キャラ選択に戻る</div>
-
-      <!-- キャラ（左下に絶対配置） -->
-      <div style="position:absolute;bottom:210px;left:16px;display:flex;align-items:flex-end;gap:8px;pointer-events:none;z-index:10;">
-        <span id="depth-list-chara" class="chara-svg" data-w="52" data-h="52" style="flex-shrink:0;"></span>
-        <div id="depth-list-chara-serif" style="
-          background:#fff;border:1px solid #e8e8e4;border-radius:12px;
-          padding:8px 12px;font-size:10px;letter-spacing:0.08em;
-          color:#555;line-height:1.7;max-width:160px;
-          box-shadow:0 2px 8px rgba(0,0,0,0.06);
-        "></div>
-      </div>
     </div>
   </div>
 
@@ -1575,31 +1575,31 @@
         </div>
       </div>
 
+      <!-- 全STEP共通: キャラ固定エリア（スクロール外） -->
+      <div id="step-sticky-chara" style="flex-shrink:0;padding:12px 20px 10px;background:#fff;border-bottom:1px solid #f0f0ec;">
+        <div style="display:flex;align-items:flex-start;gap:10px;">
+          <span id="step-chara-icon" class="chara-svg" data-w="40" data-h="40" style="flex-shrink:0;margin-top:2px;"></span>
+          <div id="step-chara-serif" style="background:#f4f2ed;border-radius:4px 14px 14px 14px;padding:10px 14px;font-size:12px;letter-spacing:0.04em;color:#555;line-height:1.8;flex:1;"></div>
+        </div>
+      </div>
+
       <!-- ステップ本文 -->
       <div style="flex:1;overflow-y:auto;">
 
         <!-- STEP 1: 気になることを選ぶ -->
         <div id="depth-step-1" style="padding:20px;">
-          <div style="font-size:11px;letter-spacing:0.08em;color:#aaa;margin-bottom:16px;line-height:1.8;">気になること、もやもやしたこと。複数選んでもOK。</div>
           <div id="depth-source-list" style="display:flex;flex-direction:column;gap:8px;"></div>
         </div>
 
         <!-- STEP 2: 概念を選ぶ -->
         <div id="depth-step-2" style="display:none;padding:16px 20px 20px;">
-          <!-- マジマジ＋セリフ -->
-          <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:20px;">
-            <span id="step2-chara-icon" class="chara-svg" data-w="40" data-h="40" style="flex-shrink:0;margin-top:2px;"></span>
-            <div id="step2-chara-serif" style="background:#f4f2ed;border-radius:4px 14px 14px 14px;padding:10px 14px;font-size:12px;letter-spacing:0.04em;color:#555;line-height:1.8;flex:1;"></div>
-          </div>
           <!-- タブ -->
           <div style="display:flex;border-bottom:1px solid #ddd;margin-bottom:16px;">
             <button id="tab-btn-concepts" onclick="switchDepthTab('concepts')" style="flex:1;padding:10px 4px;border:none;background:none;font-family:inherit;font-size:9px;letter-spacing:0.2em;color:#222;cursor:pointer;border-bottom:2px solid #222;">概念・アート</button>
             <button id="tab-btn-forest" onclick="switchDepthTab('forest')" style="flex:1;padding:10px 4px;border:none;background:none;font-family:inherit;font-size:9px;letter-spacing:0.2em;color:#aaa;cursor:pointer;border-bottom:2px solid transparent;">森で拾った</button>
-            <button id="tab-btn-fragments" onclick="switchDepthTab('fragments')" style="flex:1;padding:10px 4px;border:none;background:none;font-family:inherit;font-size:9px;letter-spacing:0.2em;color:#aaa;cursor:pointer;border-bottom:2px solid transparent;">断片</button>
           </div>
           <div id="tab-panel-concepts"><div id="depth-concepts-list" style="display:flex;flex-direction:column;gap:8px;"></div></div>
           <div id="tab-panel-forest" style="display:none;"><div id="depth-forest-picks-list" style="display:flex;flex-direction:column;gap:8px;"></div></div>
-          <div id="tab-panel-fragments" style="display:none;"><div id="depth-fragments-list" style="display:flex;flex-direction:column;gap:8px;"></div></div>
 
           <!-- マジマジの一言 -->
           <div id="step2-majimaji-note" style="margin-top:16px;padding:14px 16px;text-align:center;">
@@ -1610,7 +1610,6 @@
         <!-- STEP 3: 問いと概念を作る -->
         <div id="depth-step-3" style="display:none;padding:20px;">
 
-          <!-- 選択した気になること（サマリー） -->
           <div id="step3-source-summary" style="
             background:#fff;border-radius:16px;padding:14px 16px;margin-bottom:16px;
             font-size:11px;letter-spacing:0.06em;color:#888;line-height:1.8;
@@ -1704,16 +1703,6 @@
 
       <!-- フッターナビ -->
       <div style="flex-shrink:0;border-top:1px solid #e8e8e4;background:#fff;display:flex;align-items:center;position:relative;z-index:10;">
-        <!-- キャラ（左下） -->
-        <div style="position:absolute;bottom:100%;left:16px;display:flex;align-items:flex-end;gap:8px;pointer-events:none;z-index:10;">
-          <span id="depth-edit-chara" class="chara-svg" data-w="48" data-h="48" style="flex-shrink:0;display:block;width:48px;height:48px;"></span>
-          <div id="depth-edit-chara-serif" style="
-            background:#fff;border:1px solid #e8e8e4;border-radius:12px;
-            padding:8px 12px;font-size:10px;letter-spacing:0.08em;
-            color:#555;line-height:1.7;max-width:200px;
-            box-shadow:0 2px 8px rgba(0,0,0,0.06);margin-bottom:4px;
-          "></div>
-        </div>
         <div id="step-back-area" onclick="depthStepBack()" style="padding:16px 20px;font-size:10px;letter-spacing:0.2em;color:#333;cursor:pointer;">← 戻る</div>
         <div style="flex:1;"></div>
         <div id="step-next-area" onclick="depthStepNext()" style="padding:16px 20px;font-size:10px;letter-spacing:0.2em;color:#333;cursor:pointer;font-weight:500;">次へ →</div>
@@ -4779,8 +4768,11 @@
     scored.sort((a, b) => b.score - a.score);
     const display = scored.slice(0, 12).map(s => s.f);
 
+    const savedIds = getSavedFragments().map(function(x){ return x.id; });
+
     el.innerHTML = '';
     display.forEach(frag => {
+      const isSaved = savedIds.includes(frag.id);
       const perspective = getMajimajiPerspectiveForArt(frag, inputTexts);
       const card = document.createElement('div');
       card.style.cssText = 'background:#fff;border-radius:16px;padding:20px 20px 16px;margin-bottom:12px;position:relative;overflow:hidden;';
@@ -4802,7 +4794,7 @@
         '<div style="display:flex;gap:8px;">' +
           '<button onclick="libArtAction(\'close\',\''+frag.id+'\',\''+frag.concept.replace(/'/g,"\\'")+'\')" style="flex:1;padding:11px 8px;border:1px solid #ddd;border-radius:12px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;color:#888;cursor:pointer;">気になる</button>' +
           '<button onclick="libArtAction(\'skip\',\''+frag.id+'\',\''+frag.concept.replace(/'/g,"\\'")+'\')" style="flex:1;padding:11px 8px;border:1px solid #ddd;border-radius:12px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;color:#888;cursor:pointer;">ちがうかも</button>' +
-          '<button id="lib-art-save-'+frag.id+'" onclick="libArtAction(\'save\',\''+frag.id+'\',\''+frag.concept.replace(/'/g,"\\'")+'\')" style="flex:1;padding:11px 8px;border:1px solid #ddd;border-radius:12px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;color:#888;cursor:pointer;">とっておく</button>' +
+          '<button id="lib-art-save-'+frag.id+'" onclick="libArtAction(\'save\',\''+frag.id+'\',\''+frag.concept.replace(/'/g,"\\'")+'\')" style="flex:1;padding:11px 8px;border:1px solid '+(isSaved?'var(--lime)':'#ddd')+';border-radius:12px;background:'+(isSaved?'var(--lime)':'none')+';font-family:inherit;font-size:10px;letter-spacing:0.14em;color:'+(isSaved?'#fff':'#888')+';cursor:pointer;">'+(isSaved?'とっておいた':'とっておく')+'</button>' +
           (frag.link ? '<button onclick="openArtModal(\''+frag.id+'\')" style="flex:1;padding:11px 8px;border:1px solid #ddd;border-radius:12px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;color:#888;cursor:pointer;">見る</button>' : '') +
         '</div>';
 
@@ -4817,13 +4809,6 @@
           if (arrow) arrow.textContent = open ? '▼' : '▲';
         });
       }
-        (frag.img ? '<div style="margin-bottom:10px;"><img src="'+frag.img+'" style="width:100%;border-radius:10px;cursor:pointer;" onclick="openArtModal(\''+frag.id+'\')" /></div>' : '') +
-        '<div style="display:flex;gap:8px;">' +
-          '<button onclick="libArtAction(\'close\',\''+frag.id+'\',\''+frag.concept.replace(/'/g,"\\'")+'\')" style="flex:1;padding:11px 8px;border:1px solid #ddd;border-radius:12px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;color:#888;cursor:pointer;">気になる</button>' +
-          '<button onclick="libArtAction(\'skip\',\''+frag.id+'\',\''+frag.concept.replace(/'/g,"\\'")+'\')" style="flex:1;padding:11px 8px;border:1px solid #ddd;border-radius:12px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;color:#888;cursor:pointer;">ちがうかも</button>' +
-          '<button id="lib-art-save-'+frag.id+'" onclick="libArtAction(\'save\',\''+frag.id+'\',\''+frag.concept.replace(/'/g,"\\'")+'\')" style="flex:1;padding:11px 8px;border:1px solid #ddd;border-radius:12px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;color:#888;cursor:pointer;">とっておく</button>' +
-          (frag.img || frag.link ? '<button onclick="openArtModal(\''+frag.id+'\')" style="flex:1;padding:11px 8px;border:1px solid #ddd;border-radius:12px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.14em;color:#888;cursor:pointer;">見る</button>' : '') +
-        '</div>';
       el.appendChild(card);
     });
   }
@@ -5503,14 +5488,11 @@
   // タブ切り替え
   function switchDepthTab(tab) {
     const btnC = document.getElementById('tab-btn-concepts');
-    const btnF = document.getElementById('tab-btn-fragments');
     const btnFo = document.getElementById('tab-btn-forest');
     const panC = document.getElementById('tab-panel-concepts');
-    const panF = document.getElementById('tab-panel-fragments');
     const panFo = document.getElementById('tab-panel-forest');
     const all = [
       [btnC,  panC,  tab === 'concepts'],
-      [btnF,  panF,  tab === 'fragments'],
       [btnFo, panFo, tab === 'forest'],
     ];
     all.forEach(function(item) {
@@ -6299,9 +6281,13 @@
       const svg = document.createElement('span');
       svg.style.cssText = 'flex-shrink:0;';
       svg.innerHTML = charaInnerSVGFixed(currentChara, 32, 32);
+      const charaNames = { majimaji:'マジマジ', concrete:'カワラちゃん', kasa:'ムッシュ', yurayura:'ユラユランゴ', namake:'ナマケール', sun:'テカリ王子' };
+      const charaName = charaNames[currentChara] || 'マジマジ';
       const bubble = document.createElement('div');
-      bubble.style.cssText = 'background:'+(isNight?'rgba(60,60,58,0.8)':'rgba(255,255,255,0.75)')+';border-radius:4px 12px 12px 12px;padding:10px 14px;font-size:11px;letter-spacing:0.06em;color:'+(isNight?'#aaa':'#555')+';line-height:1.9;max-width:80%;';
-      bubble.textContent = frag.text;
+      bubble.style.cssText = 'max-width:80%;';
+      bubble.innerHTML =
+        '<div style="font-size:8px;letter-spacing:0.16em;color:'+(isNight?'#666':'#bbb')+';margin-bottom:4px;">'+charaName+'</div>' +
+        '<div style="background:'+(isNight?'rgba(60,60,58,0.8)':'rgba(255,255,255,0.75)')+';border-radius:4px 12px 12px 12px;padding:10px 14px;font-size:11px;letter-spacing:0.06em;color:'+(isNight?'#aaa':'#555')+';line-height:1.9;">'+frag.text+'</div>';
       el.appendChild(svg); el.appendChild(bubble);
 
     } else if (frag.type === 'concept') {
@@ -6967,25 +6953,31 @@
   function renderMajimajiCuriosityCard(container) {
     const text = getMajimajiCuriosity();
 
-    // すでに表示されている場合は追加しない
     if (document.getElementById('majimaji-curiosity-card')) return;
+
+    const period = getTimePeriod();
+    const isNight = period === 'night' || period === 'midnight';
 
     const card = document.createElement('div');
     card.id = 'majimaji-curiosity-card';
-    card.style.cssText = 'margin:16px 20px 4px;padding:14px 16px;background:rgba(255,255,255,0.7);border-radius:16px;border:1px solid rgba(0,0,0,0.06);backdrop-filter:blur(4px);';
+    card.style.cssText = 'margin:16px 20px 4px;padding:14px 16px;background:' + (isNight ? 'rgba(60,60,58,0.85)' : 'rgba(255,255,255,0.7)') + ';border-radius:16px;border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(4px);';
 
     const charaNames = { majimaji:'マジマジ', concrete:'カワラちゃん', kasa:'ムッシュ', yurayura:'ユラユランゴ', namake:'ナマケール', sun:'テカリ王子' };
     const charaName = charaNames[currentChara || 'majimaji'] || 'マジマジ';
+    const labelColor  = isNight ? '#888' : '#bbb';
+    const textColor   = isNight ? '#ccc' : '#444';
+    const btnColor    = isNight ? '#777' : '#888';
+    const btnBorder   = isNight ? 'rgba(255,255,255,0.15)' : '#ddd';
+    const skipColor   = isNight ? '#555' : '#ccc';
 
     card.innerHTML =
-      '<div style="font-size:8px;letter-spacing:0.2em;color:#bbb;margin-bottom:8px;">' + charaName + 'の気になること</div>' +
-      '<div style="font-size:13px;letter-spacing:0.04em;color:#444;line-height:1.9;margin-bottom:12px;">' + text + '</div>' +
+      '<div style="font-size:8px;letter-spacing:0.2em;color:' + labelColor + ';margin-bottom:8px;">' + charaName + 'の気になること</div>' +
+      '<div style="font-size:13px;letter-spacing:0.04em;color:' + textColor + ';line-height:1.9;margin-bottom:12px;">' + text + '</div>' +
       '<div style="display:flex;gap:8px;">' +
-        '<button id="majimaji-curiosity-save" onclick="saveMajimajiCuriosity()" style="flex:1;padding:9px;border:1px solid #ddd;border-radius:20px;background:none;font-family:inherit;font-size:9px;letter-spacing:0.16em;color:#888;cursor:pointer;">これ、気になる</button>' +
-        '<button onclick="dismissMajimajiCuriosity()" style="padding:9px 16px;border:none;background:none;font-family:inherit;font-size:9px;letter-spacing:0.14em;color:#ccc;cursor:pointer;">そっとしておく</button>' +
+        '<button id="majimaji-curiosity-save" onclick="saveMajimajiCuriosity()" style="flex:1;padding:9px;border:1px solid ' + btnBorder + ';border-radius:20px;background:none;font-family:inherit;font-size:9px;letter-spacing:0.16em;color:' + btnColor + ';cursor:pointer;">これ、気になる</button>' +
+        '<button onclick="dismissMajimajiCuriosity()" style="padding:9px 16px;border:none;background:none;font-family:inherit;font-size:9px;letter-spacing:0.14em;color:' + skipColor + ';cursor:pointer;">そっとしておく</button>' +
       '</div>';
 
-    // forest-contentの先頭に挿入
     if (container.firstChild) {
       container.insertBefore(card, container.firstChild);
     } else {
@@ -8501,20 +8493,39 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
     const phaseMap = { 1:'step1', 2:'step2', 3:'step3' };
     setDepthCharaSerif('depth-edit-chara-serif', phaseMap[step] || 'step1');
 
-    // STEP2のマジマジ初期化
-    if (step === 2) {
-      const icon = document.getElementById('step2-chara-icon');
-      if (icon) { icon.dataset.chara = currentChara; updateAllCharaSVG(currentChara); }
-      const STEP2_SERIFS = {
+    // STEP別キャラセリフ設定（共通固定エリアに反映）
+    const stickyIcon  = document.getElementById('step-chara-icon');
+    const stickySerif = document.getElementById('step-chara-serif');
+    if (stickyIcon) { stickyIcon.dataset.chara = currentChara; updateAllCharaSVG(currentChara); }
+
+    const ALL_SERIFS = {
+      1: {
+        majimaji: '最近、どんな気になることがあったさ？ひとつ選んでみてよ。',
+        concrete:  'どの気になることを掘り下げてみる？ゆっくり選んでいいわ。',
+        kasa:      '気になることを選んでほしいムッシュ。どれが引っかかってるムッシュ？',
+        yurayura:  'どの気になること、気になるンゴ？直感でいいンゴ。',
+        namake:    'のんびりどれか選んでみてよん。引っかかってるやつでいいよん。',
+        sun:       '気になることを選べ！どれが一番引っかかってるんだ？',
+      },
+      2: {
         majimaji: 'なんか気になるもの、ある？よくわからなくても大丈夫だよ。',
         concrete:  'どれが気になる？ピンときたものを選べばいいわ。',
         kasa:      'なんか引っかかるものを選べばいいムッシュ。わからなくてもOKムッシュ。',
         yurayura:  'なんか気になるもの、あるンゴ？直感でいいンゴ。',
         namake:    'のんびり気になるものを選べばいいよん。',
         sun:       '気になったやつを選べ！よくわからなくてもいいぜ！',
-      };
-      const serifEl = document.getElementById('step2-chara-serif');
-      if (serifEl) serifEl.textContent = STEP2_SERIFS[currentChara] || STEP2_SERIFS.majimaji;
+      },
+      3: {
+        majimaji: 'この気になることから、どんな問いが生まれそう？自由に書いてみてさ。',
+        concrete:  'この気になることを問いにしてみて。うまくなくていいわよ。',
+        kasa:      '問いを書いてみてほしいムッシュ。うまくなくていいムッシュ。',
+        yurayura:  '問いを書いてみるンゴ。なんでもいいンゴ。',
+        namake:    'のんびり問いを書いてみてよん。うまくなくていいよん。',
+        sun:       '問いを書け！うまくなくていいぜ！',
+      },
+    };
+    if (stickySerif && ALL_SERIFS[step]) {
+      stickySerif.textContent = ALL_SERIFS[step][currentChara] || ALL_SERIFS[step].majimaji;
     }
 
     // ドット更新
@@ -8674,11 +8685,23 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
   }
 
   function toggleDepthFragment(id) {
+    // _depthSelectedFragments に追加・削除
     if (_depthSelectedFragments.includes(id)) {
       _depthSelectedFragments = _depthSelectedFragments.filter(f => f !== id);
     } else {
       _depthSelectedFragments = [..._depthSelectedFragments, id];
     }
+
+    // _depthSelectedConcepts にも同期（断片IDをそのまま使う）
+    const conceptId = 'frag_' + id;
+    if (_depthSelectedFragments.includes(id)) {
+      if (!_depthSelectedConcepts.includes(conceptId)) {
+        _depthSelectedConcepts = [..._depthSelectedConcepts, conceptId];
+      }
+    } else {
+      _depthSelectedConcepts = _depthSelectedConcepts.filter(c => c !== conceptId);
+    }
+
     renderDepthFragmentsList(_depthSelectedFragments);
   }
 
@@ -8735,30 +8758,105 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
           : { concept: w, author: '', desc: '保存した言葉', themes: [], mood: [] },
       });
     });
-    if (items.length === 0) {
+    // items があっても常にperspectiveカード形式で表示
+    const allFragments2 = getFragments();
+    const inputTexts2 = allFragments2.map(function(f){ return f.text; }).filter(Boolean);
+    const sourceText2 = _depthSelectedSourceText || '';
+    const allTexts2 = sourceText2 ? [sourceText2].concat(inputTexts2) : inputTexts2;
+
+    // itemsがある場合: itemsのfragオブジェクトをベースにカード生成
+    // itemsがない場合: matchFragmentsで自動マッチ
+    let displayFrags = [];
+    if (items.length > 0) {
+      const pool = [].concat(
+        typeof THOUGHT_FRAGMENTS !== 'undefined' ? THOUGHT_FRAGMENTS : [],
+        typeof ART_FRAGMENTS !== 'undefined' ? ART_FRAGMENTS : []
+      );
+      items.forEach(function(item) {
+        // frag_XXX / close_X / saved_X からIDを解決
+        const rawId = item.id.replace(/^(frag_|close_\d+|saved_\d+)/, function(m, p1) {
+          return p1.startsWith('frag_') ? '' : '';
+        });
+        const fragId = item.id.startsWith('frag_') ? item.id.replace('frag_', '') : null;
+        const frag = fragId ? pool.find(function(f){ return f.id === fragId; }) : null;
+        if (frag) {
+          displayFrags.push(frag);
+        } else {
+          // pool に見つからない場合はdefItemから擬似フラグ生成
+          displayFrags.push({
+            id: item.id,
+            concept: item.label,
+            author: item.defItem ? item.defItem.author : '',
+            desc: item.defItem ? item.defItem.desc : '',
+            themes: item.defItem ? item.defItem.themes || [] : [],
+            mood: item.defItem ? item.defItem.mood || [] : [],
+          });
+        }
+      });
+    } else if (allTexts2.length > 0) {
+      displayFrags = matchFragments(allTexts2, { x: 0.5, y: 0.5 }).slice(0, 6);
+    }
+
+    if (displayFrags.length === 0) {
       container.innerHTML = '<div style="font-size:11px;color:#bbb;letter-spacing:0.1em;line-height:2;">図書館で「保存」または<br>「近い」を選ぶと現れます。</div>';
       return;
     }
+
     container.innerHTML = '';
-    items.forEach(item => {
-      const isSel = _depthSelectedConcepts.includes(item.id);
-      const row = document.createElement('div');
-      row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid '+(isSel?'#444':'#e0e0da')+';border-radius:3px;background:'+(isSel?'#f0f0ec':'transparent')+';transition:all 0.15s;';
-      // 左：タップで定義
-      const info = document.createElement('div');
-      info.style.cssText = 'flex:1;min-width:0;cursor:pointer;';
-      info.innerHTML = '<div style="font-size:12px;font-weight:500;letter-spacing:0.06em;color:#333;">'+item.label+'</div>'+(item.sub?'<div style="font-size:9px;letter-spacing:0.1em;color:#aaa;margin-top:2px;">'+item.sub+'</div>':'');
-      const defData = item.defItem;
-      info.addEventListener('click', function() { openConceptDefPopup(defData); });
-      // 右：+ボタンで選択
-      const btn = document.createElement('button');
-      btn.textContent = isSel ? '✓' : '+';
-      btn.style.cssText = 'flex-shrink:0;width:28px;height:28px;border:1px solid '+(isSel?'var(--lime)':'#ccc')+';border-radius:50%;background:'+(isSel?'var(--lime)':'transparent')+';color:'+(isSel?(currentChara==="namake"?"#333":"#fff"):"#aaa")+';font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;transition:all 0.15s;';
-      const itemId = item.id;
-      btn.addEventListener('click', function(e) { e.stopPropagation(); toggleDepthConcept(itemId, item.label); });
-      row.appendChild(info);
-      row.appendChild(btn);
-      container.appendChild(row);
+    displayFrags.forEach(function(f) {
+      const isSel = _depthSelectedConcepts.includes(f.id);
+      const perspective = getMajimajiPerspective(f, allTexts2);
+      const card = document.createElement('div');
+      card.style.cssText = 'background:#fff;border-radius:16px;padding:18px 16px 14px;border:1px solid ' + (isSel ? '#444' : '#f0f0ec') + ';margin-bottom:8px;';
+      card.innerHTML =
+        '<div style="font-size:13px;letter-spacing:0.04em;color:#333;line-height:2.0;margin-bottom:10px;">' + perspective + '</div>' +
+        '<div style="display:flex;align-items:center;gap:6px;cursor:pointer;" class="concept-name-row">' +
+          '<div style="font-size:10px;color:#bbb;">—</div>' +
+          '<div style="font-size:11px;font-weight:600;letter-spacing:0.06em;color:#aaa;">' + f.concept + '</div>' +
+          '<div style="font-size:9px;letter-spacing:0.12em;color:#ccc;">' + f.author + '</div>' +
+          '<div style="font-size:9px;color:#ddd;margin-left:auto;">▼</div>' +
+        '</div>' +
+        '<div class="concept-expand" style="display:none;margin-top:8px;padding:8px 10px;background:#f8f7f4;border-radius:8px;font-size:11px;letter-spacing:0.04em;color:#777;line-height:1.8;">' + (f.desc || '') + '</div>' +
+        '<div style="display:flex;gap:8px;margin-top:12px;">' +
+          '<button class="concept-select-btn" style="flex:1;padding:10px;border:1px solid ' + (isSel ? '#444' : '#ddd') + ';border-radius:12px;background:' + (isSel ? '#f0f0ec' : 'none') + ';color:' + (isSel ? '#444' : '#aaa') + ';font-family:inherit;font-size:10px;letter-spacing:0.14em;cursor:pointer;">' + (isSel ? '選んだ' : '選ぶ') + '</button>' +
+        '</div>';
+
+      const nameRow = card.querySelector('.concept-name-row');
+      const expand  = card.querySelector('.concept-expand');
+      const arrow   = nameRow ? nameRow.querySelector('div:last-child') : null;
+      if (nameRow && expand) {
+        nameRow.addEventListener('click', function() {
+          const open = expand.style.display !== 'none';
+          expand.style.display = open ? 'none' : 'block';
+          if (arrow) arrow.textContent = open ? '▼' : '▲';
+        });
+      }
+      const selectBtn = card.querySelector('.concept-select-btn');
+      const fId = f.id;
+      function updateBtn(selected) {
+        selectBtn.textContent = selected ? '選んだ' : '選ぶ';
+        selectBtn.style.background = selected ? '#f0f0ec' : 'none';
+        selectBtn.style.color = selected ? '#444' : '#aaa';
+        selectBtn.style.border = '1px solid ' + (selected ? '#444' : '#ddd');
+        card.style.border = '1px solid ' + (selected ? '#444' : '#f0f0ec');
+      }
+      if (selectBtn) {
+        selectBtn.addEventListener('click', function() {
+          const nowSel = _depthSelectedConcepts.includes(fId);
+          if (nowSel) {
+            _depthSelectedConcepts = _depthSelectedConcepts.filter(c => c !== fId);
+          } else {
+            _depthSelectedConcepts = [..._depthSelectedConcepts, fId];
+            const frags = getSavedFragments();
+            if (!frags.find(function(x){ return x.id === fId; })) {
+              frags.push({ id: f.id, concept: f.concept, author: f.author || '', desc: f.desc || '', themes: f.themes || [], mood: f.mood || [], savedAt: new Date().toISOString() });
+              localStorage.setItem('marginary_saved_fragments', JSON.stringify(frags));
+            }
+          }
+          updateBtn(!nowSel);
+        });
+      }
+      container.appendChild(card);
     });
   }
 
@@ -8803,6 +8901,7 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
         '<div class="frag-expand" style="display:none;margin-top:8px;padding:8px 10px;background:#f8f7f4;border-radius:8px;font-size:11px;letter-spacing:0.04em;color:#777;line-height:1.8;">' + (f.desc || '') + '</div>' +
         '<div style="display:flex;gap:8px;margin-top:12px;">' +
           '<button class="frag-select-btn" style="flex:1;padding:10px;border:1px solid ' + (isSel ? '#222' : '#ddd') + ';border-radius:12px;background:' + (isSel ? '#222' : 'none') + ';color:' + (isSel ? '#fff' : '#888') + ';font-family:inherit;font-size:10px;letter-spacing:0.14em;cursor:pointer;">' + (isSel ? 'とっておいた' : 'とっておく') + '</button>' +
+          '<button class="frag-choose-btn" style="flex:1;padding:10px;border:1px solid ' + (isSel ? '#444' : '#ddd') + ';border-radius:12px;background:' + (isSel ? '#f0f0ec' : 'none') + ';color:' + (isSel ? '#444' : '#aaa') + ';font-family:inherit;font-size:10px;letter-spacing:0.14em;cursor:pointer;">' + (isSel ? '選択中' : '選択する') + '</button>' +
         '</div>';
 
       // 展開
@@ -8815,9 +8914,38 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
         arrow.textContent = open ? '▼' : '▲';
       });
 
-      // 選択ボタン
+      // 選択ボタン（とっておく / 選択する）
       const selectBtn = card.querySelector('.frag-select-btn');
-      selectBtn.addEventListener('click', function() { toggleDepthFragment(f.id); });
+      const chooseBtn = card.querySelector('.frag-choose-btn');
+      function updateFragBtns(selected) {
+        if (selectBtn) {
+          selectBtn.textContent = selected ? 'とっておいた' : 'とっておく';
+          selectBtn.style.background = selected ? '#222' : 'none';
+          selectBtn.style.color = selected ? '#fff' : '#888';
+          selectBtn.style.border = '1px solid ' + (selected ? '#222' : '#ddd');
+        }
+        if (chooseBtn) {
+          chooseBtn.textContent = selected ? '選択中' : '選択する';
+          chooseBtn.style.background = selected ? '#f0f0ec' : 'none';
+          chooseBtn.style.color = selected ? '#444' : '#aaa';
+          chooseBtn.style.border = '1px solid ' + (selected ? '#444' : '#ddd');
+        }
+        card.style.border = '1px solid ' + (selected ? '#444' : '#f0f0ec');
+      }
+      if (selectBtn) {
+        selectBtn.addEventListener('click', function() {
+          const wasSel = _depthSelectedFragments.includes(f.id);
+          toggleDepthFragment(f.id);
+          updateFragBtns(!wasSel);
+        });
+      }
+      if (chooseBtn) {
+        chooseBtn.addEventListener('click', function() {
+          const wasSel = _depthSelectedFragments.includes(f.id);
+          toggleDepthFragment(f.id);
+          updateFragBtns(!wasSel);
+        });
+      }
 
       container.appendChild(card);
     });
