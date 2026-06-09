@@ -490,9 +490,9 @@
         </div>
       </div>
 
-      <!-- タップで次へ -->
+      <!-- 進む -->
       <div id="title-tap-next" style="display:none;position:absolute;bottom:60px;left:0;right:0;text-align:center;pointer-events:none;">
-        <div style="display:inline-block;border:1.5px solid var(--lime,#00712B);border-radius:40px;padding:10px 32px;font-size:12px;letter-spacing:0.28em;color:var(--lime,#00712B);">タップで次へ</div>
+        <div style="display:inline-block;border:1.5px solid var(--lime,#00712B);border-radius:40px;padding:10px 32px;font-size:12px;letter-spacing:0.28em;color:var(--lime,#00712B);">進む</div>
       </div>
     </div>
   </div>
@@ -587,7 +587,7 @@
         <span class="chara-svg" data-w="103" data-h="103"></span>
       </div>
       <div style="text-align:center; margin-top:20px; padding-bottom:24px;">
-        <div style="display:inline-block;border:1.5px solid var(--lime,#00712B);border-radius:40px;padding:10px 40px;font-size:12px;letter-spacing:0.28em;color:var(--lime,#00712B);font-weight:500;pointer-events:none;white-space:nowrap;">タップで次へ</div>
+        <div style="display:inline-block;border:1.5px solid var(--lime,#00712B);border-radius:40px;padding:10px 40px;font-size:12px;letter-spacing:0.28em;color:var(--lime,#00712B);font-weight:500;pointer-events:none;white-space:nowrap;">進む</div>
       </div>
     </div>
   </div>
@@ -681,14 +681,14 @@
         placeholder="気になってること…"
         oninput="checkQuestionInput()"
         style="width:100%;background:#f2f2f2;border:none;border-radius:12px;padding:16px;font-family:inherit;font-size:16px;letter-spacing:0.1em;color:#333;resize:none;outline:none;line-height:1.6;caret-color:var(--green);margin-bottom:16px;"></textarea>
-      <button class="btn-next" id="question-next-btn" disabled onclick="goTo('screen-noise')">次へ</button>
+      <button class="btn-next" id="question-next-btn" disabled onclick="goTo('screen-noise')">進む</button>
     </div>
   </div>
 
   <!-- ====== SCREEN: ノイズセリフ ====== -->
   <div class="screen tap-screen" id="screen-noise">
     <div class="card" style="position:relative; min-height:320px;" onclick="goTo('screen-pad')">
-      <div class="tap-hint">タップで次へ</div>
+      <div class="tap-hint">進む</div>
       <svg width="80" height="80" style="position:absolute;top:0;right:0;" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
         <rect x="0" y="0" width="80" height="40" class="gc"/>
         <polygon points="80,0 80,80 0,80" class="gc"/>
@@ -742,7 +742,7 @@
       <!-- 選択中ラベル -->
       <div id="pad-label" style="text-align:center;font-size:11px;letter-spacing:0.2em;color:#888;margin-bottom:20px;font-weight:400;min-height:18px;"></div>
 
-      <button class="btn-next" id="pad-next-btn" onclick="goTo('screen-detail')">次へ</button>
+      <button class="btn-next" id="pad-next-btn" onclick="goTo('screen-detail')">進む</button>
     </div>
   </div>
 
@@ -764,7 +764,7 @@
         placeholder="もう少し…"
         oninput="checkDetailInput()"
         style="width:100%;background:#f2f2f2;border:none;border-radius:12px;padding:16px;font-family:inherit;font-size:16px;letter-spacing:0.1em;color:#333;resize:none;outline:none;line-height:1.6;caret-color:var(--green);margin-bottom:16px;"></textarea>
-      <button class="btn-next" id="detail-next-btn" disabled onclick="submitDetail()">次へ</button>
+      <button class="btn-next" id="detail-next-btn" disabled onclick="submitDetail()">進む</button>
     </div>
   </div>
 
@@ -848,7 +848,7 @@
         <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float2"></div>
       </div>
 
-      <button class="btn-next" id="gutai-next-btn" disabled onclick="showFirstResult('gutai')">次へ</button>
+      <button class="btn-next" id="gutai-next-btn" disabled onclick="showFirstResult('gutai')">進む</button>
 
       <!-- キャラからの問いかけ -->
       <div id="chara-question-card" style="display:none;margin-top:16px;" onclick="event.stopPropagation()">
@@ -920,7 +920,7 @@
         <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float2"></div>
       </div>
 
-      <button class="btn-next" id="oboroke-next-btn" disabled onclick="showFirstResult('oboroke')">次へ</button>
+      <button class="btn-next" id="oboroke-next-btn" disabled onclick="showFirstResult('oboroke')">進む</button>
     </div>
   </div>
 
@@ -928,7 +928,7 @@
   <div class="screen" id="screen-dialogue">
     <div class="card" style="position:relative; min-height:320px; padding:28px 24px 32px;">
       <div id="dialogue-lines" style="margin-bottom:32px;"></div>
-      <button class="btn-next" onclick="afterFirst(dialogueType)">次へ</button>
+      <button class="btn-next" onclick="afterFirst(dialogueType)">進む</button>
     </div>
   </div>
 
@@ -942,7 +942,7 @@
         <span class="chara-svg" data-w="90" data-h="108"></span>
       </div>
       <div id="reaction-badge" class="result-badge-lime" style="font-size:17px;min-height:56px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;"></div>
-      <div onclick="afterReaction()" style="text-align:right;padding:8px 0;font-size:11px;letter-spacing:0.18em;color:#aaa;cursor:pointer;">タップで次へ</div>
+      <div onclick="afterReaction()" style="text-align:right;padding:8px 0;font-size:11px;letter-spacing:0.18em;color:#aaa;cursor:pointer;">進む</div>
     </div>
   </div>
 
@@ -994,7 +994,7 @@
         <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float"></div>
         <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float2"></div>
       </div>
-      <button class="btn-next" id="oboroke2-next-btn" disabled onclick="showCombined()">次へ</button>
+      <button class="btn-next" id="oboroke2-next-btn" disabled onclick="showCombined()">進む</button>
     </div>
   </div>
 
@@ -1030,14 +1030,14 @@
         <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float"></div>
         <div style="width:13px;height:13px;background:#8C6239;border-radius:50%;" class="float2"></div>
       </div>
-      <button class="btn-next" id="gutai2-next-btn" disabled onclick="showCombined()">次へ</button>
+      <button class="btn-next" id="gutai2-next-btn" disabled onclick="showCombined()">進む</button>
     </div>
   </div>
 
   <!-- ====== SCREEN 7: COMBINED ====== -->
   <div class="screen tap-screen" id="screen-combined">
     <div class="card" style="position:relative; min-height:300px;" onclick="goTo('screen-kokoni')">
-      <div class="tap-hint">タップで次へ</div>
+      <div class="tap-hint">進む</div>
       <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
         <span class="chara-svg" data-w="66" data-h="79"></span>
         <div style="font-size:13px;letter-spacing:3px;color:#333; font-weight:700;" data-serif="serif-combined">ち ょ っ と 並 べ た</div>
@@ -1052,7 +1052,7 @@
   <!-- ====== SCREEN 8: ここに何かあるかもね ====== -->
   <div class="screen tap-screen" id="screen-kokoni">
     <div class="card" style="position:relative; min-height:300px;" onclick="goTo('screen-tamatta')">
-      <div class="tap-hint">タップで次へ</div>
+      <div class="tap-hint">進む</div>
       <div id="kokoni-oboroke" class="result-badge-gray" style="font-size:17px;min-height:56px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;"></div>
       <div style="border:2px dashed #ccc;border-radius:10px;padding:16px;text-align:center;margin-bottom:12px;min-height:52px;display:flex;align-items:center;justify-content:center;">
         <span style="font-size:22px;color:#ccc;">？</span>
@@ -1079,9 +1079,9 @@
       <div style="height:1px;background:#A0845A;flex-shrink:0;position:relative;z-index:2;"></div>
       <!-- 地層エリア（木くず地面） -->
       <div id="tamatta-strata" style="position:relative;height:38%;flex-shrink:0;background:var(--forest-soil,#B8956A);overflow:hidden;"></div>
-      <!-- タップで次へ -->
+      <!-- 進む -->
       <div onclick="onTamattaTap()" style="text-align:center;padding:16px;flex-shrink:0;cursor:pointer;background:var(--forest-soil,#A07848);">
-        <div style="display:inline-block;border:1.5px solid rgba(255,255,255,0.7);border-radius:40px;padding:10px 40px;font-size:12px;letter-spacing:0.28em;color:#fff;font-weight:500;">タップで次へ</div>
+        <div style="display:inline-block;border:1.5px solid rgba(255,255,255,0.7);border-radius:40px;padding:10px 40px;font-size:12px;letter-spacing:0.28em;color:#fff;font-weight:500;">進む</div>
       </div>
     </div>
   </div>
@@ -1100,8 +1100,8 @@
       <div style="height:1px;background:#A0845A;flex-shrink:0;position:relative;z-index:2;"></div>
       <!-- 地層エリア -->
       <div id="tree-intro-strata" style="position:relative;height:38%;flex-shrink:0;background:#B8956A;overflow:hidden;"></div>
-      <!-- タップで次へ -->
-      <div onclick="treeIntroNext()" style="text-align:center;padding:10px;color:#ffffff;font-size:13px;letter-spacing:0.2em;flex-shrink:0;font-weight:700;cursor:pointer;background:#A07848;">タップで次へ</div>
+      <!-- 進む -->
+      <div onclick="treeIntroNext()" style="text-align:center;padding:10px;color:#ffffff;font-size:13px;letter-spacing:0.2em;flex-shrink:0;font-weight:700;cursor:pointer;background:#A07848;">進む</div>
     </div>
   </div>
 
@@ -1113,7 +1113,7 @@
         flex-shrink:0;text-align:center;padding:14px;
         color:#fff;font-size:13px;letter-spacing:0.2em;
         font-weight:700;cursor:pointer;background:#A07848;
-      ">タップで次へ</div>
+      ">進む</div>
     </div>
   </div>
 
@@ -1149,6 +1149,21 @@
         ">他のキャラと話す</button>
       </div>
 
+    </div>
+  </div>
+
+  <!-- ====== SCREEN: 問いへの橋渡し ====== -->
+  <div class="screen tap-screen" id="screen-depth-bridge" style="background:#fff;" onclick="goTo('screen-depth-edit')">
+    <div class="card" style="position:relative;min-height:320px;">
+      <svg width="80" height="80" style="position:absolute;top:0;right:0;" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="80" height="40" class="gc"/>
+        <polygon points="80,0 80,80 0,80" class="gc"/>
+      </svg>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:20px;margin-top:52px;padding:0 16px 60px;">
+        <span id="depth-bridge-chara" class="chara-svg" data-w="88" data-h="88"></span>
+        <div id="depth-bridge-serif" style="font-size:13px;letter-spacing:0.2em;color:#333;font-weight:700;line-height:2.4;text-align:center;"></div>
+      </div>
+      <div class="tap-hint">進む</div>
     </div>
   </div>
 
@@ -1293,7 +1308,7 @@
           background:none;font-family:inherit;
           font-size:11px;letter-spacing:0.22em;color:#333;cursor:pointer;
         ">問いをつくってみる →</button>
-        <div onclick="goTo('screen-end')" style="text-align:center;padding:10px 12px 14px;color:#aaa;font-size:10px;letter-spacing:0.22em;cursor:pointer;">つ ぎ へ</div>
+        <div onclick="goTo('screen-end')" style="text-align:center;padding:10px 12px 14px;color:#aaa;font-size:10px;letter-spacing:0.22em;cursor:pointer;">進む</div>
       </div>
 
     </div>
@@ -1551,165 +1566,163 @@
     </div>
   </div>
 
-  <!-- ====== SCREEN: 深み編集（ステップ式） ====== -->
+  <!-- ====== SCREEN: 問いフロー1 気になること選択 ====== -->
   <div class="screen" id="screen-depth-edit" style="background:#fff;justify-content:flex-start;align-items:stretch;">
     <div style="width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;">
-
-      <!-- ヘッダー -->
-      <div style="padding:18px 20px 14px;flex-shrink:0;border-bottom:1px solid #e8e8e4;background:#fff;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-          <div style="display:flex;align-items:center;gap:6px;flex:1;">
-            <div id="step-dot-1" style="width:7px;height:7px;border-radius:50%;background:#222;transition:all 0.3s;"></div>
-            <div style="flex:1;height:1px;background:#ddd;"></div>
-            <div id="step-dot-2" style="width:7px;height:7px;border-radius:50%;background:#ccc;transition:all 0.3s;"></div>
-            <div style="flex:1;height:1px;background:#ddd;"></div>
-            <div id="step-dot-3" style="width:7px;height:7px;border-radius:50%;background:#ccc;transition:all 0.3s;"></div>
-          </div>
-          <button id="step-save-btn" onclick="saveDepthEntry()" style="
-            display:none;padding:8px 16px;border:none;border-radius:20px;
-            background:#222;color:#f8f8f6;
-            font-family:inherit;font-size:9px;letter-spacing:0.2em;cursor:pointer;
-          ">ことばを置く</button>
-        </div>
-        <div>
-          <div id="step-label" style="font-size:8px;letter-spacing:0.28em;color:#bbb;margin-bottom:2px;">STEP 1 / 3</div>
-          <div id="step-title" style="font-size:16px;font-weight:600;letter-spacing:0.04em;color:#222;">気になることを選ぶ</div>
-        </div>
-      </div>
-
-      <!-- 全STEP共通: キャラ固定エリア（スクロール外） -->
-      <div id="step-sticky-chara" style="flex-shrink:0;padding:12px 20px 10px;background:#fff;border-bottom:1px solid #f0f0ec;">
+      <!-- キャラ固定 -->
+      <div style="flex-shrink:0;padding:20px 20px 14px;background:#fff;border-bottom:1px solid #f0f0ec;">
         <div style="display:flex;align-items:flex-start;gap:10px;">
-          <span id="step-chara-icon" class="chara-svg" data-w="40" data-h="40" style="flex-shrink:0;margin-top:2px;"></span>
-          <div id="step-chara-serif" style="background:#f4f2ed;border-radius:4px 14px 14px 14px;padding:10px 14px;font-size:12px;letter-spacing:0.04em;color:#555;line-height:1.8;flex:1;"></div>
+          <span id="ds1-chara" class="chara-svg" data-w="48" data-h="48" style="flex-shrink:0;margin-top:2px;"></span>
+          <div id="ds1-serif" style="background:#f4f2ed;border-radius:4px 14px 14px 14px;padding:12px 14px;font-size:13px;letter-spacing:0.04em;color:#555;line-height:1.8;flex:1;"></div>
         </div>
       </div>
+      <!-- リスト -->
+      <div style="flex:1;overflow-y:auto;padding:20px;">
+        <div id="depth-source-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+      <!-- フッター -->
+      <div style="flex-shrink:0;border-top:1px solid #e8e8e4;background:#fff;display:flex;align-items:center;">
+        <div onclick="goTo('screen-depth-list')" style="padding:16px 20px;font-size:10px;letter-spacing:0.2em;color:#aaa;cursor:pointer;">← 戻る</div>
+        <div style="flex:1;"></div>
+        <div onclick="depthSource_next()" style="padding:16px 20px;font-size:10px;letter-spacing:0.2em;color:#333;cursor:pointer;font-weight:500;">進む →</div>
+      </div>
+    </div>
+  </div>
 
-      <!-- ステップ本文 -->
-      <div style="flex:1;overflow-y:auto;">
+  <!-- ====== SCREEN: 問いフロー2 キャラ反応（気になること） ====== -->
+  <div class="screen tap-screen" id="screen-depth-source-reaction" style="background:#fff;" onclick="goTo('screen-depth-concept')">
+    <div class="card" style="position:relative;min-height:320px;">
+      <svg width="80" height="80" style="position:absolute;top:0;right:0;" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="80" height="40" class="gc"/>
+        <polygon points="80,0 80,80 0,80" class="gc"/>
+      </svg>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:20px;margin-top:52px;padding:0 16px 60px;">
+        <span id="dsr-chara" class="chara-svg" data-w="88" data-h="88"></span>
+        <div id="dsr-serif" style="font-size:13px;letter-spacing:0.2em;color:#333;font-weight:700;line-height:2.4;text-align:center;"></div>
+      </div>
+      <div class="tap-hint">進む</div>
+    </div>
+  </div>
 
-        <!-- STEP 1: 気になることを選ぶ -->
-        <div id="depth-step-1" style="padding:20px;">
-          <div id="depth-source-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+  <!-- ====== SCREEN: 問いフロー3 概念・アート選択 ====== -->
+  <div class="screen" id="screen-depth-concept" style="background:#fff;justify-content:flex-start;align-items:stretch;">
+    <div style="width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;">
+      <!-- キャラ固定 -->
+      <div style="flex-shrink:0;padding:20px 20px 14px;background:#fff;border-bottom:1px solid #f0f0ec;">
+        <div style="display:flex;align-items:flex-start;gap:10px;">
+          <span id="ds2-chara" class="chara-svg" data-w="48" data-h="48" style="flex-shrink:0;margin-top:2px;"></span>
+          <div id="ds2-serif" style="background:#f4f2ed;border-radius:4px 14px 14px 14px;padding:12px 14px;font-size:13px;letter-spacing:0.04em;color:#555;line-height:1.8;flex:1;"></div>
         </div>
-
-        <!-- STEP 2: 概念を選ぶ -->
-        <div id="depth-step-2" style="display:none;padding:16px 20px 20px;">
-          <!-- タブ -->
+      </div>
+      <!-- タブ+リスト -->
+      <div style="flex:1;overflow-y:auto;">
+        <div style="padding:16px 20px 4px;">
           <div style="display:flex;border-bottom:1px solid #ddd;margin-bottom:16px;">
             <button id="tab-btn-concepts" onclick="switchDepthTab('concepts')" style="flex:1;padding:10px 4px;border:none;background:none;font-family:inherit;font-size:9px;letter-spacing:0.2em;color:#222;cursor:pointer;border-bottom:2px solid #222;">概念・アート</button>
             <button id="tab-btn-forest" onclick="switchDepthTab('forest')" style="flex:1;padding:10px 4px;border:none;background:none;font-family:inherit;font-size:9px;letter-spacing:0.2em;color:#aaa;cursor:pointer;border-bottom:2px solid transparent;">森で拾った</button>
           </div>
           <div id="tab-panel-concepts"><div id="depth-concepts-list" style="display:flex;flex-direction:column;gap:8px;"></div></div>
           <div id="tab-panel-forest" style="display:none;"><div id="depth-forest-picks-list" style="display:flex;flex-direction:column;gap:8px;"></div></div>
-
-          <!-- マジマジの一言 -->
-          <div id="step2-majimaji-note" style="margin-top:16px;padding:14px 16px;text-align:center;">
-            <div style="font-size:11px;letter-spacing:0.06em;color:#bbb;line-height:2.0;" id="step2-majimaji-text"></div>
+          <div id="step2-majimaji-note" style="margin-top:16px;padding:8px 0;text-align:center;">
+            <div id="step2-majimaji-text" style="font-size:11px;letter-spacing:0.06em;color:#bbb;line-height:2.0;"></div>
           </div>
         </div>
-
-        <!-- STEP 3: 問いと概念を作る -->
-        <div id="depth-step-3" style="display:none;padding:20px;">
-
-          <div id="step3-source-summary" style="
-            background:#fff;border-radius:16px;padding:14px 16px;margin-bottom:16px;
-            font-size:11px;letter-spacing:0.06em;color:#888;line-height:1.8;
-          "></div>
-
-          <!-- 選択した概念 -->
-          <div id="step3-concepts-summary" style="margin-bottom:12px;display:none;">
-            <div style="font-size:8px;letter-spacing:0.28em;color:#bbb;margin-bottom:8px;">選択した概念</div>
-            <div id="step3-concepts-tags" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
-          </div>
-
-          <!-- 問い -->
-          <div style="background:#fff;border-radius:16px;padding:16px;margin-bottom:8px;">
-            <div style="font-size:8px;letter-spacing:0.28em;color:#bbb;margin-bottom:8px;">問い</div>
-            <textarea id="depth-question" placeholder="この気になることから、どんな問いが生まれる？" style="
-              width:100%;min-height:80px;border:none;background:transparent;
-              font-family:inherit;font-size:13px;letter-spacing:0.06em;
-              line-height:2.0;color:#222;resize:none;outline:none;padding:0;
-              box-sizing:border-box;
-            " oninput="onQuestionInput()"></textarea>
-          </div>
-
-          <!-- メモ -->
-          <div style="background:#fff;border-radius:16px;padding:16px;margin-bottom:16px;">
-            <div style="font-size:8px;letter-spacing:0.28em;color:#bbb;margin-bottom:8px;">メモ</div>
-            <textarea id="depth-memo" placeholder="気づいたこと、つながったこと、何でも。" style="
-              width:100%;min-height:64px;border:none;background:transparent;
-              font-family:inherit;font-size:12px;letter-spacing:0.04em;
-              line-height:2.0;color:#444;resize:none;outline:none;padding:0;
-              box-sizing:border-box;
-            "></textarea>
-          </div>
-
-          <!-- ShakeCard -->
-          <div style="margin-bottom:16px;">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-              <div style="font-size:8px;letter-spacing:0.28em;color:#bbb;">SHAKE</div>
-              <button onclick="triggerShakeCard()" style="padding:5px 12px;border:1px solid #ccc;border-radius:20px;background:none;font-family:inherit;font-size:8px;letter-spacing:0.18em;color:#888;cursor:pointer;">揺さぶる</button>
-            </div>
-            <div id="shake-card-area"></div>
-          </div>
-
-          <!-- 削除 -->
-          <div id="depth-delete-area" style="display:none;">
-            <button onclick="deleteCurrentDepthEntry()" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:20px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.18em;color:#ccc;cursor:pointer;">このエントリを削除する</button>
-          </div>
-
-          <!-- 文章の書き出しを作る -->
-          <div style="margin-top:16px;margin-bottom:16px;">
-            <button onclick="generateWritingStarter()" id="writing-starter-btn" style="
-              width:100%;padding:12px;border:1px solid #ddd;border-radius:20px;
-              background:none;font-family:inherit;font-size:10px;letter-spacing:0.18em;
-              color:#888;cursor:pointer;
-            ">文章の書き出しを作る</button>
-            <div id="writing-starter-output" style="display:none;margin-top:12px;background:#f9f8f5;border-radius:16px;padding:16px;">
-              <div style="font-size:8px;letter-spacing:0.24em;color:#bbb;margin-bottom:10px;">書き出し</div>
-              <div id="writing-starter-text" style="font-size:13px;letter-spacing:0.05em;color:#222;line-height:2.0;"></div>
-              <button onclick="copyWritingStarter()" style="
-                margin-top:12px;padding:7px 16px;border:1px solid #ddd;border-radius:20px;
-                background:none;font-family:inherit;font-size:9px;letter-spacing:0.16em;
-                color:#aaa;cursor:pointer;
-              ">コピーする</button>
-            </div>
-          </div>
-
-          <!-- 構造を見る -->
-          <div style="margin-top:0;margin-bottom:24px;">
-            <button onclick="showInquiryCard()" id="inquiry-card-btn" style="
-              width:100%;padding:12px;border:1px solid #ddd;border-radius:20px;
-              background:none;font-family:inherit;font-size:10px;letter-spacing:0.18em;
-              color:#888;cursor:pointer;
-            ">構造の気配を見る</button>
-            <div id="inquiry-card-output" style="display:none;margin-top:12px;"></div>
-          </div>
-
-          <!-- 螺旋の記録 -->
-          <div id="spiral-log-section" style="display:none;margin-bottom:24px;">
-            <div style="font-size:8px;letter-spacing:0.28em;color:#bbb;margin-bottom:6px;">螺旋の記録</div>
-            <div style="font-size:10px;letter-spacing:0.08em;color:#ccc;margin-bottom:12px;">この問いと過ごして、少し見え方は変わった？</div>
-            <div id="spiral-log-list" style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px;"></div>
-            <button onclick="openSpiralLogForm()" style="
-              width:100%;padding:11px;border:1px solid #ddd;border-radius:20px;
-              background:none;font-family:inherit;font-size:10px;letter-spacing:0.18em;
-              color:#888;cursor:pointer;
-            ">つづきを書く</button>
-          </div>
-
-        </div>
-
       </div>
-
-      <!-- フッターナビ -->
-      <div style="flex-shrink:0;border-top:1px solid #e8e8e4;background:#fff;display:flex;align-items:center;position:relative;z-index:10;">
-        <div id="step-back-area" onclick="depthStepBack()" style="padding:16px 20px;font-size:10px;letter-spacing:0.2em;color:#333;cursor:pointer;">← 戻る</div>
+      <!-- フッター -->
+      <div style="flex-shrink:0;border-top:1px solid #e8e8e4;background:#fff;display:flex;align-items:center;">
+        <div onclick="goTo('screen-depth-edit')" style="padding:16px 20px;font-size:10px;letter-spacing:0.2em;color:#aaa;cursor:pointer;">← 戻る</div>
         <div style="flex:1;"></div>
-        <div id="step-next-area" onclick="depthStepNext()" style="padding:16px 20px;font-size:10px;letter-spacing:0.2em;color:#333;cursor:pointer;font-weight:500;">次へ →</div>
+        <div onclick="depthConcept_next()" style="padding:16px 20px;font-size:10px;letter-spacing:0.2em;color:#333;cursor:pointer;font-weight:500;">進む →</div>
       </div>
+    </div>
+  </div>
 
+  <!-- ====== SCREEN: 問いフロー4 キャラ反応（概念） ====== -->
+  <div class="screen tap-screen" id="screen-depth-concept-reaction" style="background:#fff;" onclick="goTo('screen-depth-question')">
+    <div class="card" style="position:relative;min-height:320px;">
+      <svg width="80" height="80" style="position:absolute;top:0;right:0;" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="80" height="40" class="gc"/>
+        <polygon points="80,0 80,80 0,80" class="gc"/>
+      </svg>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:20px;margin-top:52px;padding:0 16px 60px;">
+        <span id="dcr-chara" class="chara-svg" data-w="88" data-h="88"></span>
+        <div id="dcr-serif" style="font-size:13px;letter-spacing:0.2em;color:#333;font-weight:700;line-height:2.4;text-align:center;"></div>
+      </div>
+      <div class="tap-hint">進む</div>
+    </div>
+  </div>
+
+  <!-- ====== SCREEN: 問いフロー5 問いをつくってみる ====== -->
+  <div class="screen" id="screen-depth-question" style="background:#fff;justify-content:flex-start;align-items:stretch;">
+    <div style="width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;">
+      <!-- キャラ固定 -->
+      <div style="flex-shrink:0;padding:20px 20px 14px;background:#fff;border-bottom:1px solid #f0f0ec;">
+        <div style="display:flex;align-items:flex-start;gap:10px;">
+          <span id="ds3-chara" class="chara-svg" data-w="48" data-h="48" style="flex-shrink:0;margin-top:2px;"></span>
+          <div id="ds3-serif" style="background:#f4f2ed;border-radius:4px 14px 14px 14px;padding:12px 14px;font-size:13px;letter-spacing:0.04em;color:#555;line-height:1.8;flex:1;"></div>
+        </div>
+      </div>
+      <!-- 問い入力 -->
+      <div style="flex:1;overflow-y:auto;padding:20px;">
+        <!-- 選んだ気になること -->
+        <div id="step3-source-summary" style="margin-bottom:12px;display:none;">
+          <div style="font-size:8px;letter-spacing:0.24em;color:#bbb;margin-bottom:8px;">気になること</div>
+          <div id="step3-source-tags" style="display:flex;flex-wrap:wrap;gap:4px;"></div>
+        </div>
+        <!-- 選択した概念タグ -->
+        <div id="step3-concepts-summary" style="margin-bottom:16px;display:none;">
+          <div style="font-size:8px;letter-spacing:0.24em;color:#bbb;margin-bottom:8px;">選んだ概念</div>
+          <div id="step3-concepts-tags" style="display:flex;flex-wrap:wrap;gap:4px;"></div>
+        </div>
+        <!-- 問い -->
+        <div style="background:#f8f8f6;border-radius:16px;padding:16px;margin-bottom:12px;">
+          <textarea id="depth-question" placeholder="どんな問いが生まれそう？" style="
+            width:100%;min-height:80px;border:none;background:transparent;
+            font-family:inherit;font-size:14px;letter-spacing:0.06em;
+            line-height:2.0;color:#222;resize:none;outline:none;padding:0;
+            box-sizing:border-box;caret-color:var(--green);
+          " oninput="onQuestionInput()"></textarea>
+        </div>
+        <!-- メモ -->
+        <div style="background:#f8f8f6;border-radius:16px;padding:16px;margin-bottom:12px;">
+          <div style="font-size:8px;letter-spacing:0.28em;color:#bbb;margin-bottom:8px;">メモ</div>
+          <textarea id="depth-memo" placeholder="気づいたこと、つながったこと、何でも。" style="
+            width:100%;min-height:56px;border:none;background:transparent;
+            font-family:inherit;font-size:12px;letter-spacing:0.04em;
+            line-height:2.0;color:#444;resize:none;outline:none;padding:0;
+            box-sizing:border-box;
+          "></textarea>
+        </div>
+        <!-- ShakeCard -->
+        <div style="margin-bottom:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <div style="font-size:8px;letter-spacing:0.24em;color:#ccc;">SHAKE</div>
+            <button onclick="triggerShakeCard()" style="padding:4px 12px;border:1px solid #ddd;border-radius:20px;background:none;font-family:inherit;font-size:8px;letter-spacing:0.18em;color:#aaa;cursor:pointer;">揺さぶる</button>
+          </div>
+          <div id="shake-card-area"></div>
+        </div>
+        <!-- 削除 -->
+        <div id="depth-delete-area" style="display:none;margin-bottom:12px;">
+          <button onclick="deleteCurrentDepthEntry()" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:20px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.18em;color:#ccc;cursor:pointer;">このエントリを削除する</button>
+        </div>
+        <!-- 構造を見る -->
+        <div style="margin-bottom:16px;">
+          <button onclick="showInquiryCard()" id="inquiry-card-btn" style="width:100%;padding:12px;border:1px solid #e8e8e4;border-radius:20px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.18em;color:#aaa;cursor:pointer;">構造の気配を見る</button>
+          <div id="inquiry-card-output" style="display:none;margin-top:12px;"></div>
+        </div>
+        <!-- 螺旋の記録 -->
+        <div id="spiral-log-section" style="display:none;margin-bottom:24px;">
+          <div style="font-size:8px;letter-spacing:0.28em;color:#bbb;margin-bottom:6px;">螺旋の記録</div>
+          <div id="spiral-log-list" style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px;"></div>
+          <button onclick="openSpiralLogForm()" style="width:100%;padding:11px;border:1px solid #ddd;border-radius:20px;background:none;font-family:inherit;font-size:10px;letter-spacing:0.18em;color:#888;cursor:pointer;">つづきを書く</button>
+        </div>
+      </div>
+      <!-- フッター：ことばを置く -->
+      <div style="flex-shrink:0;border-top:1px solid #e8e8e4;background:#fff;display:flex;align-items:center;">
+        <div onclick="goTo('screen-depth-concept')" style="padding:16px 20px;font-size:10px;letter-spacing:0.2em;color:#aaa;cursor:pointer;">← 戻る</div>
+        <div style="flex:1;"></div>
+        <div onclick="saveDepthEntry()" id="depth-save-btn" style="padding:14px 20px;font-size:10px;letter-spacing:0.2em;color:#fff;background:#222;border-radius:20px;margin:8px 16px 8px 0;cursor:pointer;font-weight:500;">ことばを置く</div>
+      </div>
     </div>
   </div>
 
@@ -2806,7 +2819,7 @@
       } else {
         if (Math.random() < 0.5) setTimeout(() => startCharaDialogue(), 800);
       }
-      // 会話後にタイトルへ戻ってきた場合、タップで次へを表示
+      // 会話後にタイトルへ戻ってきた場合、進むを表示
       const tapNext = document.getElementById('title-tap-next');
       if (tapNext) {
         if (localStorage.getItem('marginary_chat_done') === '1') {
@@ -5307,9 +5320,15 @@
     const srcSection = document.getElementById('detail-source-section');
     const srcList    = document.getElementById('detail-source-list');
     if (srcSection && srcList) {
-      const text = entry.sourceText || '';
-      if (text) {
-        srcList.innerHTML = '<span style="display:inline-block;background:#f0f0ec;border-radius:20px;padding:4px 12px;font-size:10px;letter-spacing:0.06em;color:#666;margin:2px;">'+text+'</span>';
+      const allFrags = getFragments();
+      const ids = Array.isArray(entry.sourceEntryIds) ? entry.sourceEntryIds : (entry.sourceEntryId ? [entry.sourceEntryId] : []);
+      const texts = ids.map(id => (allFrags.find(f => f.id === id) || {}).text || '').filter(Boolean);
+      // sourceTextも念のち追加（重複除去）
+      if (entry.sourceText && !texts.includes(entry.sourceText)) texts.push(entry.sourceText);
+      if (texts.length > 0) {
+        srcList.innerHTML = texts.map(t =>
+          '<span style="display:inline-block;background:#f0f0ec;border-radius:20px;padding:4px 12px;font-size:10px;letter-spacing:0.06em;color:#666;margin:2px;">'+t+'</span>'
+        ).join('');
         srcSection.style.display = 'block';
       } else { srcSection.style.display = 'none'; }
     }
@@ -6074,11 +6093,26 @@
   }
 
   function goToDepthFromTamatta() {
-    goTo('screen-depth-list');
-    setTimeout(function() {
-      goTo('screen-depth-edit');
-      setTimeout(function() { goToDepthStep(1); }, 80);
-    }, 80);
+    // キャラのセリフを設定してから橋渡し画面へ
+    const BRIDGE_SERIFS = {
+      majimaji: 'じゃあ、気になることを\nひとつ選んでみてさ。',
+      concrete:  'では、気になることを\n選んでみましょうか。',
+      kasa:      '気になることを\n選んでほしいムッシュ。',
+      yurayura:  'じゃあ気になることを\n選んでみるンゴ。',
+      namake:    'のんびり気になることを\n選んでみてよん。',
+      sun:       'よし、気になることを\n選べ！',
+    };
+    const icon  = document.getElementById('depth-bridge-chara');
+    const serif = document.getElementById('depth-bridge-serif');
+    if (icon)  { icon.dataset.chara = currentChara; updateAllCharaSVG(currentChara); }
+    if (serif) serif.textContent = BRIDGE_SERIFS[currentChara] || BRIDGE_SERIFS.majimaji;
+    // state リセット
+    currentDepthId = null;
+    _depthSelectedSourceIds = []; _depthSelectedSourceText = '';
+    _depthSelectedConcepts = []; _depthSelectedFragments = [];
+    const q = document.getElementById('depth-question'); if (q) q.value = '';
+    const m = document.getElementById('depth-memo'); if (m) m.value = '';
+    goTo('screen-depth-bridge');
   }
 
   function onTamattaTap() {
@@ -7686,7 +7720,7 @@
     setTimeout(() => { scene.style.opacity = '1'; }, 100);
     setTimeout(() => {
       bubbleB.style.display = 'block';
-      // タップで次へを表示
+      // 進むを表示
       const tapNext = document.getElementById('title-tap-next');
       if (tapNext) tapNext.style.display = 'block';
     }, 2000);
@@ -8476,193 +8510,183 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
 
   // ================================================================
 
-  const STEP_CONFIG = {
-    1: { label: 'STEP 1 / 3', title: '気になることを選ぶ',   back: null,  next: 2 },
-    2: { label: 'STEP 2 / 3', title: '気になる見方を選ぶ',     back: 1,     next: 3 },
-    3: { label: 'STEP 3 / 3', title: '問いをつくる',   back: 2,     next: null },
+  // ====== 新フロー：問い作成スクリーン群 ======
+
+  const DEPTH_SERIFS = {
+    s1: {
+      majimaji: '最近、どんな気になることがあったさ？ひとつ選んでみてよ。',
+      concrete: 'どの気になることを掘り下げてみる？ゆっくり選んでいいわ。',
+      kasa:     '気になることを選んでほしいムッシュ。どれが引っかかってるムッシュ？',
+      yurayura: 'どの気になること、気になるンゴ？直感でいいンゴ。',
+      namake:   'のんびりどれか選んでみてよん。引っかかってるやつでいいよん。',
+      sun:      '気になることを選べ！どれが一番引っかかってるんだ？',
+    },
+    sr: { // source reaction
+      majimaji: 'それ、選んだんだね。少し、そこに何があるか見てみようさ。',
+      concrete: 'これを選んだのね。何かひっかかるものがあるのかも。',
+      kasa:     'それを選んだムッシュ。何かが引っかかってるに違いないムッシュ。',
+      yurayura: 'それ選んだンゴ。なんかあるんゴ、きっと。',
+      namake:   'それを選んだのかあ。じっくりいこうよん。',
+      sun:      'それを選んだか！何かが動いてる感じがするぜ！',
+    },
+    s2: {
+      majimaji: 'なんか気になるもの、ある？別に選ばなくても大丈夫だよ。',
+      concrete: 'どれか気になるものがあれば選んでみて。別に選ばなくても大丈夫よ。',
+      kasa:     'なんか引っかかるものがあれば選べばいいムッシュ。別に選ばなくても大丈夫ムッシュ。',
+      yurayura: 'なんか気になるものがあれば選ぶンゴ。別に選ばなくても大丈夫ンゴ。',
+      namake:   'のんびり見てみてよん。別に選ばなくても大丈夫よん。',
+      sun:      '気になったやつがあれば選べ！別に選ばなくても大丈夫だぜ！',
+    },
+    cr: { // concept reaction
+      majimaji: 'ふーん、それが引っかかったんだね。そこから、問いが生まれそうさ。',
+      concrete: 'それを選んだのね。何か問いになりそうな気がするわ。',
+      kasa:     'それですかムッシュ。なるほどムッシュ。問いの形が見えてきましたムッシュ。',
+      yurayura: 'それかぁンゴ。じゃあ問いにしてみるンゴ。',
+      namake:   'それ選んだんだねえ。ゆっくり問いにしていこうよん。',
+      sun:      'そいつを選んだか！問いにしてやるぜ！',
+    },
+    s3: {
+      majimaji: 'この気になることから、どんな問いが生まれそう？自由に書いてみてさ。',
+      concrete: 'この気になることを問いにしてみて。うまくなくていいわよ。',
+      kasa:     '問いを書いてみてほしいムッシュ。うまくなくていいムッシュ。',
+      yurayura: '問いを書いてみるンゴ。なんでもいいンゴ。',
+      namake:   'のんびり問いを書いてみてよん。うまくなくていいよん。',
+      sun:      '問いを書け！うまくなくていいぜ！',
+    },
   };
 
+  function _depthSetChara(iconId, serifId, serifKey) {
+    const icon  = document.getElementById(iconId);
+    const serif = document.getElementById(serifId);
+    if (icon)  { icon.dataset.chara = currentChara; updateAllCharaSVG(currentChara); }
+    if (serif) serif.textContent = (DEPTH_SERIFS[serifKey] || {})[currentChara] || (DEPTH_SERIFS[serifKey] || {}).majimaji || '';
+  }
+
+  // STEP1相当: 気になること選択
+  function initDepthEditScreen() {
+    _depthSetChara('ds1-chara', 'ds1-serif', 's1');
+    renderDepthSourceList(_depthSelectedSourceIds);
+  }
+
+  // STEP1→反応へ
+  function depthSource_next() {
+    _depthSetChara('dsr-chara', 'dsr-serif', 'sr');
+    goTo('screen-depth-source-reaction');
+  }
+
+  // 反応→STEP2: 概念選択
+  // (onclick="goTo('screen-depth-concept')" はHTML側で直接指定)
+
+  // STEP2相当: 概念選択
+  function initDepthConceptScreen() {
+    _depthSetChara('ds2-chara', 'ds2-serif', 's2');
+    renderDepthConceptsList(_depthSelectedConcepts);
+    const noteEl = document.getElementById('step2-majimaji-text');
+    const NOTES = ['直感でいいよ。','わからないままでも、置いておけるよ。','名前がつくと、見えてくることもあるよ。','近いかどうかより、気になるかどうかでいいよ。'];
+    if (noteEl && !noteEl.textContent) noteEl.textContent = NOTES[Math.floor(Math.random() * NOTES.length)];
+  }
+
+  // STEP2→反応へ
+  function depthConcept_next() {
+    _depthSetChara('dcr-chara', 'dcr-serif', 'cr');
+    goTo('screen-depth-concept-reaction');
+  }
+
+  // 反応→STEP3: 問い入力
+  // (onclick="goTo('screen-depth-question')" はHTML側で直接指定)
+
+  // STEP3相当: 問い入力
+  function initDepthQuestionScreen() {
+    _depthSetChara('ds3-chara', 'ds3-serif', 's3');
+
+    // 選んだ気になることタグ表示
+    const srcSummaryEl = document.getElementById('step3-source-summary');
+    const srcTagsEl    = document.getElementById('step3-source-tags');
+    if (srcSummaryEl && srcTagsEl) {
+      const allFrags = getFragments();
+      const texts = _depthSelectedSourceIds
+        .map(id => (allFrags.find(f => f.id === id) || {}).text || '').filter(Boolean);
+      if (_depthSelectedSourceText && !texts.includes(_depthSelectedSourceText)) texts.push(_depthSelectedSourceText);
+      if (texts.length > 0) {
+        srcTagsEl.innerHTML = texts.map(t =>
+          '<span style="display:inline-block;background:#f0f0ec;border-radius:20px;padding:5px 12px;font-size:10px;letter-spacing:0.06em;color:#666;margin:2px;">'+t+'</span>'
+        ).join('');
+        srcSummaryEl.style.display = 'block';
+      } else { srcSummaryEl.style.display = 'none'; }
+    }
+    // 選択した概念タグ表示
+    const summaryEl = document.getElementById('step3-concepts-summary');
+    const tagsEl    = document.getElementById('step3-concepts-tags');
+    if (summaryEl && tagsEl) {
+      const allFrags   = typeof THOUGHT_FRAGMENTS !== 'undefined' ? THOUGHT_FRAGMENTS : [];
+      const artFrags   = typeof ART_FRAGMENTS !== 'undefined' ? ART_FRAGMENTS : [];
+      const sfList     = getSavedFragments();
+      const pool       = [].concat(allFrags, artFrags, sfList);
+
+      const resolveFragObj = (id) => {
+        // 生IDで直接検索
+        let f = pool.find(x => x.id === id);
+        if (f) return f;
+        // frag_ プレフィックスを取って検索
+        if (id.startsWith('frag_')) { f = pool.find(x => x.id === id.replace('frag_','')); if (f) return f; }
+        // art_ プレフィックスを取って検索
+        if (id.startsWith('art_')) { f = artFrags.find(x => x.id === id.replace('art_','')); if (f) return f; }
+        return null;
+      };
+
+      tagsEl.innerHTML = '';
+      const rendered = [];
+      _depthSelectedConcepts.forEach(id => {
+        const frag = resolveFragObj(id);
+        if (!frag || rendered.includes(frag.concept)) return;
+        rendered.push(frag.concept);
+        const tag = document.createElement('div');
+        tag.style.cssText = 'display:inline-flex;align-items:center;gap:6px;background:#f4f2ed;border-radius:20px;padding:7px 14px;cursor:pointer;margin:2px;';
+        tag.innerHTML =
+          '<span style="font-size:11px;font-weight:600;letter-spacing:0.04em;color:#444;">'+frag.concept+'</span>' +
+          (frag.author ? '<span style="font-size:9px;color:#aaa;">'+frag.author+'</span>' : '') +
+          '<span style="font-size:10px;color:#bbb;margin-left:2px;">›</span>';
+        tag.addEventListener('click', () => openConceptDefPopup({
+          concept: frag.concept, author: frag.author || '',
+          desc: frag.desc || '', themes: frag.themes || [], mood: frag.mood || []
+        }));
+        tagsEl.appendChild(tag);
+      });
+
+      if (rendered.length > 0) {
+        summaryEl.style.display = 'block';
+      } else {
+        summaryEl.style.display = 'none';
+      }
+    }
+    const delArea = document.getElementById('depth-delete-area');
+    if (delArea) delArea.style.display = currentDepthId ? 'block' : 'none';
+    if (currentDepthId) renderSpiralLog(currentDepthId);
+    _shakeQueue = []; _shakeIndex = 0;
+    setTimeout(triggerShakeCard, 400);
+  }
+
+  // 後方互換: goToDepthStep は screen-depth-edit を初期化して遷移
+  let _currentDepthStep = 1;
+  const STEP_CONFIG = {
+    1: { back: null, next: 2 },
+    2: { back: 1,    next: 3 },
+    3: { back: 2,    next: null },
+  };
   function goToDepthStep(step) {
     _currentDepthStep = step;
-    const cfg = STEP_CONFIG[step];
-
-    // ヘッダー更新
-    const lbl = document.getElementById('step-label');
-    const ttl = document.getElementById('step-title');
-    if (lbl) lbl.textContent = cfg.label;
-    if (ttl) ttl.textContent = cfg.title;
-    // キャラセリフ更新
-    const phaseMap = { 1:'step1', 2:'step2', 3:'step3' };
-    setDepthCharaSerif('depth-edit-chara-serif', phaseMap[step] || 'step1');
-
-    // STEP別キャラセリフ設定（共通固定エリアに反映）
-    const stickyIcon  = document.getElementById('step-chara-icon');
-    const stickySerif = document.getElementById('step-chara-serif');
-    if (stickyIcon) { stickyIcon.dataset.chara = currentChara; updateAllCharaSVG(currentChara); }
-
-    const ALL_SERIFS = {
-      1: {
-        majimaji: '最近、どんな気になることがあったさ？ひとつ選んでみてよ。',
-        concrete:  'どの気になることを掘り下げてみる？ゆっくり選んでいいわ。',
-        kasa:      '気になることを選んでほしいムッシュ。どれが引っかかってるムッシュ？',
-        yurayura:  'どの気になること、気になるンゴ？直感でいいンゴ。',
-        namake:    'のんびりどれか選んでみてよん。引っかかってるやつでいいよん。',
-        sun:       '気になることを選べ！どれが一番引っかかってるんだ？',
-      },
-      2: {
-        majimaji: 'なんか気になるもの、ある？よくわからなくても大丈夫だよ。',
-        concrete:  'どれが気になる？ピンときたものを選べばいいわ。',
-        kasa:      'なんか引っかかるものを選べばいいムッシュ。わからなくてもOKムッシュ。',
-        yurayura:  'なんか気になるもの、あるンゴ？直感でいいンゴ。',
-        namake:    'のんびり気になるものを選べばいいよん。',
-        sun:       '気になったやつを選べ！よくわからなくてもいいぜ！',
-      },
-      3: {
-        majimaji: 'この気になることから、どんな問いが生まれそう？自由に書いてみてさ。',
-        concrete:  'この気になることを問いにしてみて。うまくなくていいわよ。',
-        kasa:      '問いを書いてみてほしいムッシュ。うまくなくていいムッシュ。',
-        yurayura:  '問いを書いてみるンゴ。なんでもいいンゴ。',
-        namake:    'のんびり問いを書いてみてよん。うまくなくていいよん。',
-        sun:       '問いを書け！うまくなくていいぜ！',
-      },
-    };
-    if (stickySerif && ALL_SERIFS[step]) {
-      stickySerif.textContent = ALL_SERIFS[step][currentChara] || ALL_SERIFS[step].majimaji;
-    }
-
-    // ドット更新
-    [1, 2, 3].forEach(n => {
-      const dot = document.getElementById('step-dot-' + n);
-      if (dot) dot.style.background = n <= step ? '#222' : '#d0d0cc';
-    });
-
-    // パネル表示切り替え
-    [1, 2, 3].forEach(n => {
-      const panel = document.getElementById('depth-step-' + n);
-      if (panel) panel.style.display = n === step ? 'block' : 'none';
-    });
-
-    // 保存ボタン（step3のみ表示）
-    const saveBtn = document.getElementById('step-save-btn');
-    if (saveBtn) saveBtn.style.display = step === 3 ? 'inline-block' : 'none';
-
-    // フッターナビ
-    const backArea = document.getElementById('step-back-area');
-    const nextArea = document.getElementById('step-next-area');
-    if (backArea) backArea.textContent = cfg.back ? '← 戻る' : '← 一覧へ';
-    if (nextArea) {
-      nextArea.textContent = cfg.next ? '次へ →' : '';
-      nextArea.style.visibility = cfg.next ? 'visible' : 'hidden';
-    }
-
-    // step3に入ったらShakeCard発動 & ソースサマリー更新
-    if (step === 3) {
-      // ソースサマリー
-      const summaryEl = document.getElementById('step3-source-summary');
-      if (summaryEl) {
-        const allFrags = getFragments();
-        const sourceTexts = _depthSelectedSourceIds
-          .map(sid => (allFrags.find(f => f.id === sid) || {}).text || '')
-          .filter(Boolean);
-        if (sourceTexts.length > 0) {
-          summaryEl.innerHTML = sourceTexts.map(t =>
-            `<span style="display:inline-block;background:#f0f0ec;border-radius:20px;padding:3px 10px;font-size:10px;letter-spacing:0.06em;color:#666;margin:2px;">${t}</span>`
-          ).join('');
-        } else {
-          summaryEl.style.display = 'none';
-        }
-      }
-
-      // 選択した概念サマリー
-      const conceptsSummaryEl = document.getElementById('step3-concepts-summary');
-      const conceptsTagsEl    = document.getElementById('step3-concepts-tags');
-      if (conceptsSummaryEl && conceptsTagsEl) {
-        const allFrags2   = typeof THOUGHT_FRAGMENTS !== 'undefined' ? THOUGHT_FRAGMENTS : [];
-        const sfList      = getSavedFragments();
-        const cwList      = getCloseWords();
-        const swList      = getSavedWords();
-
-        // IDからラベルを引く関数
-        const resolveLabel = (id) => {
-          if (id.startsWith('art_')) {
-            return resolveArtLabel(id);
-          }
-          if (id.startsWith('frag_')) {
-            const fid = id.replace('frag_', '');
-            // THOUGHT_FRAGMENTS_ALL と保存済み断片の両方を検索
-            const allF = (typeof THOUGHT_FRAGMENTS_ALL !== 'undefined' ? THOUGHT_FRAGMENTS_ALL : []);
-            const f = allF.find(f => f.id === fid) || sfList.find(f => f.id === fid);
-            return f ? f.concept : null;
-          }
-          if (id.startsWith('close_')) {
-            const idx = parseInt(id.replace('close_', ''));
-            return cwList[idx] || null;
-          }
-          if (id.startsWith('saved_')) {
-            const idx = parseInt(id.replace('saved_', ''));
-            return swList[idx] || null;
-          }
-          return null;
-        };
-
-        const selectedLabels = _depthSelectedConcepts.map(resolveLabel).filter(Boolean);
-
-        if (selectedLabels.length > 0) {
-          conceptsSummaryEl.style.display = 'block';
-          conceptsTagsEl.innerHTML = '';
-          selectedLabels.forEach(label => {
-            const m2 = label.match(/^(.+?)\s*[―—]\s*(.+)$/);
-            const conceptName = m2 ? m2[1].trim() : label;
-            const fragMatch   = allFrags2.find(f => f.concept === conceptName);
-            const tag = document.createElement('div');
-            tag.style.cssText = 'display:inline-flex;align-items:center;gap:4px;background:#fff;border:1px solid #e0e0da;border-radius:20px;padding:5px 12px;cursor:pointer;margin:2px;';
-            tag.innerHTML =
-              '<span style="font-size:10px;letter-spacing:0.06em;color:#444;">' + conceptName + '</span>' +
-              (fragMatch ? '<span style="font-size:10px;color:#bbb;">›</span>' : '');
-            if (fragMatch) {
-              const def = { concept: fragMatch.concept, author: fragMatch.author, desc: fragMatch.desc, themes: fragMatch.themes || [], mood: fragMatch.mood || [] };
-              tag.addEventListener('click', () => openConceptDefPopup(def));
-            }
-            conceptsTagsEl.appendChild(tag);
-          });
-        } else {
-          conceptsSummaryEl.style.display = 'none';
-        }
-      }
-      _shakeQueue = [];
-      _shakeIndex = 0;
-      setTimeout(triggerShakeCard, 400);
-
-      // 入力停止タイマーをセット
-      const q  = document.getElementById('depth-question');
-      const m  = document.getElementById('depth-memo');
-      [q, m].forEach(el => {
-        if (el && !el._shakeListenerAdded) {
-          el.addEventListener('input', () => resetShakeTimer());
-          el._shakeListenerAdded = true;
-        }
-      });
-    }
-    if (scroll) scroll.scrollTop = 0;
+    if (step === 1) { goTo('screen-depth-edit'); }
+    else if (step === 2) { goTo('screen-depth-concept'); }
+    else if (step === 3) { goTo('screen-depth-question'); }
   }
-
   function depthStepNext() {
-    const cfg = STEP_CONFIG[_currentDepthStep];
-    if (cfg.next === 3) {
-      // STEP2→STEP3の前に中間画面を挟む
-      showMajimajiThinkScreen();
-    } else if (cfg.next) {
-      goToDepthStep(cfg.next);
-    }
+    if (_currentDepthStep === 1) depthSource_next();
+    else if (_currentDepthStep === 2) depthConcept_next();
   }
-
   function depthStepBack() {
-    const cfg = STEP_CONFIG[_currentDepthStep];
-    if (cfg.back) {
-      goToDepthStep(cfg.back);
-    } else {
-      goTo('screen-depth-list');
-    }
+    if (_currentDepthStep === 1) goTo('screen-depth-list');
+    else if (_currentDepthStep === 2) goTo('screen-depth-edit');
+    else if (_currentDepthStep === 3) goTo('screen-depth-concept');
   }
 
   function openDepthInfoModal() {
@@ -9130,13 +9154,7 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
       renderDepthList();
     }
     if (id === 'screen-depth-edit') {
-      // キャラを反映
-      const editCharaEl = document.getElementById('depth-edit-chara');
-      if (editCharaEl) {
-        editCharaEl.dataset.chara = currentChara || 'majimaji';
-        updateAllCharaSVG(currentChara || 'majimaji');
-      }
-      setDepthCharaSerif('depth-edit-chara-serif', 'step1');
+      // 既存エントリの状態を復元
       if (currentDepthId) {
         const entry = getDepthEntryById(currentDepthId);
         if (entry) {
@@ -9144,34 +9162,25 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
           _depthSelectedSourceText = entry.sourceText || '';
           _depthSelectedConcepts   = entry.selectedConcepts || [];
           _depthSelectedFragments  = entry.savedFragments || [];
-        } else {
-          _depthSelectedSourceIds  = [];
-          _depthSelectedSourceText = '';
-          _depthSelectedConcepts   = [];
-          _depthSelectedFragments  = [];
-        }
-      }
-      // ステップ1から開始
-      goToDepthStep(1);
-      // 各ステップのコンテンツをレンダリング
-      const initIds = _depthSelectedSourceIds.length ? _depthSelectedSourceIds : [];
-      renderDepthSourceList(initIds);
-      renderDepthConceptsList(_depthSelectedConcepts);
-      renderDepthFragmentsList(_depthSelectedFragments);
-      // 既存エントリのフィールドを復元
-      if (currentDepthId) {
-        const entry = getDepthEntryById(currentDepthId);
-        if (entry) {
           const q = document.getElementById('depth-question');
-          const n = document.getElementById('depth-concept-name') || {value:''};
           const m = document.getElementById('depth-memo');
           if (q) q.value = entry.questionText || '';
-          if (n) n.value = entry.originalConceptName || '';
           if (m) m.value = entry.memo || '';
-          const delArea = document.getElementById('depth-delete-area');
-          if (delArea) delArea.style.display = 'block';
+        } else {
+          _depthSelectedSourceIds = []; _depthSelectedSourceText = '';
+          _depthSelectedConcepts = []; _depthSelectedFragments = [];
         }
       }
+      _currentDepthStep = 1;
+      initDepthEditScreen();
+    }
+    if (id === 'screen-depth-concept') {
+      _currentDepthStep = 2;
+      initDepthConceptScreen();
+    }
+    if (id === 'screen-depth-question') {
+      _currentDepthStep = 3;
+      initDepthQuestionScreen();
     }
   }
 
