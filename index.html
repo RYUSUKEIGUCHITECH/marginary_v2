@@ -1362,17 +1362,17 @@
         <button onclick="goTo('screen-graft');renderGraftList()" style="
           width:100%;padding:11px;border:1px solid #e8e8e4;border-radius:20px;
           background:none;font-family:inherit;font-size:10px;letter-spacing:0.2em;
-          color:#bbb;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+          color:#333;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
         ">🌱 問いを接ぎ木する</button>
       </div>
       <div style="padding:4px 20px 8px;flex-shrink:0;">
         <button onclick="goTo('screen-library')" style="
           width:100%;padding:11px;border:1px solid #e8e8e4;border-radius:20px;
           background:none;font-family:inherit;font-size:10px;letter-spacing:0.2em;
-          color:#bbb;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+          color:#333;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
         ">📚 概念・アートを探す</button>
       </div>
-      <div onclick="goTo('screen-chara-select')" style="flex-shrink:0;padding:10px 20px 16px;font-size:10px;letter-spacing:0.2em;color:#ccc;cursor:pointer;text-align:center;">← キャラ選択に戻る</div>
+      <div onclick="goTo('screen-chara-select')" style="flex-shrink:0;padding:10px 20px 16px;font-size:10px;letter-spacing:0.2em;color:#333;cursor:pointer;text-align:center;">← キャラ選択に戻る</div>
 
     </div>
   </div>
@@ -6076,7 +6076,7 @@
   }
 
   const AFTER_TAMATTA_SERIFS = {
-    majimaji: 'これ、もう少し深めてみる？\n問いにしてみると、また違う景色が見えるかもよ。',
+    majimaji: 'これ、もう少し眺めてみるー？\nどっちでもいいよー。',
     concrete:  'この気になること、問いにしてみる？\nもう少し育てられるかしら。',
     kasa:      'これ、問いにしてみるムッシュ？\nもっと深みが出るかもしれないムッシュ。',
     yurayura:  'これ、問いにしてみるンゴ？\nもう少しゆらゆらできるンゴ。',
@@ -6127,6 +6127,12 @@
     'モフモフ羊でっせ',
     '時計って、\n何測ってんだろ',
     '本を枕にすると、\nよく寝れるよー',
+    'なんだか星が\n落ちてきそう',
+    '寝そべると、\nコリがほぐれるなー',
+    'ミザンショウ、\nサンショウオ',
+    '寒いとさー、\n空気が澄んでるよー',
+    '鳥ってさ、\n気持ちよく飛んでるのかなー',
+    '木を見ると、\n頬擦りしたくなるさー',
   ];
 
   function goToDepthFromTamatta() {
