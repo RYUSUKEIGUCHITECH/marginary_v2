@@ -688,14 +688,14 @@
   <!-- ====== SCREEN: ノイズセリフ ====== -->
   <div class="screen tap-screen" id="screen-noise">
     <div class="card" style="position:relative; min-height:320px;" onclick="goTo('screen-pad')">
-      <div class="tap-hint">次へ</div>
       <svg width="80" height="80" style="position:absolute;top:0;right:0;" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
         <rect x="0" y="0" width="80" height="40" class="gc"/>
         <polygon points="80,0 80,80 0,80" class="gc"/>
       </svg>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:16px;margin-top:52px;padding:0 16px;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:16px;margin-top:52px;padding:0 16px 40px;">
         <span class="chara-svg" data-w="88" data-h="88"></span>
         <div id="noise-serif" style="font-size:13px;letter-spacing:0.2em;color:#333;font-weight:700;line-height:2.4;text-align:center;"></div>
+        <div style="font-size:12px;letter-spacing:0.28em;color:#333;font-weight:500;pointer-events:none;margin-top:80px;">次へ</div>
       </div>
     </div>
   </div>
@@ -1137,7 +1137,7 @@
           width:100%;padding:16px;border:none;border-radius:20px;
           background:var(--lime);color:var(--lime-text);
           font-family:inherit;font-size:11px;letter-spacing:0.2em;cursor:pointer;
-        ">問いをつくってみる</button>
+        ">もうちょい眺める</button>
         <button onclick="goTo('screen-forest')" style="
           width:100%;padding:16px;border:1px solid #ddd;border-radius:20px;
           background:none;color:#888;
@@ -1163,7 +1163,6 @@
         <span id="depth-bridge-chara" class="chara-svg" data-w="88" data-h="88"></span>
         <div id="depth-bridge-serif" style="font-size:13px;letter-spacing:0.2em;color:#333;font-weight:700;line-height:2.4;text-align:center;"></div>
       </div>
-      <div class="tap-hint">次へ</div>
     </div>
   </div>
 
@@ -5457,7 +5456,9 @@
       row.innerHTML =
         '<div style="width:6px;height:6px;border-radius:50%;flex-shrink:0;background:'+(isSelected?(currentChara==="namake"?"#333":"#fff"):"#d0d0cc")+'"></div>'+
         '<div style="font-size:12px;letter-spacing:0.06em;color:'+(isSelected?(currentChara==="namake"?"#333":"#fff"):"#444")+';line-height:1.7;flex:1;">'+(f.text||'')+'</div>'+
-        (isSelected?'<div style="font-size:10px;color:'+(currentChara==="namake"?"#333":"#fff")+';opacity:0.6;">✓</div>':'');
+        (isSelected
+          ? '<div style="font-size:10px;color:'+(currentChara==="namake"?"#333":"#fff")+';opacity:0.6;">✓</div>'
+          : '<div style="font-size:9px;letter-spacing:0.14em;color:#888;flex-shrink:0;border:1px solid #ddd;border-radius:20px;padding:4px 10px;">選ぶ</div>');
       row.addEventListener('click', () => toggleDepthSource(f.id, f.text || ''));
       container.appendChild(row);
     });
