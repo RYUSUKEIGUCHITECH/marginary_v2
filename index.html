@@ -628,19 +628,19 @@
 
       <!-- ことばを置いていくボタン（最初は非表示） -->
       <div id="intro-place-btn" style="margin-top:24px; opacity:0; transition:opacity 0.6s ease; pointer-events:none;">
-        <button onclick="event.stopPropagation(); goTo('screen-question')" style="
+        <button onclick="event.stopPropagation(); showIntroWordBridge('screen-question')" style="
           width:100%; padding:16px; border:none; border-radius:12px;
           background:var(--lime); color:var(--lime-text);
           font-size:13px; font-weight:700; letter-spacing:3px;
           font-family:inherit; cursor:pointer;
         ">ことばを置いていく</button>
-        <button onclick="event.stopPropagation(); goTo('screen-chat')" id="chat-start-btn" style="
+        <button onclick="event.stopPropagation(); showIntroWordBridge('screen-chat')" id="chat-start-btn" style="
           width:100%; padding:13px; margin-top:10px; border:1px solid #ddd; border-radius:12px;
           background:#fff; color:#555;
           font-size:11px; font-weight:400; letter-spacing:3px;
           font-family:inherit; cursor:pointer;
         ">雑談する</button>
-        <button onclick="event.stopPropagation(); goTo('screen-forest')" id="forest-walk-btn" style="
+        <button onclick="event.stopPropagation(); showIntroWordBridge('screen-forest')" id="forest-walk-btn" style="
           width:100%; padding:13px; margin-top:8px; border:none; border-radius:12px;
           background:none; color:#00712B;
           font-size:11px; font-weight:400; letter-spacing:3px;
@@ -649,6 +649,20 @@
       </div>
 
 
+    </div>
+  </div>
+
+  <!-- ====== SCREEN: イントロ語録中間画面 ====== -->
+  <div class="screen tap-screen" id="screen-intro-word-bridge" style="background:#fff;" onclick="_introWordBridgeTap()">
+    <div class="card" style="position:relative;min-height:320px;">
+      <svg width="80" height="80" style="position:absolute;top:0;right:0;" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="80" height="40" class="gc"/>
+        <polygon points="80,0 80,80 0,80" class="gc"/>
+      </svg>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:20px;margin-top:52px;padding:0 16px 60px;">
+        <span id="intro-word-bridge-chara" class="chara-svg" data-w="88" data-h="88"></span>
+        <div id="intro-word-bridge-text" style="font-size:13px;letter-spacing:0.2em;color:#333;font-weight:700;line-height:2.4;text-align:center;"></div>
+      </div>
     </div>
   </div>
 
@@ -1942,7 +1956,8 @@
       goTo('screen-tree-intro');
     } else {
       _charaSelectFromDepth = false;
-      goTo('screen-intro');
+      // 語録画面を挟んでからscreen-introへ
+      showIntroWordBridge('screen-intro');
     }
   }
 
@@ -6156,6 +6171,19 @@
     const q = document.getElementById('depth-question'); if (q) q.value = '';
     const m = document.getElementById('depth-memo'); if (m) m.value = '';
     goTo('screen-depth-bridge');
+  }
+
+  let _introWordBridgeNext = 'screen-question';
+  function showIntroWordBridge(nextScreen) {
+    _introWordBridgeNext = nextScreen;
+    const icon = document.getElementById('intro-word-bridge-chara');
+    const text = document.getElementById('intro-word-bridge-text');
+    if (icon) { icon.dataset.chara = currentChara; updateAllCharaSVG(currentChara); }
+    if (text) text.textContent = MAJIMAJI_BRIDGE_WORDS[Math.floor(Math.random() * MAJIMAJI_BRIDGE_WORDS.length)];
+    goTo('screen-intro-word-bridge');
+  }
+  function _introWordBridgeTap() {
+    goTo(_introWordBridgeNext);
   }
 
   function onTamattaTap() {
