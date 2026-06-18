@@ -324,6 +324,7 @@
     100% { transform: rotate(0deg) translateY(0px); }
   }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
 <div class="app">
@@ -1883,6 +1884,53 @@
 </div><!-- /.app -->
 
 <script>
+  // ===== Supabase 接続 =====
+  const SUPABASE_URL = 'https://yfkjrscrilmanegukjvb.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_2sxe4TWr0t-Ua8q7FSjEhA_YgSk0Q2E';
+  let supabaseClient = null;
+  try {
+    if (window.supabase && window.supabase.createClient) {
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    }
+  } catch (e) { console.warn('Supabase init failed:', e); }
+
+  // 端末ごとの匿名ID（一度発行したら使い続ける）
+  function getAnonId() {
+    let id = localStorage.getItem('marginary_anon_id');
+    if (!id) {
+      id = 'anon_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
+      localStorage.setItem('marginary_anon_id', id);
+    }
+    return id;
+  }
+
+  // entries テーブルへ非同期で送信（失敗してもアプリの動作は止めない）
+  async function syncEntryToSupabase(type, text, extra) {
+    if (!supabaseClient) return;
+    try {
+      await supabaseClient.from('entries').insert({
+        anon_id: getAnonId(),
+        chara: (typeof currentChara !== 'undefined' ? currentChara : null),
+        type: type,
+        text: text,
+        memo: (extra && extra.memo) || null,
+      });
+    } catch (e) { console.warn('Supabase sync failed:', e); }
+  }
+
+  // anon_sessions テーブルへ最終アクセス情報を記録（軽量・失敗無視）
+  async function pingAnonSession(meta) {
+    if (!supabaseClient) return;
+    try {
+      await supabaseClient.from('anon_sessions').upsert({
+        anon_id: getAnonId(),
+        chara: (typeof currentChara !== 'undefined' ? currentChara : null),
+        last_seen: new Date().toISOString(),
+        meta: meta || {},
+      });
+    } catch (e) { console.warn('Supabase session ping failed:', e); }
+  }
+
   // ===== キャラ設定 =====
   const ALL_CHARAS = ['majimaji','yurayura','kasa','concrete','sun','namake'];
 
@@ -2295,6 +2343,7 @@
     setTimeout(() => startCharaDialogue(), 1200);
     showEchoCardIfReady();
     scheduleEchoQuestion();
+    pingAnonSession({ event: 'app_open' });
   });
 
   function applyCharaConfig(charaKey) {
@@ -2386,6 +2435,7 @@
     });
     fragments = fragments.slice(-50);
     try { localStorage.setItem('marginary_fragments', JSON.stringify(fragments)); } catch(e) {}
+    syncEntryToSupabase('source', text.trim());
   }
 
   function getFragments() {
@@ -9195,6 +9245,9 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
       updatedAt:           now,
     };
     upsertDepthEntry(entry);
+    if (entry.questionText) {
+      syncEntryToSupabase('question', entry.questionText, { memo: entry.memo });
+    }
     ensureAudio();
     soundSave();
     // 保存した存在IDを保持して presence へ
