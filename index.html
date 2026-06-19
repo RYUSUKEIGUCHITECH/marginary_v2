@@ -6295,6 +6295,19 @@
   ];
 
   function goToDepthFromTamatta() {
+    // state リセット
+    currentDepthId = null;
+    _depthSelectedSourceIds = []; _depthSelectedSourceText = '';
+    _depthSelectedConcepts = []; _depthSelectedFragments = [];
+    const q = document.getElementById('depth-question'); if (q) q.value = '';
+    const m = document.getElementById('depth-memo'); if (m) m.value = '';
+
+    // マジマジ以外のキャラの場合はことば画面をスキップして直接遷移
+    if (currentChara !== 'majimaji') {
+      goTo('screen-depth-edit');
+      return;
+    }
+
     const icon  = document.getElementById('depth-bridge-chara');
     const serif = document.getElementById('depth-bridge-serif');
     if (icon)  { icon.dataset.chara = currentChara; updateAllCharaSVG(currentChara); }
@@ -6307,17 +6320,16 @@
     if (isFirstVisit) localStorage.setItem('marginary_bridge_visited', '1');
     const wordPool = isFirstVisit ? FIRST_VISIT_WORDS : MAJIMAJI_BRIDGE_WORDS;
     if (serif) serif.textContent = wordPool[Math.floor(Math.random() * wordPool.length)];
-    // state リセット
-    currentDepthId = null;
-    _depthSelectedSourceIds = []; _depthSelectedSourceText = '';
-    _depthSelectedConcepts = []; _depthSelectedFragments = [];
-    const q = document.getElementById('depth-question'); if (q) q.value = '';
-    const m = document.getElementById('depth-memo'); if (m) m.value = '';
     goTo('screen-depth-bridge');
   }
 
   let _introWordBridgeNext = 'screen-question';
   function showIntroWordBridge(nextScreen) {
+    // マジマジ以外のキャラの場合はことば画面をスキップして直接遷移
+    if (currentChara !== 'majimaji') {
+      goTo(nextScreen);
+      return;
+    }
     _introWordBridgeNext = nextScreen;
     const icon = document.getElementById('intro-word-bridge-chara');
     const text = document.getElementById('intro-word-bridge-text');
@@ -8784,6 +8796,11 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
 
   // STEP1→反応へ
   function depthSource_next() {
+    // マジマジ以外はセリフ画面をスキップ
+    if (currentChara !== 'majimaji') {
+      goTo('screen-depth-concept');
+      return;
+    }
     _depthSetChara('dsr-chara', 'dsr-serif', 'sr');
     goTo('screen-depth-source-reaction');
   }
@@ -8802,6 +8819,11 @@ ${entry.originalConceptName ? '概念名: ' + entry.originalConceptName : ''}
 
   // STEP2→反応へ
   function depthConcept_next() {
+    // マジマジ以外はセリフ画面をスキップ
+    if (currentChara !== 'majimaji') {
+      goTo('screen-depth-question');
+      return;
+    }
     _depthSetChara('dcr-chara', 'dcr-serif', 'cr');
     goTo('screen-depth-concept-reaction');
   }
