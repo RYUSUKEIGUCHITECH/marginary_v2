@@ -350,6 +350,46 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
+
+<!-- ====== インスタレーション専用モニター表示（?mode=installation） ====== -->
+<div id="installation-mode-screen" style="
+  display:none;position:fixed;inset:0;z-index:99999;
+  background:var(--forest-bg,#f4f6ef);overflow:hidden;
+">
+  <!-- 降ってくる言葉レイヤー（ノーフィルタ/承認モード共通） -->
+  <div id="installation-falling-layer" style="position:absolute;inset:0;overflow:hidden;display:none;"></div>
+
+  <!-- 木が育つレイヤー（?display=tree の時） -->
+  <div id="installation-tree-layer" style="display:none;position:absolute;inset:0;flex-direction:column;align-items:center;justify-content:center;">
+    <div id="installation-tree-canvas" style="position:relative;width:70vmin;height:80vmin;"></div>
+    <div id="installation-tree-strata" style="position:relative;width:70vmin;"></div>
+    <div id="installation-tree-count" style="margin-top:18px;font-size:14px;letter-spacing:0.2em;color:#888;"></div>
+  </div>
+
+  <div style="position:absolute;bottom:24px;left:50%;transform:translateX(-50%);font-size:13px;letter-spacing:0.3em;color:#999;">marginary</div>
+</div>
+
+<!-- ====== 入力専用モード（?mode=input） ====== -->
+<div id="input-mode-screen" style="
+  display:none;position:fixed;inset:0;z-index:99999;
+  background:#fff;flex-direction:column;align-items:stretch;
+">
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;">
+    <div style="font-size:13px;letter-spacing:0.2em;color:#888;margin-bottom:20px;">気になることを置いていく</div>
+    <textarea id="input-mode-textarea" placeholder="最近、気になっていることは？" style="
+      width:100%;max-width:480px;min-height:140px;border:1px solid #e0e0da;border-radius:16px;
+      padding:18px;font-family:inherit;font-size:16px;letter-spacing:0.04em;line-height:1.8;
+      resize:none;outline:none;box-sizing:border-box;
+    "></textarea>
+    <button onclick="submitInputModeEntry()" style="
+      margin-top:20px;padding:16px 48px;border:none;border-radius:30px;
+      background:var(--lime,#00712B);color:#fff;font-family:inherit;font-size:14px;
+      letter-spacing:0.2em;cursor:pointer;
+    ">置く</button>
+    <div id="input-mode-feedback" style="margin-top:16px;font-size:13px;color:#00712B;letter-spacing:0.1em;opacity:0;transition:opacity 0.4s;">置きました</div>
+  </div>
+</div>
+
 <div class="app">
 
   <!-- ====== SCREEN 1: TITLE ====== -->
@@ -2022,6 +2062,207 @@
     if (layer) layer.innerHTML = '';
   }
 
+  // ===== インスタレーション専用モード（?mode=installation） =====
+  // 承認フィルタなしで、入力されたすべての言葉をリアルタイムで降らせる
+  const INSTALLATION_COLORS = ['#4a7c3a', '#6b8e5a', '#8a9a7a', '#557a4a', '#3d6b2e'];
+
+  function isInstallationMode() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('mode') === 'installation';
+    } catch (e) { return false; }
+  }
+
+  function isInstallationCuratedOnly() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('curated') === 'true';
+    } catch (e) { return false; }
+  }
+
+  function getInstallationDisplayType() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('display') === 'tree' ? 'tree' : 'falling';
+    } catch (e) { return 'falling'; }
+  }
+
+  function isInputMode() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('mode') === 'input';
+    } catch (e) { return false; }
+  }
+
+  function spawnInstallationWord(text) {
+    const layer = document.getElementById('installation-falling-layer');
+    if (!layer || !text) return;
+    const el = document.createElement('div');
+    el.className = 'falling-word-item';
+    const leftPct = 5 + Math.random() * 85;
+    const duration = 10 + Math.random() * 8;
+    const drift = (Math.random() * 80 - 40) + 'px';
+    const rot = (Math.random() * 16 - 8) + 'deg';
+    const color = INSTALLATION_COLORS[Math.floor(Math.random() * INSTALLATION_COLORS.length)];
+    el.style.left = leftPct + '%';
+    el.style.animationDuration = duration + 's';
+    el.style.setProperty('--drift', drift);
+    el.style.setProperty('--rot', rot);
+    el.style.fontSize = (16 + Math.random() * 8) + 'px';
+    el.style.letterSpacing = '0.06em';
+    el.style.color = color;
+    el.style.opacity = '0.9';
+    el.style.fontFamily = 'inherit';
+    el.style.fontWeight = '500';
+    el.style.whiteSpace = 'nowrap';
+    el.style.background = 'rgba(255,255,255,0.7)';
+    el.style.borderRadius = '24px';
+    el.style.padding = '8px 20px';
+    el.style.boxShadow = '0 2px 12px rgba(0,0,0,0.04)';
+    el.textContent = text;
+    layer.appendChild(el);
+    setTimeout(() => { el.remove(); }, duration * 1000 + 300);
+  }
+
+  async function loadInstallationBacklog() {
+    if (!supabaseClient) return;
+    try {
+      const curatedOnly = isInstallationCuratedOnly();
+      // 直近の入力をいくつか取得して、起動直後の画面に最初から言葉が流れている状態にする
+      let query = supabaseClient
+        .from('entries')
+        .select('text, created_at, is_curated')
+        .order('created_at', { ascending: false })
+        .limit(20);
+      if (curatedOnly) query = query.eq('is_curated', true);
+      const { data, error } = await query;
+      if (error || !data) return;
+      data.reverse().forEach((row, i) => {
+        setTimeout(() => spawnInstallationWord(row.text), i * 700);
+      });
+    } catch (e) { console.warn('loadInstallationBacklog failed:', e); }
+  }
+
+  // ----- 木モード（display=tree）-----
+  let _installationTreeAnim = null;
+  let _installationTreeTexts = [];
+
+  async function fetchInstallationTexts() {
+    if (!supabaseClient) return [];
+    try {
+      const curatedOnly = isInstallationCuratedOnly();
+      let query = supabaseClient
+        .from('entries')
+        .select('text, created_at, is_curated')
+        .order('created_at', { ascending: true })
+        .limit(200);
+      if (curatedOnly) query = query.eq('is_curated', true);
+      const { data, error } = await query;
+      if (error || !data) return [];
+      return data.map(r => r.text).filter(Boolean);
+    } catch (e) { console.warn('fetchInstallationTexts failed:', e); return []; }
+  }
+
+  async function renderInstallationTree() {
+    _installationTreeTexts = await fetchInstallationTexts();
+    const ref = { anim: _installationTreeAnim };
+    renderTreeOnCanvas(_installationTreeTexts, 'installation-tree-canvas', 'installation-tree-strata', ref);
+    _installationTreeAnim = ref.anim;
+    const countEl = document.getElementById('installation-tree-count');
+    if (countEl) countEl.textContent = _installationTreeTexts.length + ' のことば';
+  }
+
+  function startInstallationRealtime() {
+    if (!supabaseClient) return;
+    const curatedOnly = isInstallationCuratedOnly();
+    const displayType = getInstallationDisplayType();
+
+    if (displayType === 'tree') {
+      // 木モード: INSERT/UPDATEのたびに全件再取得して木を再描画
+      const channel = supabaseClient.channel('installation-tree');
+      channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'entries' }, () => {
+        renderInstallationTree();
+      });
+      if (curatedOnly) {
+        channel.on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'entries' }, () => {
+          renderInstallationTree();
+        });
+      }
+      channel.subscribe();
+      return;
+    }
+
+    if (curatedOnly) {
+      // 承認モード（降ってくる表示）: is_curated が false→true に更新された瞬間に降らせる
+      supabaseClient
+        .channel('installation-entries-curated')
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'entries' }, (payload) => {
+          const row = payload.new;
+          if (row && row.is_curated === true && row.text) spawnInstallationWord(row.text);
+        })
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'entries' }, (payload) => {
+          const row = payload.new;
+          if (row && row.is_curated === true && row.text) spawnInstallationWord(row.text);
+        })
+        .subscribe();
+    } else {
+      // ノーフィルタモード（降ってくる表示）: 入力された瞬間そのまま降らせる
+      supabaseClient
+        .channel('installation-entries')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'entries' }, (payload) => {
+          const text = payload.new && payload.new.text;
+          if (text) spawnInstallationWord(text);
+        })
+        .subscribe();
+    }
+  }
+
+  function initInstallationMode() {
+    const screen = document.getElementById('installation-mode-screen');
+    if (!screen) return;
+    screen.style.display = 'block';
+    const appEl = document.querySelector('.app');
+    if (appEl) appEl.style.display = 'none';
+
+    const displayType = getInstallationDisplayType();
+    const fallingLayer = document.getElementById('installation-falling-layer');
+    const treeLayer = document.getElementById('installation-tree-layer');
+
+    if (displayType === 'tree') {
+      if (treeLayer) treeLayer.style.display = 'flex';
+      if (fallingLayer) fallingLayer.style.display = 'none';
+      renderInstallationTree();
+    } else {
+      if (fallingLayer) fallingLayer.style.display = 'block';
+      if (treeLayer) treeLayer.style.display = 'none';
+      loadInstallationBacklog();
+    }
+    startInstallationRealtime();
+  }
+
+  // ===== 入力専用モード（?mode=input） =====
+  function initInputMode() {
+    const screen = document.getElementById('input-mode-screen');
+    if (!screen) return;
+    screen.style.display = 'flex';
+    const appEl = document.querySelector('.app');
+    if (appEl) appEl.style.display = 'none';
+  }
+
+  async function submitInputModeEntry() {
+    const ta = document.getElementById('input-mode-textarea');
+    const feedback = document.getElementById('input-mode-feedback');
+    if (!ta) return;
+    const text = ta.value.trim();
+    if (text.length < 2) return;
+    await syncEntryToSupabase('source', text);
+    ta.value = '';
+    if (feedback) {
+      feedback.style.opacity = '1';
+      setTimeout(() => { feedback.style.opacity = '0'; }, 1800);
+    }
+  }
+
   // ===== キャラ設定 =====
   const ALL_CHARAS = ['majimaji','yurayura','kasa','concrete','sun','namake'];
 
@@ -2426,6 +2667,14 @@
   };
 
   document.addEventListener('DOMContentLoaded', () => {
+    if (isInstallationMode()) {
+      initInstallationMode();
+      return; // 通常の初期化はスキップ
+    }
+    if (isInputMode()) {
+      initInputMode();
+      return; // 通常の初期化はスキップ
+    }
     initTitleCanvas();
     updateAllCharaSVG('majimaji');
     applyCharaConfig('majimaji');
