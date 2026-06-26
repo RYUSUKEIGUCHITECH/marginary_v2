@@ -372,21 +372,36 @@
 <!-- ====== 入力専用モード（?mode=input） ====== -->
 <div id="input-mode-screen" style="
   display:none;position:fixed;inset:0;z-index:99999;
-  background:#fff;flex-direction:column;align-items:stretch;
+  background:#fff;align-items:center;justify-content:center;
 ">
-  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;">
-    <div style="font-size:13px;letter-spacing:0.2em;color:#888;margin-bottom:20px;">気になることを置いていく</div>
-    <textarea id="input-mode-textarea" placeholder="最近、気になっていることは？" style="
-      width:100%;max-width:480px;min-height:140px;border:1px solid #e0e0da;border-radius:16px;
-      padding:18px;font-family:inherit;font-size:16px;letter-spacing:0.04em;line-height:1.8;
-      resize:none;outline:none;box-sizing:border-box;
-    "></textarea>
-    <button onclick="submitInputModeEntry()" style="
-      margin-top:20px;padding:16px 48px;border:none;border-radius:30px;
-      background:var(--lime,#00712B);color:#fff;font-family:inherit;font-size:14px;
-      letter-spacing:0.2em;cursor:pointer;
-    ">置く</button>
-    <div id="input-mode-feedback" style="margin-top:16px;font-size:13px;color:#00712B;letter-spacing:0.1em;opacity:0;transition:opacity 0.4s;">置きました</div>
+  <div class="card" style="position:relative; min-height:320px; width:100%; max-width:420px;">
+    <svg width="100" height="160" style="position:absolute;top:0;left:0;" viewBox="0 0 100 160" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="45" height="70" class="gc"/>
+      <rect x="45" y="0" width="20" height="160" fill="#8C6239"/>
+      <rect x="0" y="70" width="45" height="50" class="gc"/>
+      <rect x="0" y="120" width="45" height="40" class="gc"/>
+      <circle cx="10" cy="14" r="6" fill="white"/><circle cx="26" cy="14" r="6" fill="white"/>
+      <circle cx="10" cy="32" r="6" fill="white"/><circle cx="26" cy="32" r="6" fill="white"/>
+      <circle cx="10" cy="50" r="6" fill="white"/>
+    </svg>
+    <div style="display:flex;align-items:center;gap:12px;margin-top:52px;margin-bottom:12px;padding:0 8px;justify-content:flex-end;">
+      <div style="font-size:13px;letter-spacing:0.2em;line-height:2.2;color:#333;font-weight:700;text-align:right;">
+        <span id="input-mode-serif"></span>
+      </div>
+      <span id="input-mode-chara" class="chara-svg" data-w="72" data-h="86"></span>
+    </div>
+    <div class="dots-row" style="margin-bottom:6px;">
+      <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float"></div>
+      <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float2"></div>
+      <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float3"></div>
+      <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float2"></div>
+      <div style="width:13px;height:13px;background:var(--oboroke-dot);border-radius:50%;" class="float3"></div>
+    </div>
+    <textarea id="input-mode-textarea" rows="2"
+      placeholder="気になってること…"
+      oninput="checkInputModeText()"
+      style="width:100%;background:#f2f2f2;border:none;border-radius:12px;padding:16px;font-family:inherit;font-size:16px;letter-spacing:0.1em;color:#333;resize:none;outline:none;line-height:1.6;caret-color:var(--green);margin-bottom:16px;box-sizing:border-box;"></textarea>
+    <button class="btn-next" id="input-mode-next-btn" disabled onclick="submitInputModeEntry()">次へ</button>
   </div>
 </div>
 
@@ -2247,20 +2262,33 @@
     screen.style.display = 'flex';
     const appEl = document.querySelector('.app');
     if (appEl) appEl.style.display = 'none';
+    // マジマジ固定でセリフ・アイコンをセット
+    const icon = document.getElementById('input-mode-chara');
+    if (icon) { icon.dataset.chara = 'majimaji'; updateAllCharaSVG('majimaji'); }
+    const serifEl = document.getElementById('input-mode-serif');
+    if (serifEl) serifEl.innerHTML = 'な ん か 生 き て て<br>気 に な る こ と<br>あ る ？';
+  }
+
+  function checkInputModeText() {
+    const el  = document.getElementById('input-mode-textarea');
+    const btn = document.getElementById('input-mode-next-btn');
+    if (btn) btn.disabled = !(el && el.value.trim().length > 0);
   }
 
   async function submitInputModeEntry() {
     const ta = document.getElementById('input-mode-textarea');
-    const feedback = document.getElementById('input-mode-feedback');
     if (!ta) return;
     const text = ta.value.trim();
     if (text.length < 2) return;
     await syncEntryToSupabase('source', text);
     ta.value = '';
-    if (feedback) {
-      feedback.style.opacity = '1';
-      setTimeout(() => { feedback.style.opacity = '0'; }, 1800);
-    }
+    checkInputModeText();
+    // 入力完了 → キャラ選択画面へ
+    const inputScreen = document.getElementById('input-mode-screen');
+    if (inputScreen) inputScreen.style.display = 'none';
+    const appEl = document.querySelector('.app');
+    if (appEl) appEl.style.display = 'block';
+    goTo('screen-chara-select');
   }
 
   // ===== キャラ設定 =====
