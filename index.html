@@ -370,6 +370,38 @@
 </div>
 
 <!-- ====== 入力専用モード（?mode=input） ====== -->
+<!-- 1枚目: マジマジの自己紹介 -->
+<div id="input-mode-intro-screen" style="
+  display:none;position:fixed;inset:0;z-index:99999;
+  background:#fff;align-items:center;justify-content:center;cursor:pointer;
+" onclick="showInputModeForm()">
+  <div class="card" style="position:relative; min-height:320px; width:100%; max-width:420px;">
+    <svg width="100" height="160" style="position:absolute;top:0;left:0;" viewBox="0 0 100 160" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="45" height="70" class="gc"/>
+      <rect x="45" y="0" width="20" height="160" fill="#8C6239"/>
+      <rect x="0" y="70" width="45" height="50" class="gc"/>
+      <rect x="0" y="120" width="45" height="40" class="gc"/>
+      <circle cx="10" cy="14" r="6" fill="white"/><circle cx="26" cy="14" r="6" fill="white"/>
+      <circle cx="10" cy="32" r="6" fill="white"/><circle cx="26" cy="32" r="6" fill="white"/>
+      <circle cx="10" cy="50" r="6" fill="white"/>
+    </svg>
+    <svg width="80" height="80" style="position:absolute;top:0;right:0;" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="80" height="40" class="gc"/>
+      <polygon points="80,0 80,80 0,80" class="gc"/>
+    </svg>
+    <div style="text-align:center; font-size:14px; letter-spacing:3px; line-height:2.2; color:#333; font-weight:700; margin-top:52px; padding: 0 16px;">
+      ボ ク は マ ジ マ ジ<br>こ の 森 に 住 む<br>妖 精 さ
+    </div>
+    <div style="display:flex; justify-content:center; margin-top:20px;">
+      <span id="input-mode-intro-chara" class="chara-svg" data-w="103" data-h="103"></span>
+    </div>
+    <div style="text-align:center; margin-top:20px; padding-bottom:24px;">
+      <div style="display:inline-block;border:1.5px solid var(--lime,#00712B);border-radius:40px;padding:10px 40px;font-size:12px;letter-spacing:0.28em;color:var(--lime,#00712B);font-weight:500;pointer-events:none;white-space:nowrap;">次へ</div>
+    </div>
+  </div>
+</div>
+
+<!-- 2枚目: 気になること入力 -->
 <div id="input-mode-screen" style="
   display:none;position:fixed;inset:0;z-index:99999;
   background:#fff;align-items:center;justify-content:center;
@@ -2257,12 +2289,21 @@
 
   // ===== 入力専用モード（?mode=input） =====
   function initInputMode() {
-    const screen = document.getElementById('input-mode-screen');
-    if (!screen) return;
-    screen.style.display = 'flex';
+    const introScreen = document.getElementById('input-mode-intro-screen');
+    if (!introScreen) return;
+    introScreen.style.display = 'flex';
     const appEl = document.querySelector('.app');
     if (appEl) appEl.style.display = 'none';
-    // マジマジ固定でセリフ・アイコンをセット
+    // マジマジ固定で自己紹介キャラをセット
+    const introIcon = document.getElementById('input-mode-intro-chara');
+    if (introIcon) { introIcon.dataset.chara = 'majimaji'; updateAllCharaSVG('majimaji'); }
+  }
+
+  function showInputModeForm() {
+    const introScreen = document.getElementById('input-mode-intro-screen');
+    const formScreen = document.getElementById('input-mode-screen');
+    if (introScreen) introScreen.style.display = 'none';
+    if (formScreen) formScreen.style.display = 'flex';
     const icon = document.getElementById('input-mode-chara');
     if (icon) { icon.dataset.chara = 'majimaji'; updateAllCharaSVG('majimaji'); }
     const serifEl = document.getElementById('input-mode-serif');
@@ -2284,8 +2325,8 @@
     ta.value = '';
     checkInputModeText();
     // 入力完了 → キャラ選択画面へ
-    const inputScreen = document.getElementById('input-mode-screen');
-    if (inputScreen) inputScreen.style.display = 'none';
+    const formScreen = document.getElementById('input-mode-screen');
+    if (formScreen) formScreen.style.display = 'none';
     const appEl = document.querySelector('.app');
     if (appEl) appEl.style.display = 'block';
     goTo('screen-chara-select');
